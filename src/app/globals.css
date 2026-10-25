@@ -1,26 +1,116 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base */
+  --background: #FDFCFC;
+  --background-accent: #F3F0EF;
+  --foreground: #1C1918;
+  --muted: #6B6461;
+  --dust: #D6D1CE;
+
+  /* Brand */
+  --primary: #EA5753;
+  --primary-hover: #D84843;
+  --primary-soft: #FDEBEA;
+  --primary-text: #C23A36;
+  --on-primary: #1C1918;
+
+  /* Semantic */
+  --success: #34C759;
+  --failed: #B42318;
+  --information: #5AC8FA;
+  --warning: #FF9500;
+
+  --success-text: #1E7A3A;
+  --failed-text: #B42318;
+  --information-text: #0B6E99;
+  --warning-text: #A15C00;
+
+  --success-soft: #E8F8ED;
+  --failed-soft: #FDECEA;
+  --information-soft: #E6F6FD;
+  --warning-soft: #FFF3E0;
+
+  /* Shadcn mappings */
+  --card: var(--background);
+  --card-foreground: var(--foreground);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--background-accent);
+  --secondary-foreground: var(--foreground);
+  --muted-foreground: var(--muted);
+  --accent: var(--background-accent);
+  --accent-foreground: var(--foreground);
+  --destructive: var(--failed);
+  --border: var(--dust);
+  --input: var(--dust);
+  --ring: var(--primary);
+  --radius: 0.625rem;
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: var(--background-accent);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--dust);
+  --sidebar-ring: var(--primary);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-accent: var(--background-accent);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-dust: var(--dust);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-text: var(--primary-text);
+  --color-on-primary: var(--on-primary);
+  --font-sans: var(--font-plus-jakarta-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-newsreader: var(--font-newsreader), Georgia, serif;
+  --font-heading: var(--font-plus-jakarta-sans), ui-sans-serif, system-ui, sans-serif;
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* --background: #0a0a0a; */
+    /* --foreground: #ededed; */
   }
 }
 
 body {
-  background: var(--background);
+  font-family: var(--font-plus-jakarta-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+.font-newsreader {
+  font-family: var(--font-newsreader), Georgia, serif;
 }
