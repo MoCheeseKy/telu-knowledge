@@ -1,6 +1,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import RepostCard, { RepostItem } from "./RepostCard";
 import ProfileSidebar from "./ProfileSidebar";
+import HomeTab from "./HomeTab";
 
 const reposts: RepostItem[] = [
   {
@@ -53,7 +54,7 @@ export default function Profiles() {
       <section className="min-w-0 flex-1">
         <h1 className="mb-6 font-serif text-4xl font-bold">sofiamnhrk</h1>
 
-        <Tabs defaultValue="reposts">
+        <Tabs defaultValue="home">
           <TabsList className="h-auto w-full justify-start gap-6 rounded-none border-b bg-transparent p-0">
             <TabsTrigger value="home" className={triggerClass}>
               Home
@@ -64,7 +65,7 @@ export default function Profiles() {
           </TabsList>
 
           <TabsContent value="home">
-            <p className="py-6 text-sm text-gray-500">Konten tab Home</p>
+            <HomeTab />
           </TabsContent>
 
           <TabsContent value="reposts">
