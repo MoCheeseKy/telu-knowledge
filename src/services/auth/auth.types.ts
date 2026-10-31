@@ -1,13 +1,15 @@
+import type { components } from "@/lib/api/schema";
+
 /**
- * Definisi tipe data domain Autentikasi Tel-U Knowledge
+ * Tipe data backend yang diturunkan langsung dari OpenAPI schema.d.ts
+ * sebagai satu-satunya sumber kebenaran (Single Source of Truth).
  */
+export type AuthUser = components["schemas"]["AuthUserDto"];
+export type BackendLoginData = components["schemas"]["LoginDataDto"];
 
-export interface AuthUser {
-  id: string;
-  email: string;
-  created_at?: string;
-}
-
+/**
+ * Tipe payload form (ditulis manual sesuai kebutuhan form/input client).
+ */
 export interface LoginPayload {
   email: string;
   password: string;
@@ -33,25 +35,15 @@ export interface ResetPasswordPayload {
 }
 
 /**
- * Respons data dari BFF login / me / refresh ke browser (tanpa token).
+ * Respons data dari BFF ke browser (tanpa token).
  */
 export interface AuthUserResponseData {
   user: AuthUser;
 }
 
 /**
- * Respons data dari backend saat registrasi (tidak mengembalikan token).
+ * Respons data saat registrasi (user bisa null jika email sudah terdaftar / pencegahan enumerasi).
  */
 export interface RegisterResponseData {
   user: AuthUser | null;
-}
-
-/**
- * Respons data internal dari backend NestJS saat login/refresh (hanya ada di server Next.js).
- */
-export interface BackendLoginData {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-  user: AuthUser;
 }

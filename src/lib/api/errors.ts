@@ -25,13 +25,32 @@ export class ApiError extends Error {
     this.name = "ApiError";
     this.statusCode = statusCode;
     this.messages = safeMessages;
-    this.rawResponse = rawResponse;
+
+    // Pastikan rawResponse tidak pernah ikut terserialisasi secara otomatis (enumerable: false)
+    Object.defineProperty(this, "rawResponse", {
+      value: rawResponse,
+      writable: false,
+      enumerable: false,
+      configurable: true,
+    });
 
     Object.setPrototypeOf(this, ApiError.prototype);
   }
 
   override get message(): string {
     return this.messages.join(", ");
+  }
+
+  /**
+   * Representasi JSON aman yang tidak pernah membocorkan rawResponse ke browser.
+   */
+  toJSON(): { name: string; statusCode: number; message: string; messages: string[] } {
+    return {
+      name: this.name,
+      statusCode: this.statusCode,
+      message: this.message,
+      messages: this.messages,
+    };
   }
 }
 
@@ -53,7 +72,9 @@ export function isApiError(error: unknown): error is ApiError {
 }
 
 /**
- * Mengonversi segala jenis error (network, abort/timeout, non-JSON) menjadi ApiError standar.
+ * Mengonversi segala jenis error (network, abort/timeout, error tak terduga) menjadi ApiError standar.
+ * Untuk error internal tak terduga, tidak membocorkan error.message asli ke client,
+ * dan hanya mencatat log detail di sisi server (tanpa mengekspos token/rahasia).
  */
 export function toApiError(error: unknown): ApiError {
   if (isApiError(error)) {
@@ -72,7 +93,7 @@ export function toApiError(error: unknown): ApiError {
     );
   }
 
-  // Network offline / koneksi gagal
+  // Network offline / koneksi backend gagal
   if (error instanceof TypeError && error.message.toLowerCase().includes("fetch")) {
     return new ApiError(
       502,
@@ -81,15 +102,18 @@ export function toApiError(error: unknown): ApiError {
     );
   }
 
-  if (error instanceof Error) {
-    return new ApiError(
-      500,
-      error.message && error.message.trim() !== ""
-        ? error.message
-        : "Terjadi kesalahan internal pada sistem.",
-      error
+  // Error tak terduga: catat log HANYA di server, kembalikan pesan generik aman
+  if (typeof window === "undefined") {
+    // Di sisi server: log detail error internal untuk debugging developer
+    console.error(
+      "[ApiError Internal Server Error]:",
+      error instanceof Error ? error.stack || error.message : error
     );
   }
 
-  return new ApiError(500, "Terjadi kesalahan yang tidak terduga.", error);
+  return new ApiError(
+    500,
+    "Terjadi kesalahan internal pada sistem.",
+    error
+  );
 }

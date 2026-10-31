@@ -1,3 +1,5 @@
+import "server-only";
+
 /**
  * Modul pembaca dan validator environment variables sisi server.
  * Menjamin variabel wajib terisi dan memberikan pesan kesalahan yang jelas.

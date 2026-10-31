@@ -1,5 +1,7 @@
 import {
   QueryClient,
+  QueryCache,
+  MutationCache,
   isServer,
 } from "@tanstack/react-query";
 import { isApiError } from "@/lib/api/errors";
@@ -24,6 +26,20 @@ function handleUnauthorized(): void {
 
 export function makeQueryClient(): QueryClient {
   return new QueryClient({
+    queryCache: new QueryCache({
+      onError: (error) => {
+        if (isApiError(error) && error.statusCode === 401) {
+          handleUnauthorized();
+        }
+      },
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        if (isApiError(error) && error.statusCode === 401) {
+          handleUnauthorized();
+        }
+      },
+    }),
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000, // 60 detik
@@ -64,22 +80,9 @@ export function getQueryClient(): QueryClient {
     return makeQueryClient();
   }
 
-  // Browser: buat instance singleton
+  // Browser: singleton instance
   if (!browserQueryClient) {
     browserQueryClient = makeQueryClient();
-
-    // Handler global untuk HTTP 401 Unauthorized
-    browserQueryClient.getQueryCache().config.onError = (error) => {
-      if (isApiError(error) && error.statusCode === 401) {
-        handleUnauthorized();
-      }
-    };
-
-    browserQueryClient.getMutationCache().config.onError = (error) => {
-      if (isApiError(error) && error.statusCode === 401) {
-        handleUnauthorized();
-      }
-    };
   }
 
   return browserQueryClient;
