@@ -10,6 +10,13 @@ export const PUBLIC_PATHS: readonly string[] = [
 ];
 
 /**
+ * Path backend di bawah segmen auth yang diizinkan untuk diakses melalui generic proxy.
+ * Seluruh endpoint auth lainnya wajib melalui BFF route handler khusus (/api/auth/*)
+ * guna menjamin token HttpOnly tidak bocor ke browser.
+ */
+export const PROXY_ALLOWED_AUTH_PATHS: readonly string[] = ["auth/me"];
+
+/**
  * Memeriksa apakah path saat ini merupakan path publik.
  */
 export function isPublicPath(pathname: string): boolean {

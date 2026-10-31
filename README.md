@@ -53,6 +53,18 @@ $ cp .env.example .env
 |---|---|
 | `API_BASE_URL` | URL dasar backend NestJS (server-only, default: `http://localhost:8000`). Jangan tambahkan `/api` atau prefix `NEXT_PUBLIC`. |
 | `APP_ORIGIN` | Origin frontend (default: `http://localhost:3000`). Digunakan untuk validasi header `Origin` (Same-Origin). |
+| `TRUSTED_IP_HEADER` | (Opsional) Header khusus reverse proxy tepercaya (misal `cf-connecting-ip`, `x-real-ip`). Jika diisi, IP klien diambil HANYA dari header ini. |
+| `TRUSTED_PROXY_HOPS` | (Opsional, integer, default: `0`) Jumlah hop proxy tepercaya pada `X-Forwarded-For` (dihitung dari kanan). Digunakan jika `TRUSTED_IP_HEADER` kosong. |
+
+### Panduan Deployment & Konfigurasi Proxy / IP Klien
+
+Secara *default* (tanpa konfigurasi), Next.js BFF tidak meneruskan header IP apa pun dari request klien ke backend NestJS guna mencegah pemalsuan IP (*IP spoofing*) dan manipulasi rate-limit.
+
+Saat melakukan deployment di balik reverse proxy atau hosting provider:
+1. **Cloudflare**: Atur `TRUSTED_IP_HEADER=cf-connecting-ip`.
+2. **Vercel**: Atur `TRUSTED_IP_HEADER=x-vercel-forwarded-for`.
+3. **Nginx / Reverse Proxy**: Jika Nginx mengatur `X-Real-IP`, atur `TRUSTED_IP_HEADER=x-real-ip`. Jika Nginx menambahkan hop pada `X-Forwarded-For`, atur `TRUSTED_PROXY_HOPS=1`.
+4. **Penting (Sinkronisasi dengan Backend)**: Konfigurasi proxy tepercaya pada frontend harus selaras dengan pengaturan `trust proxy` pada backend NestJS agar resolusi IP dan *throttling* konsisten.
 
 ---
 

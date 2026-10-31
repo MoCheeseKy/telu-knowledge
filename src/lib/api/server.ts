@@ -1,5 +1,6 @@
 import "server-only";
 
+import { isIP } from "node:net";
 import { serverEnv } from "@/lib/env";
 import { toApiError } from "./errors";
 import { parseApiResponse } from "./parse-response";
@@ -14,19 +15,47 @@ export interface ServerFetchOptions {
 }
 
 /**
- * Membaca IP client dari headers request dengan fallback aman.
- * Jika terdapat daftar IP pada X-Forwarded-For, mengambil IP pertama (client asli).
+ * Membaca IP client dari headers request dengan verifikasi proxy tepercaya.
+ * - Default AMAN: Jika tidak ada konfigurasi TRUSTED_IP_HEADER atau TRUSTED_PROXY_HOPS,
+ *   JANGAN meneruskan IP dari header apa pun (mengembalikan undefined).
+ * - TRUSTED_IP_HEADER: Jika diisi, membaca IP HANYA dari header tersebut dan divalidasi.
+ * - TRUSTED_PROXY_HOPS (N > 0): Jika TRUSTED_IP_HEADER kosong, membaca entri ke-N dari KANAN
+ *   pada X-Forwarded-For dan divalidasi format IP-nya.
  */
 export function getClientIp(headers: Headers): string | undefined {
-  const forwardedFor = headers.get("x-forwarded-for");
-  if (forwardedFor) {
-    const firstIp = forwardedFor.split(",")[0]?.trim();
-    if (firstIp) return firstIp;
+  const trustedHeader = serverEnv.TRUSTED_IP_HEADER;
+  if (trustedHeader) {
+    const rawValue = headers.get(trustedHeader);
+    if (!rawValue) return undefined;
+    const candidate = rawValue.split(",")[0]?.trim();
+    if (candidate && isIP(candidate) !== 0) {
+      return candidate;
+    }
+    return undefined;
   }
-  const realIp = headers.get("x-real-ip");
-  if (realIp && realIp.trim()) {
-    return realIp.trim();
+
+  const hops = serverEnv.TRUSTED_PROXY_HOPS;
+  if (hops > 0) {
+    const forwardedFor = headers.get("x-forwarded-for");
+    if (!forwardedFor) return undefined;
+
+    const entries = forwardedFor
+      .split(",")
+      .map((ip) => ip.trim())
+      .filter(Boolean);
+
+    // Ambil entri ke-N dari KANAN: index = entries.length - hops
+    const index = entries.length - hops;
+    if (index >= 0 && index < entries.length) {
+      const candidate = entries[index];
+      if (candidate && isIP(candidate) !== 0) {
+        return candidate;
+      }
+    }
+    return undefined;
   }
+
+  // Default aman: jangan percayai header client apa pun
   return undefined;
 }
 

@@ -1,9 +1,16 @@
 import "server-only";
 
 import { cookies } from "next/headers";
-import { AUTH_COOKIE_ACCESS, AUTH_COOKIE_REFRESH } from "@/lib/constants";
-
-const isProduction = process.env.NODE_ENV === "production";
+import {
+  AUTH_COOKIE_ACCESS,
+  AUTH_COOKIE_REFRESH,
+  AUTH_COOKIE_REMEMBER,
+} from "@/lib/constants";
+import {
+  getAccessCookieOptions,
+  getRefreshCookieOptions,
+  getRememberCookieOptions,
+} from "./cookie-options";
 
 export interface AuthTokens {
   accessToken?: string;
@@ -41,6 +48,7 @@ export async function getRefreshToken(): Promise<string | undefined> {
  * Menyimpan token autentikasi ke dalam cookie HttpOnly.
  * - access_token memiliki masa berlaku sesuai expires_in dari backend (default 3600 detik).
  * - refresh_token memiliki maxAge 30 hari jika rememberMe aktif, atau session cookie jika tidak.
+ * - Jika rememberMe undefined, status remember ditentukan dari keberadaan cookie tk_remember (rotasi sliding).
  */
 export async function setAuthCookies(
   tokens: {
@@ -51,41 +59,42 @@ export async function setAuthCookies(
   rememberMe?: boolean
 ): Promise<void> {
   const cookieStore = await cookies();
-  const accessMaxAge =
-    tokens.expires_in && tokens.expires_in > 0 ? tokens.expires_in : 3600;
+
+  // Tentukan apakah remember me aktif
+  const isRemember =
+    rememberMe !== undefined
+      ? rememberMe
+      : Boolean(cookieStore.get(AUTH_COOKIE_REMEMBER)?.value);
 
   // Set access token cookie
-  cookieStore.set(AUTH_COOKIE_ACCESS, tokens.access_token, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    secure: isProduction,
-    maxAge: accessMaxAge,
-  });
+  cookieStore.set(
+    AUTH_COOKIE_ACCESS,
+    tokens.access_token,
+    getAccessCookieOptions(tokens.expires_in)
+  );
 
-  // Set refresh token cookie
-  const refreshCookieOptions: {
-    httpOnly: boolean;
-    sameSite: "lax";
-    path: string;
-    secure: boolean;
-    maxAge?: number;
-  } = {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    secure: isProduction,
-  };
-
-  if (rememberMe) {
-    refreshCookieOptions.maxAge = 30 * 24 * 60 * 60; // 30 hari dalam detik
-  }
-
+  // Set refresh token cookie (30 hari jika remember aktif, session cookie jika tidak)
   cookieStore.set(
     AUTH_COOKIE_REFRESH,
     tokens.refresh_token,
-    refreshCookieOptions
+    getRefreshCookieOptions(isRemember)
   );
+
+  // Atur cookie tk_remember
+  if (isRemember) {
+    // Sliding: perpanjang masa berlaku tk_remember ke 30 hari
+    cookieStore.set(
+      AUTH_COOKIE_REMEMBER,
+      "1",
+      getRememberCookieOptions()
+    );
+  } else {
+    // Pastikan cookie tk_remember dihapus jika rememberMe tidak aktif
+    cookieStore.delete({
+      name: AUTH_COOKIE_REMEMBER,
+      path: "/",
+    });
+  }
 }
 
 /**
@@ -93,6 +102,7 @@ export async function setAuthCookies(
  */
 export async function clearAuthCookies(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.delete(AUTH_COOKIE_ACCESS);
-  cookieStore.delete(AUTH_COOKIE_REFRESH);
+  cookieStore.delete({ name: AUTH_COOKIE_ACCESS, path: "/" });
+  cookieStore.delete({ name: AUTH_COOKIE_REFRESH, path: "/" });
+  cookieStore.delete({ name: AUTH_COOKIE_REMEMBER, path: "/" });
 }

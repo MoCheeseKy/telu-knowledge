@@ -22,4 +22,16 @@ export const serverEnv = {
   get APP_ORIGIN(): string {
     return getRequiredServerEnv("APP_ORIGIN");
   },
+  /** Header IP tepercaya dari reverse proxy (misal: "x-real-ip", "cf-connecting-ip") */
+  get TRUSTED_IP_HEADER(): string | undefined {
+    const val = process.env.TRUSTED_IP_HEADER?.trim();
+    return val && val !== "" ? val.toLowerCase() : undefined;
+  },
+  /** Jumlah hop proxy tepercaya pada X-Forwarded-For (dihitung dari kanan, default: 0) */
+  get TRUSTED_PROXY_HOPS(): number {
+    const raw = process.env.TRUSTED_PROXY_HOPS?.trim();
+    if (!raw) return 0;
+    const parsed = parseInt(raw, 10);
+    return isNaN(parsed) || parsed < 0 ? 0 : parsed;
+  },
 };

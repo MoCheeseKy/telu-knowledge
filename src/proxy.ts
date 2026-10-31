@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AUTH_COOKIE_ACCESS, AUTH_COOKIE_REFRESH } from "@/lib/constants";
+import {
+  AUTH_COOKIE_ACCESS,
+  AUTH_COOKIE_REFRESH,
+  AUTH_COOKIE_REMEMBER,
+} from "@/lib/constants";
 import { isPublicPath, safeNextPath } from "@/lib/auth/paths";
+import {
+  getAccessCookieOptions,
+  getRefreshCookieOptions,
+  getRememberCookieOptions,
+} from "@/lib/auth/cookie-options";
 import { serverEnv } from "@/lib/env";
 
 export const config = {
@@ -25,6 +34,8 @@ export async function proxy(request: NextRequest) {
 
   const accessToken = request.cookies.get(AUTH_COOKIE_ACCESS)?.value;
   const refreshToken = request.cookies.get(AUTH_COOKIE_REFRESH)?.value;
+  const rememberToken = request.cookies.get(AUTH_COOKIE_REMEMBER)?.value;
+  const isRememberActive = Boolean(rememberToken);
 
   let isAuthenticated = Boolean(accessToken);
   let newAccessToken: string | undefined;
@@ -74,21 +85,25 @@ export async function proxy(request: NextRequest) {
     if (shouldClearCookies) {
       response.cookies.delete(AUTH_COOKIE_ACCESS);
       response.cookies.delete(AUTH_COOKIE_REFRESH);
+      response.cookies.delete(AUTH_COOKIE_REMEMBER);
     } else if (newAccessToken && newRefreshToken) {
-      const isProduction = process.env.NODE_ENV === "production";
-      response.cookies.set(AUTH_COOKIE_ACCESS, newAccessToken, {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: isProduction,
-        maxAge: newExpiresIn || 3600,
-      });
-      response.cookies.set(AUTH_COOKIE_REFRESH, newRefreshToken, {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: isProduction,
-      });
+      response.cookies.set(
+        AUTH_COOKIE_ACCESS,
+        newAccessToken,
+        getAccessCookieOptions(newExpiresIn)
+      );
+      response.cookies.set(
+        AUTH_COOKIE_REFRESH,
+        newRefreshToken,
+        getRefreshCookieOptions(isRememberActive)
+      );
+      if (isRememberActive) {
+        response.cookies.set(
+          AUTH_COOKIE_REMEMBER,
+          "1",
+          getRememberCookieOptions()
+        );
+      }
     }
   };
 
@@ -110,16 +125,22 @@ export async function proxy(request: NextRequest) {
     if (shouldClearCookies) {
       redirectResponse.cookies.delete(AUTH_COOKIE_ACCESS);
       redirectResponse.cookies.delete(AUTH_COOKIE_REFRESH);
+      redirectResponse.cookies.delete(AUTH_COOKIE_REMEMBER);
     }
     return redirectResponse;
   }
 
-  // 4. Request diizinkan berlanjut: teruskan cookie baru ke downstream request headers
+  // 4. Request diizinkan berlanjut: teruskan cookie baru dan x-pathname ke downstream request headers
   const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname + search);
+
   if (newAccessToken) {
     request.cookies.set(AUTH_COOKIE_ACCESS, newAccessToken);
     if (newRefreshToken) {
       request.cookies.set(AUTH_COOKIE_REFRESH, newRefreshToken);
+      if (isRememberActive) {
+        request.cookies.set(AUTH_COOKIE_REMEMBER, "1");
+      }
     }
     requestHeaders.set("cookie", request.cookies.toString());
   }
