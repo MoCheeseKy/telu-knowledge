@@ -1,0 +1,86 @@
+import {
+  QueryClient,
+  isServer,
+} from "@tanstack/react-query";
+import { isApiError } from "@/lib/api/errors";
+import { PUBLIC_AUTH_PATHS } from "@/lib/constants";
+
+function handleUnauthorized(): void {
+  if (typeof window === "undefined") return;
+
+  const currentPath = window.location.pathname;
+  const isAuthPage = PUBLIC_AUTH_PATHS.some((path) =>
+    currentPath.startsWith(path)
+  );
+
+  if (!isAuthPage) {
+    const nextParam = encodeURIComponent(
+      window.location.pathname + window.location.search
+    );
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.href = `/login?next=${nextParam}`;
+  }
+}
+
+export function makeQueryClient(): QueryClient {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 60 * 1000, // 60 detik
+        retry: (failureCount, error) => {
+          // Jangan retry untuk error HTTP 4xx
+          if (
+            isApiError(error) &&
+            error.statusCode >= 400 &&
+            error.statusCode < 500
+          ) {
+            return false;
+          }
+          // Maksimal 2 kali retry untuk error lainnya
+          return failureCount < 2;
+        },
+      },
+      mutations: {
+        retry: (failureCount, error) => {
+          if (
+            isApiError(error) &&
+            error.statusCode >= 400 &&
+            error.statusCode < 500
+          ) {
+            return false;
+          }
+          return failureCount < 2;
+        },
+      },
+    },
+  });
+}
+
+let browserQueryClient: QueryClient | undefined = undefined;
+
+export function getQueryClient(): QueryClient {
+  if (isServer) {
+    // Server: selalu buat instance baru per request
+    return makeQueryClient();
+  }
+
+  // Browser: buat instance singleton
+  if (!browserQueryClient) {
+    browserQueryClient = makeQueryClient();
+
+    // Handler global untuk HTTP 401 Unauthorized
+    browserQueryClient.getQueryCache().config.onError = (error) => {
+      if (isApiError(error) && error.statusCode === 401) {
+        handleUnauthorized();
+      }
+    };
+
+    browserQueryClient.getMutationCache().config.onError = (error) => {
+      if (isApiError(error) && error.statusCode === 401) {
+        handleUnauthorized();
+      }
+    };
+  }
+
+  return browserQueryClient;
+}

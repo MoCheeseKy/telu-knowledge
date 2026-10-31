@@ -16,21 +16,80 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Arsitektur Data Fetching & BFF (Backend-For-Frontend)
 
-## Learn More
+### Diagram Alur Permintaan
 
-To learn more about Next.js, take a look at the following resources:
+```
+[Browser / Client Components]
+             │
+             │ Same-Origin fetch (/api/...)
+             ▼
+   [Next.js Route Handlers / BFF]  <─── httpOnly Cookies (tk_access, tk_refresh)
+             │
+             │ Server-to-Server fetch (Authorization: Bearer <token>)
+             ▼
+     [NestJS Backend API] (http://localhost:8000/api)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Keamanan Token**: Token (`access_token` & `refresh_token`) **TIDAK PERNAH** disimpan di `localStorage`/`sessionStorage` dan tidak boleh diakses oleh JavaScript di browser. Token hanya disimpan dalam cookie `httpOnly`, `sameSite: "lax"` yang dikelola secara eksklusif oleh Route Handler Next.js.
+2. **Same-Origin Requests**: Browser hanya memanggil endpoint Next.js Route Handler pada origin yang sama (`/api/...`).
+3. **Server-to-Server Fetching**: Server Next.js membaca cookie `httpOnly` dan meneruskan token ke backend NestJS via header `Authorization: Bearer`.
+4. **State Management**: State data server di sisi client dikelola menggunakan `@tanstack/react-query` v5.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Salin `.env.example` ke `.env`:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+$ cp .env.example .env
+```
+
+| Variabel | Keterangan |
+|---|---|
+| `API_BASE_URL` | URL dasar backend NestJS (server-only, default: `http://localhost:8000`). Jangan tambahkan `/api` atau prefix `NEXT_PUBLIC`. |
+| `APP_ORIGIN` | Origin frontend (default: `http://localhost:3000`). Digunakan untuk validasi header `Origin` (Same-Origin). |
+
+---
+
+## Sinkronisasi Tipe OpenAPI (`api:types`)
+
+Untuk meregenerasi tipe TypeScript otomatis dari spesifikasi OpenAPI backend:
+
+```bash
+# Pastikan backend berjalan pada http://localhost:8000
+$ npm run api:types
+```
+
+Hasil kompilasi akan ditulis langsung ke file `src/lib/api/schema.d.ts`.
+
+---
+
+## Panduan Menambah Service Baru (`src/services/<domain>`)
+
+Setiap modul/domain fitur baru mengikuti struktur konvensi berikut:
+
+```
+src/services/<domain>/
+├── <domain>.types.ts    # Definisi tipe request/response & interface model
+├── <domain>.schemas.ts  # Skema validasi Zod untuk validasi form & input
+└── <domain>.api.ts      # Kumpulan fungsi fetcher client yang memanggil BFF via apiFetch()
+```
+
+Contoh implementasi:
+
+```ts
+// src/services/articles/articles.api.ts
+import { apiFetch } from "@/lib/api/client";
+import type { ApiEnvelope } from "@/lib/api/types";
+import type { Article } from "./articles.types";
+
+export const articlesApi = {
+  getArticles: () => apiFetch<Article[]>("/proxy/articles"),
+  getArticleById: (id: string) => apiFetch<Article>(`/proxy/articles/${id}`),
+};
+```
