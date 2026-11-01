@@ -27,14 +27,20 @@ function handleUnauthorized(): void {
 export function makeQueryClient(): QueryClient {
   return new QueryClient({
     queryCache: new QueryCache({
-      onError: (error) => {
+      onError: (error, query) => {
+        if (query.meta?.skipAuthRedirect) {
+          return;
+        }
         if (isApiError(error) && error.statusCode === 401) {
           handleUnauthorized();
         }
       },
     }),
     mutationCache: new MutationCache({
-      onError: (error) => {
+      onError: (error, _variables, _context, mutation) => {
+        if (mutation.meta?.skipAuthRedirect) {
+          return;
+        }
         if (isApiError(error) && error.statusCode === 401) {
           handleUnauthorized();
         }

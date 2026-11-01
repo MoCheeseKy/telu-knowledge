@@ -20,7 +20,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             className={cn(
-              "flex h-11 w-full rounded-lg border border-[var(--dust)] bg-white px-3.5 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)]/60 transition-colors focus-visible:outline-none focus-visible:border-[var(--primary-text)] focus-visible:ring-1 focus-visible:ring-[var(--primary-text)] disabled:cursor-not-allowed disabled:opacity-50",
+              "flex h-11 w-full rounded-lg border border-[var(--dust)] bg-white px-3.5 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)]/60 transition-colors focus-visible:outline-none focus-visible:border-[var(--primary-text)] focus-visible:ring-1 focus-visible:ring-[var(--primary-text)] aria-invalid:border-[var(--failed)] aria-invalid:focus-visible:ring-[var(--failed)] disabled:cursor-not-allowed disabled:opacity-50",
               leftIcon && "pl-11",
               rightIcon && "pr-11",
               className
@@ -41,7 +41,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex h-11 w-full rounded-lg border border-[var(--dust)] bg-white px-3.5 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)]/60 transition-colors focus-visible:outline-none focus-visible:border-[var(--primary-text)] focus-visible:ring-1 focus-visible:ring-[var(--primary-text)] disabled:cursor-not-allowed disabled:opacity-50",
+          "flex h-11 w-full rounded-lg border border-[var(--dust)] bg-white px-3.5 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)]/60 transition-colors focus-visible:outline-none focus-visible:border-[var(--primary-text)] focus-visible:ring-1 focus-visible:ring-[var(--primary-text)] aria-invalid:border-[var(--failed)] aria-invalid:focus-visible:ring-[var(--failed)] disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         ref={ref}

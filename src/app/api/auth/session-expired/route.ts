@@ -5,6 +5,7 @@ import {
   AUTH_COOKIE_REMEMBER,
 } from "@/lib/constants";
 import { safeNextPath } from "@/lib/auth/paths";
+import { serverEnv } from "@/lib/env";
 
 /**
  * Route handler untuk menangani sesi kedaluwarsa / token yang dicabut.
@@ -16,7 +17,7 @@ export async function GET(request: Request) {
   const rawNext = url.searchParams.get("next");
   const validatedNext = safeNextPath(rawNext, "/home");
 
-  const loginUrl = new URL("/login", url.origin);
+  const loginUrl = new URL("/login", serverEnv.APP_ORIGIN);
   loginUrl.searchParams.set("next", validatedNext);
 
   const response = NextResponse.redirect(loginUrl, 307);

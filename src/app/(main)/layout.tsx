@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import MainLayout from "@/components/_layouts/MainLayout";
+import SessionHydrator from "@/components/_shared/SessionHydrator";
 import { getSession } from "@/lib/auth/session";
 
 export default async function MainRouteLayout({
@@ -15,5 +16,9 @@ export default async function MainRouteLayout({
         redirect(`/api/auth/session-expired?next=${encodeURIComponent(currentPath)}`);
     }
 
-    return <MainLayout>{children}</MainLayout>;
+    return (
+        <SessionHydrator user={session.user}>
+            <MainLayout>{children}</MainLayout>
+        </SessionHydrator>
+    );
 }

@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     });
 
     // Simpan token ke HttpOnly cookie
-    await setAuthCookies(backendRes.data, rememberMe);
+    await setAuthCookies(backendRes.data, rememberMe ?? false);
 
     // Kembalikan envelope TANPA token ke browser (hanya data user)
     return NextResponse.json({

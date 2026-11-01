@@ -14,6 +14,8 @@ export interface ServerFetchOptions {
   clientIp?: string;
 }
 
+let hasWarnedMissingTrustedIp = false;
+
 /**
  * Membaca IP client dari headers request dengan verifikasi proxy tepercaya.
  * - Default AMAN: Jika tidak ada konfigurasi TRUSTED_IP_HEADER atau TRUSTED_PROXY_HOPS,
@@ -23,6 +25,18 @@ export interface ServerFetchOptions {
  *   pada X-Forwarded-For dan divalidasi format IP-nya.
  */
 export function getClientIp(headers: Headers): string | undefined {
+  if (
+    process.env.NODE_ENV === "production" &&
+    !serverEnv.TRUSTED_IP_HEADER &&
+    serverEnv.TRUSTED_PROXY_HOPS === 0 &&
+    !hasWarnedMissingTrustedIp
+  ) {
+    hasWarnedMissingTrustedIp = true;
+    console.warn(
+      "[SECURITY WARNING] TRUSTED_IP_HEADER atau TRUSTED_PROXY_HOPS belum dikonfigurasi di lingkungan produksi. Header IP klien tidak diteruskan ke backend, sehingga seluruh pengguna akan berbagi satu bucket rate limit backend."
+    );
+  }
+
   const trustedHeader = serverEnv.TRUSTED_IP_HEADER;
   if (trustedHeader) {
     const rawValue = headers.get(trustedHeader);

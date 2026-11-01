@@ -109,7 +109,7 @@ export async function proxy(request: NextRequest) {
 
   // 2. Jika sudah terotentikasi dan mengakses halaman login atau register -> redirect ke /home
   if (isAuthenticated && (pathname === "/login" || pathname === "/register")) {
-    const homeUrl = new URL("/home", request.url);
+    const homeUrl = new URL("/home", serverEnv.APP_ORIGIN);
     const redirectResponse = NextResponse.redirect(homeUrl);
     applyAuthCookiesToResponse(redirectResponse);
     return redirectResponse;
@@ -117,7 +117,7 @@ export async function proxy(request: NextRequest) {
 
   // 3. Jika belum login dan mengakses halaman privat -> redirect ke /login?next=<path+query>
   if (!isAuthenticated && !isPublic) {
-    const loginUrl = new URL("/login", request.url);
+    const loginUrl = new URL("/login", serverEnv.APP_ORIGIN);
     const validatedNext = safeNextPath(pathname + search, "/home");
     loginUrl.searchParams.set("next", validatedNext);
 
