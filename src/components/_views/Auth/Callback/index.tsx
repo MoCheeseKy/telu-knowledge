@@ -12,7 +12,12 @@ import { useResendVerification } from "@/services/auth/auth.queries";
 import { teluEmailSchema } from "@/services/auth/auth.schemas";
 import { getErrorMessages } from "@/lib/api/error-messages";
 
-type CallbackStatus = "loading" | "success" | "error" | "pkce_unsupported";
+type CallbackStatus =
+  | "loading"
+  | "success"
+  | "error"
+  | "pkce_unsupported"
+  | "no_info";
 
 export default function CallbackView() {
   const [status, setStatus] = useState<CallbackStatus>("loading");
@@ -22,11 +27,15 @@ export default function CallbackView() {
     null
   );
 
+  const parsedRef = React.useRef(false);
+
   const resendMutation = useResendVerification();
   const cooldown = useCooldown(60);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (parsedRef.current) return;
+    parsedRef.current = true;
 
     const hashStr = window.location.hash.startsWith("#")
       ? window.location.hash.slice(1)
@@ -37,14 +46,11 @@ export default function CallbackView() {
     const hasPkceCode = searchParams.has("code");
 
     // Langsung bersihkan hash dan query dari URL browser demi keamanan
-    window.history.replaceState(null, "", window.location.pathname);
+    if (window.location.hash || window.location.search) {
+      window.history.replaceState(null, "", window.location.pathname);
+    }
 
     queueMicrotask(() => {
-      if (hasPkceCode) {
-        setStatus("pkce_unsupported");
-        return;
-      }
-
       const hasError =
         hashParams.has("error") ||
         hashParams.has("error_code") ||
@@ -52,9 +58,22 @@ export default function CallbackView() {
 
       if (hasError) {
         setStatus("error");
-      } else {
-        // Default: verifikasi email berhasil (token diabaikan, user login manual)
+        return;
+      }
+
+      if (hasPkceCode) {
+        setStatus("pkce_unsupported");
+        return;
+      }
+
+      const type = hashParams.get("type");
+      const hasAccessToken = Boolean(hashParams.get("access_token"));
+      const isSignupOrEmail = type === "signup" || type === "email";
+
+      if (isSignupOrEmail && hasAccessToken) {
         setStatus("success");
+      } else {
+        setStatus("no_info");
       }
     });
   }, []);
@@ -138,10 +157,14 @@ export default function CallbackView() {
           </div>
 
           <h2 className="font-bold text-2xl text-[var(--foreground)] tracking-tight">
-            Tautan Tidak Valid atau Kedaluwarsa
+            {status === "no_info"
+              ? "Tautan Tidak Valid"
+              : "Tautan Tidak Valid atau Kedaluwarsa"}
           </h2>
           <p className="text-sm text-[var(--muted)] leading-relaxed">
-            {status === "pkce_unsupported"
+            {status === "no_info"
+              ? "Tautan tidak valid. Buka tautan verifikasi dari email Anda."
+              : status === "pkce_unsupported"
               ? "Tautan verifikasi menggunakan format kode otorisasi (PKCE) yang belum didukung secara langsung. Silakan minta tautan baru."
               : "Tautan verifikasi yang Anda buka sudah tidak berlaku atau telah kedaluwarsa. Masukkan email Anda di bawah ini untuk meminta tautan verifikasi baru."}
           </p>

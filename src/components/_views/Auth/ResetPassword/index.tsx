@@ -25,6 +25,7 @@ export default function ResetPasswordView() {
   const [serverErrors, setServerErrors] = useState<string[]>([]);
 
   const [token, setToken] = useState<string | null>(null);
+  const parsedRef = React.useRef(false);
 
   const resetPasswordMutation = useResetPassword();
 
@@ -43,6 +44,8 @@ export default function ResetPasswordView() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (parsedRef.current) return;
+    parsedRef.current = true;
 
     const rawHash = window.location.hash.startsWith("#")
       ? window.location.hash.slice(1)
