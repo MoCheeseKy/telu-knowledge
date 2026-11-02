@@ -1,91 +1,102 @@
+export type ArticleStatus = "draft" | "terjadwal" | "diterbitkan" | "tidak_publik";
+
 export interface MyArticleItem {
+    id: string | number;
+    title: string;
+    description: string;
+    readTime: string;
+    updatedAt: string;
+    imageUrl?: string;
+    status: ArticleStatus;
+    category?: string;
+}
+
+export interface MyArticleCardProps {
     id?: string | number;
     title: string;
     description: string;
     readTime: string;
     updatedAt: string;
     imageUrl?: string;
-}
-
-export interface MyArticleCardProps {
-    title: string;
-    description: string;
-    readTime: string;
-    updatedAt: string;
-    imageUrl?: string;
+    status?: ArticleStatus;
+    category?: string;
     className?: string;
     onMoreClick?: () => void;
+    onDelete?: (id: string | number) => void;
 }
 
-export const dummyDraftArticles: MyArticleItem[] = [
+export const initialArticles: MyArticleItem[] = [
     {
         id: 1,
-        title: "Draft 1: Belajar Next.js",
-        description: "Masih dalam proses penulisan...",
-        readTime: "Bacaan 1 menit",
+        title: "Slicing UI dari Figma ke Tailwind CSS dengan Presisi",
+        description: "Tips menyamakan padding, font scale, dan layouting responsif agar hasil implementasi persis desain Figma.",
+        readTime: "Bacaan 4 menit",
         updatedAt: "Baru saja",
+        status: "draft",
+        category: "Frontend Web",
     },
     {
         id: 2,
-        title: "Cara Mengerjakan Praktikum Mopro Cepat",
-        description: "Tanpa menggunakan AI",
-        readTime: "Bacaan 3 menit",
-        updatedAt: "Baru saja",
+        title: "Catatan Kuliah: Perbedaan Algoritma BFS dan DFS pada Graph",
+        description: "Rangkuman mendalam materi Struktur Data & Algoritma untuk persiapan kuis dan tugas besar semester 5.",
+        readTime: "Bacaan 5 menit",
+        updatedAt: "2 jam lalu",
+        status: "draft",
+        category: "Struktur Data",
     },
     {
         id: 3,
-        title: "Slicing UI dari Figma ke Tailwind CSS dengan Presisi",
-        description: "Tips menyamakan padding, font, dan warna agar tampilan web sesuai desain...",
-        readTime: "Bacaan 4 menit",
-        updatedAt: "2 jam lalu",
+        title: "Review Library shadcn/ui: Solusi Desain UI Modern dan Cepat",
+        description: "Analisis kelebihan arsitektur shadcn/ui berbasis Tailwind dan Radix UI dibanding UI library konvensional.",
+        readTime: "Bacaan 3 menit",
+        updatedAt: "Kemarin",
+        status: "draft",
+        category: "Software Engineering",
     },
     {
         id: 4,
-        title: "Catatan Kuliah: Perbedaan Algoritma BFS dan DFS",
-        description: "Rangkuman materi struktur data untuk persiapan kuis minggu depan...",
-        readTime: "Bacaan 5 menit",
-        updatedAt: "Kemarin",
+        title: "Tips Lolos Seleksi Asisten Praktikum Lab Informatika Tel-U",
+        description: "Sharing pengalaman tes tulis, microteaching, dan wawancara laboratorium pemodelan dan komputasi.",
+        readTime: "Bacaan 6 menit",
+        updatedAt: "Terjadwal 30 Okt 2026",
+        status: "terjadwal",
+        category: "Tips Kampus",
     },
     {
         id: 5,
-        title: "Review Library shadcn/ui: Kelebihan dan Kekurangan",
-        description: "Kenapa banyak developer beralih menggunakan shadcn dibanding Bootstrap...",
-        readTime: "Bacaan 2 menit",
-        updatedAt: "3 hari lalu",
+        title: "Strategi Sukses Presentasi Sidang Tubes Webpro & Mopro",
+        description: "Poin-poin penilaian penting dosen penguji, tips demo interaktif, dan antisipasi tanya jawab teknis.",
+        readTime: "Bacaan 4 menit",
+        updatedAt: "Terjadwal 2 Nov 2026",
+        status: "terjadwal",
+        category: "Akademik",
     },
     {
         id: 6,
-        title: "Mempersiapkan Portofolio Magang Frontend Developer",
-        description: "Daftar project kuliah semester 5 yang layak dipajang di LinkedIn dan GitHub...",
-        readTime: "Bacaan 6 menit",
-        updatedAt: "5 hari lalu",
+        title: "Pengenalan TypeScript: Menghindari Bug Runtime di Next.js",
+        description: "Panduan praktis mengadopsi TypeScript, type safety pada props, dan pembuatan interface reusable.",
+        readTime: "Bacaan 5 menit",
+        updatedAt: "Dipublikasikan 12 Okt 2026",
+        status: "diterbitkan",
+        category: "Programming",
     },
     {
         id: 7,
-        title: "Setup Git Workflow Tim yang Rapi Tanpa Takut Konflik",
-        description: "Panduan branching, commit message, dan membuat pull request yang benar...",
-        readTime: "Bacaan 3 menit",
-        updatedAt: "1 minggu lalu",
+        title: "Panduan Git Workflow untuk Proyek Tim Kolaboratif Tanpa Konflik",
+        description: "Best practices branching DEV_Zulfan, PR review, dan penyelesaian merge conflict tanpa panik.",
+        readTime: "Bacaan 7 menit",
+        updatedAt: "Dipublikasikan 8 Okt 2026",
+        status: "diterbitkan",
+        category: "DevOps & Tools",
     },
+];
 
-];
-// Data khusus Tab Terjadwal
-export const dummyScheduledArticles: MyArticleItem[] = [
-    {
-        id: 1,
-        title: "Artikel Terjadwal: Tips Tubes Webpro",
-        description: "Artikel ini akan tayang otomatis besok pagi jam 08.00...",
-        readTime: "Bacaan 3 menit",
-        updatedAt: "Terjadwal 26 Oktober 2026",
-    },
-];
-// Data khusus Tab Diterbitkan
-export const dummyPublishedArticles: MyArticleItem[] = [
-    {
-        id: 3,
-        title: "Artikel Diterbitkan: Pengenalan TypeScript",
-        description: "Artikel ini sudah bisa dibaca oleh semua orang di kampus...",
-        readTime: "Bacaan 5 menit",
-        updatedAt: "Dipublikasikan 12 Oktober 2026",
-    },
-];
+export const dummyDraftArticles: MyArticleItem[] = initialArticles.filter(
+    (item) => item.status === "draft"
+);
+export const dummyScheduledArticles: MyArticleItem[] = initialArticles.filter(
+    (item) => item.status === "terjadwal"
+);
+export const dummyPublishedArticles: MyArticleItem[] = initialArticles.filter(
+    (item) => item.status === "diterbitkan"
+);
