@@ -64,6 +64,7 @@ export function useCreateArticle() {
   return useMutation({
     mutationFn: (payload: CreateArticlePayload = {}) =>
       articlesApi.createArticle(payload),
+    retry: false,
     onSuccess: (res) => {
       if (res?.data?.id) {
         queryClient.setQueryData(articleKeys.detail(res.data.id), res.data);
@@ -107,6 +108,7 @@ export function usePublishArticle() {
 
   return useMutation({
     mutationFn: (id: string) => articlesApi.publishArticle(id),
+    retry: false,
     onSuccess: (res) => {
       if (res?.data?.id) {
         queryClient.setQueryData(articleKeys.detail(res.data.id), res.data);
@@ -126,6 +128,7 @@ export function usePublishArticle() {
 export function useUploadArticleImage() {
   return useMutation({
     mutationFn: (file: File) => articlesApi.uploadArticleImage(file),
+    retry: false,
     meta: {
       skipAuthRedirect: true,
     },

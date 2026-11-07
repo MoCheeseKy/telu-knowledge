@@ -47,12 +47,21 @@ const SAVE_STATUS_CONFIG: Record<
 export default function EditorHeader({ authorName }: EditorHeaderProps) {
     const router = useRouter();
     const { data: user } = useMe();
-    const { saveStatus, saveDraft, publish, retrySave } = useEditorStudio();
+    const { saveStatus, articleStatus, saveDraft, publish, retrySave } =
+        useEditorStudio();
+
+    const isPublished = articleStatus === "published";
 
     const resolvedAuthorName =
         authorName || (user?.email ? user.email.split("@")[0] : "Penulis");
 
     const statusInfo = SAVE_STATUS_CONFIG[saveStatus];
+    const statusLabel =
+        saveStatus === "idle"
+            ? isPublished
+                ? "Terbit"
+                : "Draf"
+            : statusInfo.label;
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -99,7 +108,7 @@ export default function EditorHeader({ authorName }: EditorHeaderProps) {
                                 {saveStatus === "error" && (
                                     <AlertCircle className="w-3.5 h-3.5" />
                                 )}
-                                <span>{statusInfo.label}</span>
+                                <span>{statusLabel}</span>
                                 {saveStatus === "error" && (
                                     <button
                                         type="button"
@@ -115,17 +124,28 @@ export default function EditorHeader({ authorName }: EditorHeaderProps) {
                     </div>
 
                     <div className="flex items-center gap-3 sm:gap-4">
-                        <Button
-                            type="button"
-                            variant="primaryOutline"
-                            size="sm"
-                            onClick={saveDraft}
-                            disabled={saveStatus === "saving"}
-                            className="h-9 px-3.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg"
-                        >
-                            <Bookmark className="w-4 h-4 text-[var(--primary-text)]" />
-                            <span>Draft Tulisan</span>
-                        </Button>
+                        <div className="flex flex-col items-end">
+                            <Button
+                                type="button"
+                                variant="primaryOutline"
+                                size="sm"
+                                onClick={saveDraft}
+                                disabled={saveStatus === "saving"}
+                                className="h-9 px-3.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg"
+                            >
+                                <Bookmark className="w-4 h-4 text-[var(--primary-text)]" />
+                                <span>
+                                    {isPublished
+                                        ? "Simpan perubahan"
+                                        : "Draft Tulisan"}
+                                </span>
+                            </Button>
+                            {isPublished && (
+                                <span className="text-[10px] text-[var(--muted)] mt-0.5 leading-none select-none">
+                                    Perubahan langsung tayang
+                                </span>
+                            )}
+                        </div>
 
                         <Button
                             type="button"

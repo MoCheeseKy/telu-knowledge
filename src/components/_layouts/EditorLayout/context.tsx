@@ -21,6 +21,8 @@ export interface EditorStudioActions {
 export interface EditorStudioContextValue {
     saveStatus: EditorSaveStatus;
     setSaveStatus: (status: EditorSaveStatus) => void;
+    articleStatus: "draft" | "published";
+    setArticleStatus: (status: "draft" | "published") => void;
     registerActions: (actions: EditorStudioActions) => () => void;
     saveDraft: () => void;
     publish: () => void;
@@ -33,6 +35,7 @@ export const EditorStudioContext = createContext<EditorStudioContextValue | null
 
 export function EditorStudioProvider({ children }: { children: ReactNode }) {
     const [saveStatus, setSaveStatus] = useState<EditorSaveStatus>("idle");
+    const [articleStatus, setArticleStatus] = useState<"draft" | "published">("draft");
     const actionsRef = useRef<EditorStudioActions>({});
 
     const registerActions = useCallback((actions: EditorStudioActions) => {
@@ -64,12 +67,14 @@ export function EditorStudioProvider({ children }: { children: ReactNode }) {
         () => ({
             saveStatus,
             setSaveStatus,
+            articleStatus,
+            setArticleStatus,
             registerActions,
             saveDraft,
             publish,
             retrySave,
         }),
-        [saveStatus, registerActions, saveDraft, publish, retrySave]
+        [saveStatus, articleStatus, registerActions, saveDraft, publish, retrySave]
     );
 
     return (

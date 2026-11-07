@@ -128,7 +128,7 @@ function EditorStudioCanvas({
   onRequestAiHelp,
 }: EditorStudioCanvasProps) {
   const router = useRouter();
-  const { registerActions, setSaveStatus } = useEditorStudio();
+  const { registerActions, setSaveStatus, setArticleStatus } = useEditorStudio();
   const publishMutation = usePublishArticle();
 
   const [title, setTitle] = useState<string>(() => initialArticle?.title ?? "");
@@ -144,8 +144,9 @@ function EditorStudioCanvas({
       : DEFAULT_INITIAL_CONTENT
   );
 
+  // State awal null untuk mencegah hydration mismatch antara SSR dan browser localStorage
   const [pendingBackup, setPendingBackup] = useState<EditorLocalBackup | null>(
-    () => computeInitialPendingBackup(initialArticle)
+    null
   );
   const [publishErrors, setPublishErrors] = useState<string[]>([]);
   const [toast, setToast] = useState<ToastState | null>(null);
@@ -164,14 +165,26 @@ function EditorStudioCanvas({
     }, 3500);
   }, []);
 
+  // Periksa cadangan lokal dari localStorage di client setelah komponen mount
+  useEffect(() => {
+    const backup = computeInitialPendingBackup(initialArticle);
+    if (backup) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setPendingBackup(backup);
+    }
+  }, [initialArticle]);
+
   useEffect(() => {
     setSaveStatus(initialArticle ? "saved" : "idle");
+    setArticleStatus(
+      initialArticle?.status === "published" ? "published" : "draft"
+    );
     return () => {
       if (toastTimerRef.current) {
         clearTimeout(toastTimerRef.current);
       }
     };
-  }, [initialArticle, setSaveStatus]);
+  }, [initialArticle, setArticleStatus, setSaveStatus]);
 
   const currentSnapshot = useMemo<EditorDraftSnapshot>(
     () => ({
@@ -236,15 +249,21 @@ function EditorStudioCanvas({
       await flushSave({ forceCreateIfEmpty: true });
       showToast({
         variant: "success",
-        message: "Draft tulisan berhasil disimpan.",
+        message:
+          initialArticle?.status === "published"
+            ? "Perubahan berhasil disimpan."
+            : "Draft tulisan berhasil disimpan.",
       });
     } catch {
       showToast({
         variant: "error",
-        message: "Gagal menyimpan draft tulisan.",
+        message:
+          initialArticle?.status === "published"
+            ? "Gagal menyimpan perubahan."
+            : "Gagal menyimpan draft tulisan.",
       });
     }
-  }, [flushSave, showToast]);
+  }, [flushSave, initialArticle, showToast]);
 
   const handlePublish = useCallback(async () => {
     setPublishErrors([]);
@@ -261,6 +280,7 @@ function EditorStudioCanvas({
       await publishMutation.mutateAsync(targetId);
 
       clearLocalBackup(targetId);
+      setArticleStatus("published");
       setSaveStatus("saved");
       showToast({
         variant: "success",
@@ -289,6 +309,7 @@ function EditorStudioCanvas({
     flushSave,
     publishMutation,
     router,
+    setArticleStatus,
     setIsSessionExpired,
     setSaveError,
     setSaveStatus,
@@ -347,6 +368,14 @@ function EditorStudioCanvas({
       )}
 
       <div className="w-full pl-12 sm:pl-16 flex flex-col gap-5 sm:gap-6">
+        {/* Keterangan Artikel Terbit */}
+        {initialArticle?.status === "published" && (
+          <div className="flex items-center gap-2 text-xs text-[var(--muted)] -mb-1 select-none">
+            <span className="w-2 h-2 rounded-full bg-[var(--success)] shrink-0" />
+            <span>Artikel ini telah terbit. Setiap perubahan langsung tayang.</span>
+          </div>
+        )}
+
         {/* Banner 401: Sesi Berakhir */}
         {isSessionExpired && (
           <div

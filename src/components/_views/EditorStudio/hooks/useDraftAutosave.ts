@@ -171,8 +171,8 @@ export function useDraftAutosave({
   enabled,
 }: UseDraftAutosaveOptions) {
   const { setSaveStatus } = useEditorStudio();
-  const createMutation = useCreateArticle();
-  const updateMutation = useUpdateArticle();
+  const { mutateAsync: createMutateAsync } = useCreateArticle();
+  const { mutateAsync: updateMutateAsync } = useUpdateArticle();
 
   const [activeArticleId, setActiveArticleId] = useState<string | null>(
     initialArticleId
@@ -248,7 +248,7 @@ export function useDraftAutosave({
               content: snapshotToSave.content,
             };
 
-            const res = await createMutation.mutateAsync(createPayload);
+            const res = await createMutateAsync(createPayload);
             const created = res.data;
 
             articleIdRef.current = created.id;
@@ -283,7 +283,7 @@ export function useDraftAutosave({
             setSaveStatus("saving");
             setSaveError(null);
 
-            const res = await updateMutation.mutateAsync({
+            const res = await updateMutateAsync({
               id: currentId,
               payload: diffPayload,
             });
@@ -339,7 +339,7 @@ export function useDraftAutosave({
       inFlightPromiseRef.current = promise;
       return promise;
     },
-    [createMutation, setSaveStatus, updateMutation]
+    [createMutateAsync, setSaveStatus, updateMutateAsync]
   );
 
   // Efek debounce autosave (1500ms) dan cadangan localStorage (1000ms)

@@ -14,6 +14,7 @@ export function useAiAssist() {
   return useMutation({
     mutationFn: ({ signal, ...payload }: AiAssistMutationVariables) =>
       aiApi.assist(payload, { signal }),
+    retry: false,
     meta: {
       skipAuthRedirect: true,
     },
