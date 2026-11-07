@@ -44,7 +44,7 @@ export default function ProfileSidebar() {
 
   return (
     <>
-      <aside className="w-full lg:w-72 lg:shrink-0 lg:border-l border-[var(--dust)] lg:pl-8">
+      <aside className="w-full lg:w-72 lg:shrink-0 lg:border-l lg:border-[var(--dust)]/60 lg:pl-8">
         {/* Avatar */}
         <div className="mb-4 relative">
           {profile.avatarUrl ? (

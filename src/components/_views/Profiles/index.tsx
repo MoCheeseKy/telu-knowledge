@@ -48,9 +48,6 @@ const reposts: RepostItem[] = [
   },
 ];
 
-const triggerClass =
-  "flex-none rounded-none border-0 border-b-2 border-transparent bg-transparent px-0 pb-2 text-gray-500 shadow-none data-[state=active]:border-black data-[state=active]:bg-transparent data-[state=active]:text-black data-[state=active]:shadow-none data-active:border-black data-active:bg-transparent data-active:text-black";
-
 function ProfilesContent() {
   const { profile } = useProfile();
 
@@ -63,14 +60,13 @@ function ProfilesContent() {
           </h1>
         </div>
 
-        <Tabs defaultValue="home">
-          <TabsList className="h-auto w-full justify-start gap-6 rounded-none border-b border-[var(--dust)] bg-transparent p-0">
-            <TabsTrigger value="home" className={triggerClass}>
-              Home
-            </TabsTrigger>
-            <TabsTrigger value="reposts" className={triggerClass}>
-              Reposts
-            </TabsTrigger>
+        <Tabs defaultValue="home" className="w-full">
+          <TabsList
+            variant="line"
+            className="bg-transparent border-b border-[var(--dust)]/60 rounded-none w-full justify-start h-auto p-0 gap-6"
+          >
+            <TabsTrigger value="home">Home</TabsTrigger>
+            <TabsTrigger value="reposts">Reposts</TabsTrigger>
           </TabsList>
 
           <TabsContent value="home">
