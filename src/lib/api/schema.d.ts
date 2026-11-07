@@ -184,6 +184,130 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/articles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Buat draft artikel baru
+         * @description Membuat draft artikel baru di Editor Studio. Semua field pada body bersifat opsional.
+         */
+        post: operations["ArticlesController_createDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/articles/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Daftar artikel milik sendiri
+         * @description Mengambil daftar artikel milik pengguna yang sedang login (tanpa field content) dengan urutan updated_at DESC, id DESC dan cursor pagination.
+         */
+        get: operations["ArticlesController_getMyArticles"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/articles/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ambil detail artikel berdasarkan ID
+         * @description Pemilik artikel dapat melihat semua status (draft/published). Pengguna lain hanya dapat melihat artikel berstatus published; selain itu mengembalikan 404.
+         */
+        get: operations["ArticlesController_getArticleById"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Perbarui artikel (autosave / partial update)
+         * @description Memperbarui sebagian field artikel milik sendiri dan menghitung ulang excerpt serta readingTimeMinutes dari content.
+         */
+        patch: operations["ArticlesController_updateArticle"];
+        trace?: never;
+    };
+    "/api/articles/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publikasikan artikel
+         * @description Memvalidasi kelengkapan judul (1-150 karakter) dan konten (minimal satu teks non-kosong), mengubah status menjadi published, serta mengatur publishedAt dan slug secara idempoten.
+         */
+        post: operations["ArticlesController_publishArticle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/uploads/article-image": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Unggah gambar untuk artikel
+         * @description Mengunggah file gambar artikel (field `file`, maksimal 4MB). Tipe file divalidasi berdasarkan magic bytes isi file (hanya PNG, JPEG, WEBP, atau GIF; header Content-Type dari client tidak dipercaya).
+         */
+        post: operations["UploadsController_uploadArticleImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ai/assist": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Bantuan penulisan AI (Telu)
+         * @description Mengolah teks terpilih menggunakan Google Gemini (parafrase, ringkas, kembangkan, perbaiki tata bahasa, ubah nada formal/santai, atau instruksi kustom). Dibatasi 10 permintaan/menit per pengguna dengan timeout 20 detik.
+         */
+        post: operations["AiController_assist"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -342,6 +466,297 @@ export interface components {
             /** @example false */
             isError: boolean;
             data: components["schemas"]["AuthUserDataDto"];
+        };
+        CreateArticleDto: {
+            /**
+             * @description Judul artikel (maksimal 150 karakter)
+             * @example Panduan Arsitektur Microservices dengan NestJS
+             */
+            title?: string;
+            /**
+             * @description Subjudul atau ringkasan singkat artikel (maksimal 300 karakter)
+             * @example Memahami pola komunikasi antar layanan di lingkungan kampus.
+             */
+            subtitle?: Record<string, never> | null;
+            /**
+             * @description URL publik gambar sampul dari bucket Supabase Storage yang diizinkan
+             * @example https://your-project.supabase.co/storage/v1/object/public/article-images/covers/sample.png
+             */
+            coverImageUrl?: Record<string, never> | null;
+            /**
+             * @description Konten artikel dalam format JSON Tiptap ({ type: "doc", content: [...] })
+             * @example {
+             *       "type": "doc",
+             *       "content": [
+             *         {
+             *           "type": "paragraph",
+             *           "content": [
+             *             {
+             *               "type": "text",
+             *               "text": "Paragraf pembuka artikel."
+             *             }
+             *           ]
+             *         }
+             *       ]
+             *     }
+             */
+            content?: {
+                [key: string]: unknown;
+            };
+        };
+        ArticleAuthorDto: {
+            /** @example 550e8400-e29b-41d4-a716-446655440000 */
+            id: string;
+            /** @example Budi Santoso */
+            displayName: string | null;
+            /** @example https://your-project.supabase.co/storage/v1/object/public/avatars/budi.png */
+            avatarUrl: string | null;
+        };
+        ArticleDto: {
+            /** @example 7c9e6679-7425-40de-944b-e07fc1f90ae7 */
+            id: string;
+            /** @example Panduan Arsitektur Microservices dengan NestJS */
+            title: string;
+            /** @example Memahami pola komunikasi antar layanan di lingkungan kampus. */
+            subtitle: string | null;
+            /** @example https://your-project.supabase.co/storage/v1/object/public/article-images/covers/sample.png */
+            coverImageUrl: string | null;
+            /** @example Paragraf pembuka artikel yang menjelaskan arsitektur layanan... */
+            excerpt: string;
+            /** @example 3 */
+            readingTimeMinutes: number;
+            /**
+             * @example draft
+             * @enum {string}
+             */
+            status: "draft" | "published";
+            /** @example panduan-arsitektur-microservices-dengan-nestjs-a1b2c3d4 */
+            slug: string | null;
+            /** @example 2026-11-07T13:00:00.000Z */
+            createdAt: string;
+            /** @example 2026-11-07T13:30:00.000Z */
+            updatedAt: string;
+            /** @example null */
+            publishedAt: string | null;
+            author: components["schemas"]["ArticleAuthorDto"];
+            /**
+             * @example {
+             *       "type": "doc",
+             *       "content": [
+             *         {
+             *           "type": "paragraph",
+             *           "content": [
+             *             {
+             *               "type": "text",
+             *               "text": "Paragraf pembuka artikel."
+             *             }
+             *           ]
+             *         }
+             *       ]
+             *     }
+             */
+            content: {
+                [key: string]: unknown;
+            };
+        };
+        CreateArticleResponseDto: {
+            /** @example 201 */
+            statusCode: number;
+            /** @example Draft artikel berhasil dibuat */
+            message: string;
+            /** @example false */
+            isError: boolean;
+            data: components["schemas"]["ArticleDto"];
+        };
+        ArticleSummaryDto: {
+            /** @example 7c9e6679-7425-40de-944b-e07fc1f90ae7 */
+            id: string;
+            /** @example Panduan Arsitektur Microservices dengan NestJS */
+            title: string;
+            /** @example Memahami pola komunikasi antar layanan di lingkungan kampus. */
+            subtitle: string | null;
+            /** @example https://your-project.supabase.co/storage/v1/object/public/article-images/covers/sample.png */
+            coverImageUrl: string | null;
+            /** @example Paragraf pembuka artikel yang menjelaskan arsitektur layanan... */
+            excerpt: string;
+            /** @example 3 */
+            readingTimeMinutes: number;
+            /**
+             * @example draft
+             * @enum {string}
+             */
+            status: "draft" | "published";
+            /** @example panduan-arsitektur-microservices-dengan-nestjs-a1b2c3d4 */
+            slug: string | null;
+            /** @example 2026-11-07T13:00:00.000Z */
+            createdAt: string;
+            /** @example 2026-11-07T13:30:00.000Z */
+            updatedAt: string;
+            /** @example null */
+            publishedAt: string | null;
+            author: components["schemas"]["ArticleAuthorDto"];
+        };
+        MyArticlesListDataDto: {
+            items: components["schemas"]["ArticleSummaryDto"][];
+            /** @example MjAyNi0xMS0wN1QxMzozMDowMC4wMDBafDdjOWU2Njc5LTc0MjUtNDBkZS05NDRiLWUwN2ZjMWY5MGFlNw== */
+            nextCursor: string | null;
+        };
+        MyArticlesListResponseDto: {
+            /** @example 200 */
+            statusCode: number;
+            /** @example Daftar artikel berhasil diambil */
+            message: string;
+            /** @example false */
+            isError: boolean;
+            data: components["schemas"]["MyArticlesListDataDto"];
+        };
+        ArticleDetailResponseDto: {
+            /** @example 200 */
+            statusCode: number;
+            /** @example Artikel berhasil diambil */
+            message: string;
+            /** @example false */
+            isError: boolean;
+            data: components["schemas"]["ArticleDto"];
+        };
+        UpdateArticleDto: {
+            /**
+             * @description Judul artikel (maksimal 150 karakter)
+             * @example Panduan Arsitektur Microservices dengan NestJS (Revisi)
+             */
+            title?: string;
+            /**
+             * @description Subjudul atau ringkasan singkat artikel (maksimal 300 karakter)
+             * @example Memahami pola komunikasi antar layanan di lingkungan kampus.
+             */
+            subtitle?: Record<string, never> | null;
+            /**
+             * @description URL publik gambar sampul dari bucket Supabase Storage yang diizinkan
+             * @example https://your-project.supabase.co/storage/v1/object/public/article-images/covers/sample.png
+             */
+            coverImageUrl?: Record<string, never> | null;
+            /**
+             * @description Konten artikel dalam format JSON Tiptap ({ type: "doc", content: [...] })
+             * @example {
+             *       "type": "doc",
+             *       "content": [
+             *         {
+             *           "type": "heading",
+             *           "attrs": {
+             *             "level": 2
+             *           },
+             *           "content": [
+             *             {
+             *               "type": "text",
+             *               "text": "Pendahuluan"
+             *             }
+             *           ]
+             *         },
+             *         {
+             *           "type": "paragraph",
+             *           "content": [
+             *             {
+             *               "type": "text",
+             *               "text": "Isi artikel yang telah diperbarui."
+             *             }
+             *           ]
+             *         }
+             *       ]
+             *     }
+             */
+            content?: {
+                [key: string]: unknown;
+            };
+        };
+        UpdateArticleResponseDto: {
+            /** @example 200 */
+            statusCode: number;
+            /** @example Artikel berhasil diperbarui */
+            message: string;
+            /** @example false */
+            isError: boolean;
+            data: components["schemas"]["ArticleDto"];
+        };
+        PublishArticleResponseDto: {
+            /** @example 200 */
+            statusCode: number;
+            /** @example Artikel berhasil dipublikasikan */
+            message: string;
+            /** @example false */
+            isError: boolean;
+            data: components["schemas"]["ArticleDto"];
+        };
+        UploadArticleImageRequestDto: {
+            /**
+             * Format: binary
+             * @description File gambar artikel (hanya PNG, JPEG, WEBP, atau GIF; maksimal 4MB)
+             */
+            file: string;
+        };
+        UploadedArticleImageDataDto: {
+            /**
+             * @description Public URL gambar yang telah diunggah ke Supabase Storage
+             * @example https://your-project.supabase.co/storage/v1/object/public/article-images/550e8400-e29b-41d4-a716-446655440000/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d.png
+             */
+            url: string;
+            /**
+             * @description Path objek di dalam bucket Supabase Storage (${userId}/${uuid}.${ext})
+             * @example 550e8400-e29b-41d4-a716-446655440000/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d.png
+             */
+            path: string;
+        };
+        UploadArticleImageResponseDto: {
+            /** @example 201 */
+            statusCode: number;
+            /** @example Gambar artikel berhasil diunggah */
+            message: string;
+            /** @example false */
+            isError: boolean;
+            data: components["schemas"]["UploadedArticleImageDataDto"];
+        };
+        AiAssistDto: {
+            /**
+             * @description Jenis aksi bantuan penulisan AI
+             * @example paraphrase
+             * @enum {string}
+             */
+            action: "paraphrase" | "shorten" | "expand" | "fix_grammar" | "formal" | "casual" | "custom";
+            /**
+             * @description Instruksi khusus (wajib diisi apabila action bernilai "custom", maksimal 500 karakter)
+             * @example Ubahlah menjadi nada akademik yang cocok untuk jurnal ilmiah.
+             */
+            instruction?: string;
+            /**
+             * @description Teks yang dipilih untuk diolah oleh AI (1-4000 karakter)
+             * @example Sistem microservices membagi aplikasi monolitik menjadi layanan-layanan kecil yang independen.
+             */
+            selectedText: string;
+            /**
+             * @description Konteks teks sebelum bagian yang dipilih (maksimal 1000 karakter)
+             * @example Pada bab sebelumnya telah dibahas arsitektur monolitik.
+             */
+            contextBefore?: string;
+            /**
+             * @description Konteks teks sesudah bagian yang dipilih (maksimal 1000 karakter)
+             * @example Setiap layanan berkomunikasi melalui protokol HTTP atau message broker.
+             */
+            contextAfter?: string;
+        };
+        AiAssistDataDto: {
+            /**
+             * @description Teks hasil olahan asisten AI Telu
+             * @example Arsitektur microservices memecah aplikasi monolitik menjadi sejumlah layanan mandiri berskala kecil.
+             */
+            text: string;
+        };
+        AiAssistResponseDto: {
+            /** @example 200 */
+            statusCode: number;
+            /** @example Bantuan AI berhasil diproses */
+            message: string;
+            /** @example false */
+            isError: boolean;
+            data: components["schemas"]["AiAssistDataDto"];
         };
     };
     responses: never;
@@ -962,6 +1377,649 @@ export interface operations {
                      * @example {
                      *       "statusCode": 500,
                      *       "message": "Internal server error",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+        };
+    };
+    ArticlesController_createDraft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateArticleDto"];
+            };
+        };
+        responses: {
+            /** @description Draft artikel berhasil dibuat */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CreateArticleResponseDto"];
+                };
+            };
+            /** @description Validasi body atau struktur konten Tiptap gagal */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Token tidak dikirim atau tidak valid */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Terlalu banyak permintaan (rate limit terlampaui) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 429,
+                     *       "message": "Terlalu banyak permintaan, silakan coba beberapa saat lagi.",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Kesalahan tak terduga di server */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 500,
+                     *       "message": "Internal server error",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+        };
+    };
+    ArticlesController_getMyArticles: {
+        parameters: {
+            query?: {
+                /** @description Filter status artikel milik sendiri */
+                status?: "draft" | "published";
+                /** @description Jumlah maksimum artikel per halaman (1-50, default 20) */
+                limit?: number;
+                /** @description Cursor pagination dalam format base64 dari "updatedAt|id" */
+                cursor?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Daftar artikel berhasil diambil */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyArticlesListResponseDto"];
+                };
+            };
+            /** @description Parameter query atau cursor tidak valid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Token tidak dikirim atau tidak valid */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Terlalu banyak permintaan (rate limit terlampaui) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 429,
+                     *       "message": "Terlalu banyak permintaan, silakan coba beberapa saat lagi.",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Kesalahan tak terduga di server */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 500,
+                     *       "message": "Internal server error",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+        };
+    };
+    ArticlesController_getArticleById: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description UUID artikel */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Artikel berhasil diambil */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArticleDetailResponseDto"];
+                };
+            };
+            /** @description Format UUID tidak valid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": "Validation failed (uuid is expected)",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Token tidak dikirim atau tidak valid */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Artikel tidak ditemukan atau bukan milik pengguna (masih draft) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "Artikel tidak ditemukan",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Terlalu banyak permintaan (rate limit terlampaui) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 429,
+                     *       "message": "Terlalu banyak permintaan, silakan coba beberapa saat lagi.",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Kesalahan tak terduga di server */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 500,
+                     *       "message": "Internal server error",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+        };
+    };
+    ArticlesController_updateArticle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description UUID artikel */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateArticleDto"];
+            };
+        };
+        responses: {
+            /** @description Artikel berhasil diperbarui */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UpdateArticleResponseDto"];
+                };
+            };
+            /** @description Format UUID, field body, atau konten Tiptap tidak valid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": [
+                     *         "Judul artikel maksimal 150 karakter"
+                     *       ],
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Token tidak dikirim atau tidak valid */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Artikel tidak ditemukan atau bukan milik pengguna */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "Artikel tidak ditemukan",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Terlalu banyak permintaan (rate limit terlampaui) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 429,
+                     *       "message": "Terlalu banyak permintaan, silakan coba beberapa saat lagi.",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Kesalahan tak terduga di server */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 500,
+                     *       "message": "Internal server error",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+        };
+    };
+    ArticlesController_publishArticle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description UUID artikel */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Artikel berhasil dipublikasikan */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublishArticleResponseDto"];
+                };
+            };
+            /** @description Syarat publikasi belum terpenuhi (judul/konten kosong) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 400,
+                     *       "message": [
+                     *         "Judul artikel wajib diisi (minimal 1 karakter)",
+                     *         "Konten artikel wajib memiliki minimal satu teks yang tidak kosong"
+                     *       ],
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Token tidak dikirim atau tidak valid */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Artikel tidak ditemukan atau bukan milik pengguna */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 404,
+                     *       "message": "Artikel tidak ditemukan",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Terlalu banyak permintaan (rate limit terlampaui) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 429,
+                     *       "message": "Terlalu banyak permintaan, silakan coba beberapa saat lagi.",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Kesalahan tak terduga di server */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 500,
+                     *       "message": "Internal server error",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+        };
+    };
+    UploadsController_uploadArticleImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Form data berisi file gambar pada field `file` */
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["UploadArticleImageRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Gambar artikel berhasil diunggah */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadArticleImageResponseDto"];
+                };
+            };
+            /** @description File tidak dikirim atau format isi file bukan gambar yang diizinkan */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Token tidak dikirim atau tidak valid */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Ukuran file melebihi batas maksimal 4MB */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 413,
+                     *       "message": "Ukuran file terlalu besar. Maksimal ukuran file adalah 4MB.",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Terlalu banyak permintaan (rate limit 20/menit terlampaui) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 429,
+                     *       "message": "Terlalu banyak permintaan, silakan coba beberapa saat lagi.",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Kesalahan tak terduga di server */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 500,
+                     *       "message": "Internal server error",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+        };
+    };
+    AiController_assist: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AiAssistDto"];
+            };
+        };
+        responses: {
+            /** @description Bantuan AI berhasil diproses */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AiAssistResponseDto"];
+                };
+            };
+            /** @description Validasi body gagal (mis. instruction kosong saat action custom) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Token tidak dikirim atau tidak valid */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Rate limit terlampaui (maksimal 10 permintaan/menit per pengguna) atau layanan AI sedang sibuk */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Kesalahan tak terduga di server */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 500,
+                     *       "message": "Internal server error",
+                     *       "isError": true,
+                     *       "data": null
+                     *     }
+                     */
+                    "application/json": components["schemas"]["ApiErrorResponseDto"];
+                };
+            };
+            /** @description Kesalahan komunikasi atau timeout pada penyedia layanan AI */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    /**
+                     * @example {
+                     *       "statusCode": 502,
+                     *       "message": "Gagal memproses permintaan bantuan AI. Silakan coba beberapa saat lagi.",
                      *       "isError": true,
                      *       "data": null
                      *     }

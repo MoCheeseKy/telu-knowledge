@@ -90,13 +90,11 @@ async function handleProxy(request: Request, context: RouteContext) {
     }
   }
 
-  // 5. Baca token autentikasi dari cookie HttpOnly
   let accessToken = await getAccessToken();
   const refreshToken = await getRefreshToken();
 
   const clientIp = getClientIp(new Headers(request.headers));
 
-  // Jika accessToken tidak ada tetapi refreshToken ada, lakukan refresh terlebih dahulu
   if (!accessToken && refreshToken) {
     try {
       const refreshRes = await serverFetch<BackendLoginData>("/auth/refresh", {
@@ -120,7 +118,6 @@ async function handleProxy(request: Request, context: RouteContext) {
     }
   }
 
-  // Helper untuk mengeksekusi request ke backend
   const executeBackendFetch = async (token?: string): Promise<Response> => {
     const forwardHeaders = new Headers();
     if (clientIp) forwardHeaders.set("X-Forwarded-For", clientIp);
@@ -135,19 +132,21 @@ async function handleProxy(request: Request, context: RouteContext) {
       forwardHeaders.set("Authorization", `Bearer ${token}`);
     }
 
+    const isAiPath = path[0]?.toLowerCase() === "ai";
+    const timeoutMs = isAiPath ? 25000 : 10000;
+
     return fetch(targetUrl, {
       method: request.method,
       headers: forwardHeaders,
       body: bodyBuffer,
       cache: "no-store",
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   };
 
   try {
     let backendResponse = await executeBackendFetch(accessToken);
 
-    // Jika backend membalas 401 dan kita memiliki refreshToken, coba refresh SATU kali lalu ulangi request
     if (backendResponse.status === 401 && refreshToken) {
       try {
         const refreshRes = await serverFetch<BackendLoginData>(
