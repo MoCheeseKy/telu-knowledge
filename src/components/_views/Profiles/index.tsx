@@ -1,7 +1,10 @@
+"use client";
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import RepostCard, { RepostItem } from "./RepostCard";
 import ProfileSidebar from "./ProfileSidebar";
 import HomeTab from "./HomeTab";
+import { ProfileProvider, useProfile } from "./profile.context";
 
 const reposts: RepostItem[] = [
   {
@@ -45,11 +48,17 @@ const reposts: RepostItem[] = [
   },
 ];
 
-export default function Profiles() {
+function ProfilesContent() {
+  const { profile } = useProfile();
+
   return (
-    <div className="flex flex-col gap-8 lg:flex-row">
+    <div className="flex flex-col gap-8 lg:flex-row py-4">
       <section className="min-w-0 flex-1">
-        <h1 className="mb-6 font-serif text-4xl font-bold">sofiamnhrk</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[var(--foreground)] tracking-tight">
+            {profile.fullName || profile.username}
+          </h1>
+        </div>
 
         <Tabs defaultValue="home" className="w-full">
           <TabsList
@@ -65,14 +74,24 @@ export default function Profiles() {
           </TabsContent>
 
           <TabsContent value="reposts">
-            {reposts.map((item) => (
-              <RepostCard key={item.id} item={item} />
-            ))}
+            <div className="flex flex-col gap-6 py-6">
+              {reposts.map((item) => (
+                <RepostCard key={item.id} item={item} />
+              ))}
+            </div>
           </TabsContent>
         </Tabs>
       </section>
 
       <ProfileSidebar />
     </div>
+  );
+}
+
+export default function Profiles() {
+  return (
+    <ProfileProvider>
+      <ProfilesContent />
+    </ProfileProvider>
   );
 }

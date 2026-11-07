@@ -54,6 +54,7 @@ const navSections: NavSection[] = [
     items: [
       { label: "Statistik", href: "/statistics", icon: BarChart2 },
       { label: "Artikel Saya", href: "/my-articles", icon: Clipboard },
+      { label: "Forum Saya", href: "/my-forums", icon: Users },
     ],
   },
   {
