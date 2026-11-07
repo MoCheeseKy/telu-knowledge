@@ -29,7 +29,7 @@ Buka [http://localhost:3000](http://localhost:3000) pada browser Anda.
              │
              │ Server-to-Server fetch (Authorization: Bearer <token>)
              ▼
-     [NestJS Backend API] (http://localhost:8000/api)
+     [NestJS Backend API] (http://localhost:3002/api)
 ```
 
 1. **Keamanan Token**: Token (`access_token` & `refresh_token`) **TIDAK PERNAH** disimpan di `localStorage`/`sessionStorage` dan tidak boleh diakses oleh JavaScript di browser. Token hanya disimpan dalam cookie `httpOnly`, `sameSite: "lax"`, `secure` (pada production) yang dikelola secara eksklusif oleh Route Handler Next.js.
@@ -95,7 +95,7 @@ cp .env.example .env
 
 | Variabel | Tipe | Wajib | Keterangan |
 |---|---|---|---|
-| `API_BASE_URL` | String | Ya | URL dasar backend NestJS (server-only, default: `http://localhost:8000`). Jangan tambahkan `/api` atau prefix `NEXT_PUBLIC`. |
+| `API_BASE_URL` | String | Ya | URL dasar backend NestJS (server-only, default: `http://localhost:3002`). Jangan tambahkan `/api` atau prefix `NEXT_PUBLIC`. |
 | `APP_ORIGIN` | String | Ya | Origin publik frontend (default: `http://localhost:3000`). Digunakan untuk validasi header `Origin` (Same-Origin CSRF protection) dan basis URL redirect. |
 | `TRUSTED_IP_HEADER` | String | Opsional | Header IP khusus dari reverse proxy tepercaya (misal `cf-connecting-ip`, `x-vercel-forwarded-for`, `x-real-ip`). Jika diisi, IP klien diambil HANYA dari header ini. |
 | `TRUSTED_PROXY_HOPS` | Number | Opsional | Jumlah hop proxy tepercaya pada `X-Forwarded-For` (dihitung dari kanan, default: `0`). Digunakan hanya jika `TRUSTED_IP_HEADER` kosong. |
