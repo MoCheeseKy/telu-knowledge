@@ -22,7 +22,7 @@ export type RepostItem = {
 
 export default function RepostCard({ item }: { item: RepostItem }) {
   return (
-    <article className="flex items-start justify-between gap-6 border-b py-6">
+    <article className="flex items-start justify-between gap-6 border-b border-[var(--dust)]/60 py-8">
       <div className="min-w-0 flex-1">
         <div className="mb-3 flex items-center gap-2 text-xs">
           <span className="size-5 rounded bg-red-600" />

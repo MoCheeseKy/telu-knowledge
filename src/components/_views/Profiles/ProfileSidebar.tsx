@@ -9,7 +9,7 @@ const communities = [
 
 export default function ProfileSidebar() {
   return (
-    <aside className="w-full lg:w-72 lg:shrink-0 lg:border-l lg:pl-8">
+    <aside className="w-full lg:w-72 lg:shrink-0 lg:border-l lg:border-[var(--dust)]/60 lg:pl-8">
       <div className="mb-4 flex size-20 items-center justify-center rounded-full bg-blue-700 text-3xl text-white">
         S
       </div>
@@ -22,7 +22,7 @@ export default function ProfileSidebar() {
       </p>
       <button className="mb-6 text-xs text-green-700">Edit profile</button>
 
-      <div className="border-t pt-6">
+      <div className="border-t border-[var(--dust)]/60 pt-6">
         <h3 className="mb-4 text-sm font-semibold text-red-600">
           KOMUNITAS AKTIF
         </h3>
