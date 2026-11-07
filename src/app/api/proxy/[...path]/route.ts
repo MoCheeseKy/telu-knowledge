@@ -135,12 +135,15 @@ async function handleProxy(request: Request, context: RouteContext) {
       forwardHeaders.set("Authorization", `Bearer ${token}`);
     }
 
+    const isAiPath = path[0]?.toLowerCase() === "ai";
+    const timeoutMs = isAiPath ? 25000 : 10000;
+
     return fetch(targetUrl, {
       method: request.method,
       headers: forwardHeaders,
       body: bodyBuffer,
       cache: "no-store",
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   };
 
