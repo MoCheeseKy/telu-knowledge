@@ -1,7 +1,21 @@
 import type { NextConfig } from "next";
 
+const supabaseImageHost = process.env.SUPABASE_IMAGE_HOST?.trim()
+  .replace(/^https?:\/\//, "")
+  .replace(/\/.*$/, "");
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: supabaseImageHost
+      ? [
+          {
+            protocol: "https",
+            hostname: supabaseImageHost,
+            pathname: "/storage/v1/object/public/**",
+          },
+        ]
+      : [],
+  },
   turbopack: {
     rules: {
       "*.css": {
