@@ -5,14 +5,14 @@ import type { ForumItem } from "@/components/_shared/ActiveForumRecommendations/
 
 // TODO: ganti dummy data ini dengan data dari API
 const dummyTopCommunities: ForumItem[] = [
-    { id: 1, title: "Kuliner Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/discussion-forums" },
-    { id: 2, title: "Kuliner Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/discussion-forums" },
-    { id: 3, title: "Kuliner Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/discussion-forums" },
-    { id: 4, title: "Kuliner Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/discussion-forums" },
-    { id: 5, title: "Kuliner Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/discussion-forums" },
-    { id: 6, title: "Game Dev +++", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: true, href: "/discussion-forums" },
-    { id: 7, title: "Game Dev +++", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: true, href: "/discussion-forums" },
-    { id: 8, title: "Wisata Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/discussion-forums" },
+    { id: 1, title: "Kuliner Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/communities/1" },
+    { id: 2, title: "Kuliner Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/communities/2" },
+    { id: 3, title: "Kuliner Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/communities/3" },
+    { id: 4, title: "Kuliner Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/communities/4" },
+    { id: 5, title: "Kuliner Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/communities/5" },
+    { id: 6, title: "Game Dev +++", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: true, href: "/communities/6" },
+    { id: 7, title: "Game Dev +++", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: true, href: "/communities/7" },
+    { id: 8, title: "Wisata Telkom", description: "Cari Kulineran Telkom yang wa...", activeMemberCount: "128.000 Anggota", isFollowing: false, href: "/communities/8" },
 ];
 
 const dummyForumPosts = [1, 2, 3, 4].map((id) => ({

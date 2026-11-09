@@ -1,5 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
+import Link from "next/link";
 
 type Community = {
     id: number;
@@ -237,7 +238,10 @@ function CommunityCard({
             </div>
 
             {/* Community Content */}
-            <div className="flex min-h-[144px] overflow-hidden rounded-[8px] bg-white">
+            <Link
+                href={`/communities/${community.id}`}
+                className="group flex min-h-[144px] overflow-hidden rounded-[8px] bg-white"
+            >
                 <div className="h-[144px] w-[144px] shrink-0 overflow-hidden rounded-[8px]">
                     <img
                         src={community.image}
@@ -247,7 +251,7 @@ function CommunityCard({
                 </div>
 
                 <div className="flex min-w-0 flex-1 flex-col justify-center px-3 py-3 sm:px-4">
-                    <h2 className="mb-2 line-clamp-2 text-[16px] font-bold leading-[1.3] text-[#202020] sm:text-[17px]">
+                    <h2 className="mb-2 line-clamp-2 text-[16px] font-bold leading-[1.3] text-[#202020] transition-colors group-hover:text-[#E9231A] sm:text-[17px]">
                         {community.name}
                     </h2>
 
@@ -272,7 +276,7 @@ function CommunityCard({
                         </div>
                     </div>
                 </div>
-            </div>
+            </Link>
         </article>
     );
 }
@@ -319,13 +323,13 @@ export default function DiscoverForumsView() {
                     </div>
 
                     {/* Create Community */}
-                    <a
+                    <Link
                         href="/communities/create"
                         className="flex h-[44px] w-full items-center justify-center gap-3 rounded-[5px] bg-[var(--primary)] px-5 text-[15px] font-semibold text-white transition hover:bg-[var(--primary-hover)] sm:w-auto"
                     >
                         <PlusIcon />
                         Buat Komunitas Baru
-                    </a>
+                    </Link>
                 </div>
 
                 {/* COMMUNITY LIST */}
