@@ -1,10 +1,15 @@
 "use client";
 
-import { useState, type KeyboardEvent } from "react";
+import { useState, useSyncExternalStore, type KeyboardEvent } from "react";
 import CommunityBanner from "./CommunityBanner";
 import CommunityHighlights from "./CommunityHighlights";
 import CommunityFeed from "./CommunityFeed";
 import CommunitySidebar from "./CommunitySidebar";
+import {
+  getCommunityPostsSnapshot,
+  getEmptyCommunityPosts,
+  subscribeCommunityPosts,
+} from "../CommunityPostCreate/storage";
 import { cn } from "@/lib/utils";
 import type { CommunityDetail } from "./types";
 
@@ -24,6 +29,13 @@ export default function CommunityDetailView({
 }: CommunityDetailViewProps) {
   const [isJoined, setIsJoined] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("feed");
+  const savedPosts = useSyncExternalStore(
+    subscribeCommunityPosts,
+    () => getCommunityPostsSnapshot(community.id),
+    getEmptyCommunityPosts
+  );
+
+  const posts = [...savedPosts, ...community.posts];
 
   const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
@@ -100,7 +112,7 @@ export default function CommunityDetailView({
         )}
       >
         <CommunityHighlights highlights={community.highlights} />
-        <CommunityFeed posts={community.posts} />
+        <CommunityFeed posts={posts} />
       </div>
 
       <div

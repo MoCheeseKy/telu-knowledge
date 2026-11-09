@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Calendar, ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Calendar } from "lucide-react";
+import CommunityRulesList from "@/components/_shared/CommunityRulesList";
 import type { CommunityDetail } from "./types";
 
 interface CommunitySidebarProps {
@@ -12,16 +11,6 @@ interface CommunitySidebarProps {
 export default function CommunitySidebar({
   community,
 }: CommunitySidebarProps) {
-  const [openRuleIds, setOpenRuleIds] = useState<number[]>([]);
-
-  const toggleRule = (id: number) => {
-    setOpenRuleIds((current) =>
-      current.includes(id)
-        ? current.filter((ruleId) => ruleId !== id)
-        : [...current, id]
-    );
-  };
-
   return (
     <aside className="w-full shrink-0 pt-2 lg:w-[320px] xl:w-[340px]">
       <section className="rounded-xl border border-[var(--dust)]/70 bg-white p-5">
@@ -100,41 +89,7 @@ export default function CommunitySidebar({
           Aturan Komunitas
         </p>
 
-        <div className="mt-1 flex flex-col">
-          {community.rules.map((rule) => {
-            const isOpen = openRuleIds.includes(rule.id);
-
-            return (
-              <div
-                key={rule.id}
-                className="border-b border-[var(--dust)]/40 last:border-b-0"
-              >
-                <button
-                  type="button"
-                  onClick={() => toggleRule(rule.id)}
-                  aria-expanded={isOpen}
-                  className="flex w-full items-start justify-between gap-3 py-2.5 text-left"
-                >
-                  <span className="font-sans text-[13px] leading-snug text-[var(--foreground)]">
-                    {rule.id}. {rule.title}
-                  </span>
-                  <ChevronDown
-                    className={cn(
-                      "mt-0.5 h-4 w-4 shrink-0 text-[var(--muted)] transition-transform",
-                      isOpen && "rotate-180"
-                    )}
-                  />
-                </button>
-
-                {isOpen && (
-                  <p className="pb-3 pr-6 font-sans text-[12px] leading-relaxed text-[var(--muted)]">
-                    {rule.description}
-                  </p>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <CommunityRulesList rules={community.rules} className="mt-1" />
       </section>
     </aside>
   );
