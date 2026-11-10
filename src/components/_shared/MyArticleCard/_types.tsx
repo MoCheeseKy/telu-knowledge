@@ -2,19 +2,23 @@ export interface MyArticleItem {
     id?: string | number;
     title: string;
     description: string;
-    readTime: string;
-    updatedAt: string;
+    readTime?: string;
+    updatedAt?: string;
     imageUrl?: string;
 }
 
 export interface MyArticleCardProps {
+    id?: string | number;
     title: string;
     description: string;
-    readTime: string;
-    updatedAt: string;
+    readTime?: string;
+    updatedAt?: string;
     imageUrl?: string;
+    status?: "draft" | "published";
     className?: string;
-    onMoreClick?: () => void;
+    onEdit?: () => void;
+    onDelete?: () => void;
+    onPublish?: () => void;
 }
 
 export const dummyDraftArticles: MyArticleItem[] = [

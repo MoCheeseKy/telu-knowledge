@@ -70,11 +70,11 @@ export default function ForumPostCard({
             </div>
 
             {/* Judul dan deskripsi */}
-            <div className="mt-6 flex flex-col gap-2">
-                <h2 className="font-newsreader font-normal text-[24px] uppercase leading-tight text-[var(--foreground)] group-hover:text-[var(--primary-text)] transition-colors">
+            <div className="mt-4 sm:mt-6 flex flex-col gap-2">
+                <h2 className="font-newsreader font-normal text-[20px] sm:text-[24px] uppercase leading-tight text-[var(--foreground)] group-hover:text-[var(--primary-text)] transition-colors">
                     {title}
                 </h2>
-                <p className="font-sans font-normal text-[16px] leading-relaxed text-[var(--foreground)]">
+                <p className="font-sans font-normal text-[14px] sm:text-[16px] leading-relaxed text-[var(--foreground)]">
                     {description}
                 </p>
             </div>

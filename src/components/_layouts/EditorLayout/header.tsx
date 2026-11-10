@@ -47,7 +47,7 @@ const SAVE_STATUS_CONFIG: Record<
 export default function EditorHeader({ authorName }: EditorHeaderProps) {
     const router = useRouter();
     const { data: user } = useMe();
-    const { saveStatus, articleStatus, saveDraft, publish, retrySave } =
+    const { saveStatus, articleStatus, saveDraft, publish, unpublish, retrySave } =
         useEditorStudio();
 
     const isPublished = articleStatus === "published";
@@ -56,12 +56,7 @@ export default function EditorHeader({ authorName }: EditorHeaderProps) {
         authorName || (user?.email ? user.email.split("@")[0] : "Penulis");
 
     const statusInfo = SAVE_STATUS_CONFIG[saveStatus];
-    const statusLabel =
-        saveStatus === "idle"
-            ? isPublished
-                ? "Terbit"
-                : "Draf"
-            : statusInfo.label;
+    const statusLabel = statusInfo.label;
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -74,9 +69,9 @@ export default function EditorHeader({ authorName }: EditorHeaderProps) {
     return (
         <header className="sticky top-0 z-30 w-full border-b border-[var(--dust)] bg-[var(--background)]/95 backdrop-blur-md transition-colors">
             <Wrapper backgroundColor="bg-transparent" className="py-3">
-                <div className="flex w-full max-w-[920px] mx-auto items-center justify-between">
-                    <div className="flex items-center">
-                        <div className="w-12 sm:w-16 shrink-0 flex items-center justify-start">
+                <div className="flex w-full max-w-[920px] mx-auto items-center justify-between gap-2">
+                    <div className="flex items-center min-w-0 flex-1">
+                        <div className="w-9 sm:w-12 md:w-16 shrink-0 flex items-center justify-start">
                             <button
                                 type="button"
                                 onClick={handleBack}
@@ -87,81 +82,88 @@ export default function EditorHeader({ authorName }: EditorHeaderProps) {
                             </button>
                         </div>
 
-                        <div className="flex items-baseline gap-2.5 select-none">
-                            <span className="font-newsreader font-bold italic text-[28px] sm:text-[32px] leading-none text-[var(--primary-text)] tracking-tight">
+                        <div className="flex items-baseline gap-1.5 sm:gap-2.5 min-w-0 select-none">
+                            <span className="font-newsreader font-bold italic text-[20px] sm:text-[26px] md:text-[32px] leading-none text-[var(--primary-text)] tracking-tight truncate">
                                 {resolvedAuthorName}
                             </span>
 
-                            <span
-                                aria-live="polite"
-                                className={cn(
-                                    "inline-flex items-center gap-1.5 text-xs font-medium transition-colors",
-                                    statusInfo.className
-                                )}
-                            >
-                                {saveStatus === "saving" && (
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                )}
-                                {saveStatus === "saved" && (
-                                    <CheckCircle2 className="w-3.5 h-3.5" />
-                                )}
-                                {saveStatus === "error" && (
-                                    <AlertCircle className="w-3.5 h-3.5" />
-                                )}
-                                <span>{statusLabel}</span>
-                                {saveStatus === "error" && (
-                                    <button
-                                        type="button"
-                                        onClick={retrySave}
-                                        className="inline-flex items-center gap-1 underline underline-offset-2 text-[var(--primary-text)] hover:opacity-80 cursor-pointer ml-1"
-                                    >
-                                        <RotateCcw className="w-3 h-3" />
-                                        <span>Coba lagi</span>
-                                    </button>
-                                )}
-                            </span>
+                            {!isPublished && (
+                                <span
+                                    aria-live="polite"
+                                    className={cn(
+                                        "inline-flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-xs font-medium transition-colors shrink-0",
+                                        statusInfo.className
+                                    )}
+                                >
+                                    {saveStatus === "saving" && (
+                                        <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-spin" />
+                                    )}
+                                    {saveStatus === "saved" && (
+                                        <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                    )}
+                                    {saveStatus === "error" && (
+                                        <AlertCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                                    )}
+                                    <span>{statusLabel}</span>
+                                    {saveStatus === "error" && (
+                                        <button
+                                            type="button"
+                                            onClick={retrySave}
+                                            className="inline-flex items-center gap-1 underline underline-offset-2 text-[var(--primary-text)] hover:opacity-80 cursor-pointer ml-1"
+                                        >
+                                            <RotateCcw className="w-3 h-3" />
+                                            <span>Coba lagi</span>
+                                        </button>
+                                    )}
+                                </span>
+                            )}
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="flex flex-col items-end">
+                    <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0">
+                        {isPublished && (
                             <Button
                                 type="button"
                                 variant="primaryOutline"
                                 size="sm"
                                 onClick={saveDraft}
                                 disabled={saveStatus === "saving"}
-                                className="h-9 px-3.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg"
+                                className="h-8 sm:h-9 px-2.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg"
                             >
-                                <Bookmark className="w-4 h-4 text-[var(--primary-text)]" />
-                                <span>
-                                    {isPublished
-                                        ? "Simpan perubahan"
-                                        : "Draft Tulisan"}
-                                </span>
+                                <Bookmark className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--primary-text)]" />
+                                <span className="hidden sm:inline">Simpan perubahan</span>
+                                <span className="sm:hidden">Simpan</span>
                             </Button>
-                            {isPublished && (
-                                <span className="text-[10px] text-[var(--muted)] mt-0.5 leading-none select-none">
-                                    Perubahan langsung tayang
-                                </span>
-                            )}
-                        </div>
+                        )}
 
-                        <Button
-                            type="button"
-                            variant="default"
-                            size="sm"
-                            onClick={publish}
-                            disabled={saveStatus === "saving"}
-                            className="h-9 px-3.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg shadow-xs"
-                        >
-                            <ExternalLink className="w-4 h-4 text-[var(--primary-foreground)]" />
-                            <span>Publikasi</span>
-                        </Button>
+                        {isPublished ? (
+                            <Button
+                                type="button"
+                                variant="default"
+                                size="sm"
+                                onClick={unpublish}
+                                disabled={saveStatus === "saving"}
+                                className="h-8 sm:h-9 px-2.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg shadow-xs"
+                            >
+                                <span>Batal Publikasi</span>
+                            </Button>
+                        ) : (
+                            <Button
+                                type="button"
+                                variant="default"
+                                size="sm"
+                                onClick={publish}
+                                disabled={saveStatus === "saving"}
+                                className="h-8 sm:h-9 px-2.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg shadow-xs"
+                            >
+                                <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[var(--primary-foreground)]" />
+                                <span>Publikasi</span>
+                            </Button>
+                        )}
 
                         <Link
                             href="/profile"
-                            className="h-9 w-9 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-[var(--primary-foreground)] rounded-xl transition-all shadow-xs shrink-0 cursor-pointer flex items-center justify-center text-xs font-bold"
+                            className="h-8 w-8 sm:h-9 sm:w-9 bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-[var(--primary-foreground)] rounded-xl transition-all shadow-xs shrink-0 cursor-pointer flex items-center justify-center text-xs font-bold"
                             aria-label="Profil Saya"
                             title={user?.email || resolvedAuthorName}
                         >

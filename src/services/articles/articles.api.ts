@@ -59,6 +59,20 @@ export async function publishArticle(
 }
 
 /**
+ * Membatalkan publikasi artikel milik sendiri (POST /proxy/articles/:id/unpublish).
+ */
+export async function unpublishArticle(
+  id: string
+): Promise<ApiEnvelope<Article>> {
+  return apiFetch<Article>(
+    `/proxy/articles/${encodeURIComponent(id)}/unpublish`,
+    {
+      method: "POST",
+    }
+  );
+}
+
+/**
  * Mengambil daftar artikel milik pengguna yang sedang login (GET /proxy/articles/me).
  */
 export async function listMyArticles(
@@ -107,6 +121,7 @@ export const articlesApi = {
   getArticle,
   updateArticle,
   publishArticle,
+  unpublishArticle,
   listMyArticles,
   uploadArticleImage,
   aiAssist,

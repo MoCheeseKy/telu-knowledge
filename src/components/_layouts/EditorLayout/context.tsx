@@ -15,6 +15,7 @@ export type EditorSaveStatus = "idle" | "saving" | "saved" | "error";
 export interface EditorStudioActions {
     saveDraft?: () => void | Promise<void>;
     publish?: () => void | Promise<void>;
+    unpublish?: () => void | Promise<void>;
     retrySave?: () => void | Promise<void>;
 }
 
@@ -26,6 +27,7 @@ export interface EditorStudioContextValue {
     registerActions: (actions: EditorStudioActions) => () => void;
     saveDraft: () => void;
     publish: () => void;
+    unpublish: () => void;
     retrySave: () => void;
 }
 
@@ -55,6 +57,10 @@ export function EditorStudioProvider({ children }: { children: ReactNode }) {
         void actionsRef.current.publish?.();
     }, []);
 
+    const unpublish = useCallback(() => {
+        void actionsRef.current.unpublish?.();
+    }, []);
+
     const retrySave = useCallback(() => {
         if (actionsRef.current.retrySave) {
             void actionsRef.current.retrySave();
@@ -72,9 +78,10 @@ export function EditorStudioProvider({ children }: { children: ReactNode }) {
             registerActions,
             saveDraft,
             publish,
+            unpublish,
             retrySave,
         }),
-        [saveStatus, articleStatus, registerActions, saveDraft, publish, retrySave]
+        [saveStatus, articleStatus, registerActions, saveDraft, publish, unpublish, retrySave]
     );
 
     return (

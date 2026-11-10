@@ -2,25 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
-import { Tag, X } from "lucide-react";
-import type { JSONContent } from "@tiptap/react";
-import RichTextEditor, {
-  DEFAULT_INITIAL_CONTENT,
-  type RichTextEditorHandle,
-} from "@/components/_views/EditorStudio/RichTextEditor";
+import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { ImagePlus, RefreshCw, Tag, Trash2, X } from "lucide-react";
 import { useMe } from "@/services/auth/auth.queries";
 import { cn } from "@/lib/utils";
 import PostGuidelinesSidebar from "./PostGuidelinesSidebar";
-import {
-  clearCommunityDraft,
-  getDraftPresenceSnapshot,
-  getEmptyDraftPresence,
-  loadCommunityDraft,
-  saveCommunityDraft,
-  saveCommunityPost,
-  subscribeCommunityDrafts,
-} from "./storage";
+import { saveCommunityPost } from "./storage";
 import type { CommunityDetail, CommunityPost } from "../CommunityDetail/types";
 
 interface CommunityPostCreateViewProps {
@@ -28,6 +15,8 @@ interface CommunityPostCreateViewProps {
 }
 
 const TITLE_MAX_LENGTH = 300;
+const ACCEPTED_IMAGE_TYPES = "image/png,image/jpeg,image/webp,image/gif";
+const MAX_FILE_SIZE_BYTES = 4 * 1024 * 1024;
 
 const FLAIR_OPTIONS = [
   "Diskusi",
@@ -38,61 +27,24 @@ const FLAIR_OPTIONS = [
   "Tips",
 ];
 
-function extractEditorText(node: JSONContent): string {
-  if (node.type === "hardBreak") {
-    return "\n";
-  }
-
-  if (typeof node.text === "string") {
-    return node.text;
-  }
-
-  if (!Array.isArray(node.content)) {
-    return "";
-  }
-
-  const separator =
-    node.type === "doc" ||
-    node.type === "bulletList" ||
-    node.type === "orderedList"
-      ? "\n"
-      : "";
-
-  return node.content.map(extractEditorText).join(separator);
-}
-
 export default function CommunityPostCreateView({
   community,
 }: CommunityPostCreateViewProps) {
   const router = useRouter();
   const { data: user } = useMe();
-  const editorRef = useRef<RichTextEditorHandle | null>(null);
-  const contentRef = useRef<JSONContent>(DEFAULT_INITIAL_CONTENT);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+  const [description, setDescription] = useState("");
+  const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [coverError, setCoverError] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [showFlairs, setShowFlairs] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
-
-  const hasDraft = useSyncExternalStore(
-    subscribeCommunityDrafts,
-    () => getDraftPresenceSnapshot(community.id),
-    getEmptyDraftPresence
-  );
 
   const canSubmit =
-    title.trim().length > 0 && body.trim().length > 0 && tags.length > 0;
-
-  const showNotice = (message: string) => {
-    setNotice(message);
-    window.setTimeout(() => setNotice(null), 3000);
-  };
-
-  const handleEditorUpdate = useCallback((json: JSONContent) => {
-    contentRef.current = json;
-    setBody(extractEditorText(json).trim());
-  }, []);
+    title.trim().length > 0 &&
+    description.trim().length > 0 &&
+    tags.length > 0;
 
   const toggleTag = (tag: string) => {
     setTags((current) =>
@@ -102,30 +54,39 @@ export default function CommunityPostCreateView({
     );
   };
 
-  const handleSaveDraft = () => {
-    saveCommunityDraft(community.id, {
-      title,
-      body,
-      content: contentRef.current,
-      tags,
-      savedAt: new Date().toISOString(),
-    });
-    showNotice("Draft berhasil disimpan.");
+  const openFilePicker = () => {
+    fileInputRef.current?.click();
   };
 
-  const handleRestoreDraft = () => {
-    const draft = loadCommunityDraft(community.id);
-    if (!draft) {
-      showNotice("Belum ada draft yang tersimpan.");
+  const handleCoverFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+
+    setCoverError(null);
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setCoverError(
+        "Ukuran file terlalu besar. Maksimal ukuran file adalah 4MB."
+      );
       return;
     }
 
-    setTitle(draft.title);
-    setBody(draft.body);
-    setTags(draft.tags);
-    contentRef.current = draft.content;
-    editorRef.current?.setContent(draft.content);
-    showNotice("Draft dipulihkan.");
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setCoverImage(reader.result);
+      }
+    };
+    reader.onerror = () => {
+      setCoverError("Gagal memuat gambar cover. Silakan coba lagi.");
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveCover = () => {
+    setCoverError(null);
+    setCoverImage(null);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -133,7 +94,7 @@ export default function CommunityPostCreateView({
     if (!canSubmit) return;
 
     const publisher = user?.email?.split("@")[0] ?? "Anggota Tel-U";
-    const trimmedBody = body.trim();
+    const trimmedDescription = description.trim();
     const post: CommunityPost = {
       id: Date.now(),
       topic: community.name,
@@ -145,9 +106,10 @@ export default function CommunityPostCreateView({
       }).format(new Date()),
       title: title.trim(),
       description:
-        trimmedBody.length > 280
-          ? `${trimmedBody.slice(0, 280)}…`
-          : trimmedBody,
+        trimmedDescription.length > 280
+          ? `${trimmedDescription.slice(0, 280)}…`
+          : trimmedDescription,
+      ...(coverImage ? { imageUrl: coverImage, imageAlt: title.trim() } : {}),
       likesCount: 0,
       commentsCount: 0,
       repostsCount: 0,
@@ -155,14 +117,13 @@ export default function CommunityPostCreateView({
     };
 
     saveCommunityPost(community.id, post);
-    clearCommunityDraft(community.id);
     router.push(`/communities/${community.id}`);
   };
 
   return (
     <div className="grid w-full grid-cols-1 gap-x-10 py-2 sm:py-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-x-12">
       <form onSubmit={handleSubmit} className="min-w-0">
-        {/* Komunitas tujuan + draft */}
+        {/* Komunitas tujuan */}
         <div className="flex items-center justify-between gap-4">
           <Link
             href={`/communities/${community.id}`}
@@ -177,39 +138,7 @@ export default function CommunityPostCreateView({
               {community.name}
             </span>
           </Link>
-
-          <button
-            type="button"
-            onClick={handleRestoreDraft}
-            title={
-              hasDraft
-                ? "Ada draft tersimpan untuk komunitas ini"
-                : "Belum ada draft tersimpan"
-            }
-            aria-label={
-              hasDraft
-                ? "Pulihkan draft tersimpan"
-                : "Belum ada draft tersimpan"
-            }
-            className={cn(
-              "inline-flex shrink-0 items-center gap-1.5 font-sans text-[13px] font-semibold transition-colors",
-              hasDraft
-                ? "text-[var(--primary-text)] hover:text-[var(--primary-hover)]"
-                : "text-[var(--muted)] hover:text-[var(--foreground)]"
-            )}
-          >
-            Pulihkan Draft
-          </button>
         </div>
-
-        {notice && (
-          <div
-            role="status"
-            className="mt-4 rounded-lg bg-[var(--success-soft)] px-3 py-2 font-sans text-[13px] text-[var(--success-text)]"
-          >
-            {notice}
-          </div>
-        )}
 
         {/* Judul */}
         <div className="mt-6">
@@ -242,7 +171,7 @@ export default function CommunityPostCreateView({
             onClick={() => setShowFlairs((current) => !current)}
             aria-expanded={showFlairs}
             className={cn(
-              "inline-flex h-9 items-center gap-2 rounded-full border px-4 font-sans text-[13px] font-semibold transition-colors",
+              "inline-flex h-9 items-center gap-2 rounded-full border px-4 font-sans text-[13px] font-semibold transition-colors cursor-pointer",
               tags.length > 0
                 ? "border-[var(--primary)]/40 bg-[var(--primary-soft)] text-[var(--primary-text)]"
                 : "border-[var(--dust)] text-[var(--foreground)] hover:bg-[var(--background-accent)]"
@@ -267,7 +196,7 @@ export default function CommunityPostCreateView({
                     onClick={() => toggleTag(flair)}
                     aria-pressed={isSelected}
                     className={cn(
-                      "rounded-full border px-3 py-1.5 font-sans text-[12px] font-medium transition-colors",
+                      "rounded-full border px-3 py-1.5 font-sans text-[12px] font-medium transition-colors cursor-pointer",
                       isSelected
                         ? "border-[var(--primary)] bg-[var(--primary)] text-white"
                         : "border-[var(--dust)] bg-white text-[var(--foreground)] hover:bg-[var(--background-accent)]"
@@ -292,7 +221,7 @@ export default function CommunityPostCreateView({
                     type="button"
                     onClick={() => toggleTag(tag)}
                     aria-label={`Hapus tag ${tag}`}
-                    className="rounded-full p-0.5 transition-colors hover:bg-white/60"
+                    className="rounded-full p-0.5 transition-colors hover:bg-white/60 cursor-pointer"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -306,46 +235,105 @@ export default function CommunityPostCreateView({
           </p>
         </div>
 
-        {/* Isi postingan */}
-        <div className="mt-7">
+        {/* Lampirkan Gambar Cover */}
+        <div className="mt-6">
           <p className="font-sans text-[13px] font-bold text-[var(--foreground)]">
+            Gambar cover{" "}
+            <span className="font-normal text-[var(--muted)]">(opsional)</span>
+          </p>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ACCEPTED_IMAGE_TYPES}
+            onChange={handleCoverFileChange}
+            className="hidden"
+            aria-label="Lampirkan gambar cover"
+          />
+
+          <div className="mt-2">
+            {coverImage ? (
+              <div className="group relative w-full overflow-hidden rounded-xl border border-[var(--dust)]/70 bg-[var(--background-accent)]">
+                <img
+                  src={coverImage}
+                  alt="Pratinjau gambar cover"
+                  className="max-h-[360px] w-full object-cover"
+                />
+                <div className="absolute top-3 right-3 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={openFilePicker}
+                    className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-[var(--dust)] bg-[var(--background)]/95 px-3 font-sans text-xs font-semibold text-[var(--foreground)] shadow-xs transition-colors hover:bg-[var(--background-accent)] cursor-pointer"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" />
+                    <span>Ganti</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCover}
+                    className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-[var(--failed)] px-3 font-sans text-xs font-semibold text-white shadow-xs transition-opacity hover:opacity-90 cursor-pointer"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    <span>Hapus</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={openFilePicker}
+                className="flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--dust)] bg-white/60 px-4 py-7 text-center transition-colors hover:border-[var(--primary)]/60 hover:bg-[var(--background-accent)]/60"
+              >
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--primary-soft)] text-[var(--primary-text)]">
+                  <ImagePlus className="h-5 w-5" />
+                </div>
+                <span className="font-sans text-sm font-semibold text-[var(--foreground)]">
+                  Lampirkan gambar cover
+                </span>
+                <span className="font-sans text-xs text-[var(--muted)]">
+                  Format PNG, JPEG, WEBP, atau GIF (maks. 4MB)
+                </span>
+              </button>
+            )}
+
+            {coverError && (
+              <p className="mt-1.5 font-sans text-xs text-[var(--failed)]">
+                {coverError}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Isi postingan (Input deskripsi biasa) */}
+        <div className="mt-6">
+          <label
+            htmlFor="post-description"
+            className="font-sans text-[13px] font-bold text-[var(--foreground)]"
+          >
             Isi postingan{" "}
             <span className="text-[var(--primary)]" aria-hidden="true">
               *
             </span>
-          </p>
+          </label>
 
           <div className="mt-2 rounded-xl border border-[var(--dust)]/70 bg-white">
-            <div className="px-4 py-3 [&_.editor-content]:text-[15px] [&_.editor-content_blockquote]:text-[15px] [&_.editor-content_blockquote]:leading-relaxed [&_.editor-content_h2]:text-[22px] [&_.editor-content_h3]:text-[18px] [&_.editor-content_li]:text-[15px] [&_.editor-content_li]:leading-relaxed [&_.editor-content_p]:mb-3 [&_.editor-content_p]:text-[15px] [&_.editor-content_p]:leading-relaxed [&_.editor-content_pre]:text-[13px]">
-              <RichTextEditor
-                ref={editorRef}
-                ariaLabel="Isi postingan"
-                initialContent={DEFAULT_INITIAL_CONTENT}
-                onUpdate={handleEditorUpdate}
-              />
-            </div>
+            <textarea
+              id="post-description"
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              rows={7}
+              placeholder="Tulis deskripsi atau isi postingan Anda..."
+              className="w-full resize-y rounded-t-xl bg-transparent px-4 py-3 font-sans text-[15px] leading-relaxed text-[var(--foreground)] outline-none placeholder:text-[var(--muted)]/70"
+            />
 
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--dust)]/50 px-4 py-3">
-              <p className="font-sans text-[11px] text-[var(--muted)]">
-                Pilih teks untuk memunculkan toolbar format.
-              </p>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleSaveDraft}
-                  className="inline-flex h-9 items-center justify-center rounded-lg border border-[var(--dust)] px-4 font-sans text-[13px] font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--background-accent)]"
-                >
-                  Simpan Draft
-                </button>
-                <button
-                  type="submit"
-                  disabled={!canSubmit}
-                  className="inline-flex h-9 items-center justify-center rounded-lg bg-[var(--primary)] px-5 font-sans text-[13px] font-semibold text-white transition-colors hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  Posting
-                </button>
-              </div>
+            <div className="flex items-center justify-end border-t border-[var(--dust)]/50 px-4 py-3">
+              <button
+                type="submit"
+                disabled={!canSubmit}
+                className="inline-flex h-9 items-center justify-center rounded-lg bg-[var(--primary)] px-5 font-sans text-[13px] font-semibold text-white transition-colors hover:bg-[var(--primary-hover)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Posting
+              </button>
             </div>
           </div>
         </div>

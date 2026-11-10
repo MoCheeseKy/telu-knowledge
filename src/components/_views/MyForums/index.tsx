@@ -44,8 +44,8 @@ export default function MyForumsView() {
   return (
     <div className="w-full flex flex-col py-2 mb-auto">
       {/* Header - konsisten dengan MyArticles */}
-      <div className="flex items-center justify-between gap-3 mb-6">
-        <h1 className="font-sans text-[32px] font-bold text-[var(--foreground)]">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4 sm:mb-6">
+        <h1 className="font-sans text-[24px] sm:text-[32px] font-bold text-[var(--foreground)]">
           Forum Saya
         </h1>
         <Button
@@ -62,7 +62,7 @@ export default function MyForumsView() {
       <Tabs defaultValue="all" className="w-full">
         <TabsList
           variant="line"
-          className="bg-transparent border-b border-[var(--dust)]/60 rounded-none w-full justify-start h-auto p-0 gap-6"
+          className="bg-transparent border-b border-[var(--dust)]/60 rounded-none w-full justify-start h-auto p-0 gap-4 sm:gap-6"
         >
           <TabsTrigger value="all">
             Semua
