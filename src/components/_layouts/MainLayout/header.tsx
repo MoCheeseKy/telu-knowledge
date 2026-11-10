@@ -30,19 +30,20 @@ export default function MainHeader({ onOpenSidebar }: MainHeaderProps) {
                             href="/home"
                             className="flex items-baseline gap-1 select-none cursor-pointer group"
                         >
-                            <span className="font-newsreader font-bold italic text-[32px] leading-none text-[var(--primary-text)] tracking-tight transition-transform group-hover:scale-[1.02]">
+                            <span className="font-newsreader font-bold italic text-[26px] sm:text-[32px] leading-none text-[var(--primary-text)] tracking-tight transition-transform group-hover:scale-[1.02]">
                                 Tel-U
                             </span>
-                            <span className="font-newsreader italic text-[16px] leading-none text-[var(--foreground)]">
+                            <span className="font-newsreader italic text-[14px] sm:text-[16px] leading-none text-[var(--foreground)]">
                                 Knowledge
                             </span>
                         </Link>
                     </div>
 
-                    <div className="flex items-center gap-3 sm:gap-4">
+                    <div className="flex items-center gap-2 sm:gap-4">
                         <Link
                             href="/editor-studio"
-                            className="flex items-center gap-2 text-sm font-medium text-[var(--primary-text)] hover:opacity-85 transition-opacity cursor-pointer"
+                            aria-label="Tulis Artikel"
+                            className="flex items-center gap-2 p-2 sm:p-0 rounded-lg text-sm font-medium text-[var(--primary-text)] hover:bg-[var(--background-accent)] sm:hover:bg-transparent hover:opacity-85 transition-all cursor-pointer"
                         >
                             <Pencil className="w-4 h-4 text-[var(--primary-text)]" />
                             <span className="hidden sm:inline">Tulis Artikel</span>

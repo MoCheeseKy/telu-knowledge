@@ -10,7 +10,7 @@ export default function Wrapper({
             className={`flex flex-grow items-center justify-center w-full text-black ${backgroundColor}`}
         >
             <div
-                className={`w-full max-w-[1200px] px-4 md:w-[85%] md:px-[36px] lg:w-full ${className}`}
+                className={`w-full max-w-[1200px] px-4 sm:px-6 md:px-[36px] ${className}`}
             >
                 {children}
             </div>

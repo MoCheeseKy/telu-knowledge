@@ -18,14 +18,22 @@ export default function MyForumCard({ item, onToggleFollow }: MyForumCardProps) 
     <div className="flex items-center justify-between gap-4 py-4 border-b border-[var(--dust)]/40 w-full group">
       <div className="flex items-start gap-3 min-w-0 flex-1">
         {/* Avatar */}
-        <div
-          className={cn(
-            "w-8 h-8 rounded-[3px] flex items-center justify-center font-bold text-white text-sm shrink-0",
-            item.avatarColor || "bg-[var(--primary)]"
-          )}
-        >
-          {item.avatarInitial}
-        </div>
+        {item.avatarUrl ? (
+          <img
+            src={item.avatarUrl}
+            alt={item.name}
+            className="w-8 h-8 rounded-[3px] object-cover shrink-0 bg-[var(--background-accent)]"
+          />
+        ) : (
+          <div
+            className={cn(
+              "w-8 h-8 rounded-[3px] flex items-center justify-center font-bold text-white text-sm shrink-0",
+              item.avatarColor || "bg-[var(--primary)]"
+            )}
+          >
+            {item.avatarInitial}
+          </div>
+        )}
 
         {/* Info */}
         <div className="flex flex-col min-w-0 flex-1 gap-0.5">

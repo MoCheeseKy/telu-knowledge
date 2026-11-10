@@ -103,7 +103,7 @@ function EditorStudioSkeleton() {
       aria-label="Memuat artikel"
       className="w-full max-w-[920px] mx-auto py-4 sm:py-6"
     >
-      <div className="w-full pl-12 sm:pl-16 flex flex-col gap-6 animate-pulse">
+      <div className="w-full pl-0 sm:pl-12 md:pl-16 flex flex-col gap-6 animate-pulse">
         <div className="flex flex-col gap-3">
           <div className="h-11 sm:h-12 w-3/4 rounded-lg bg-[var(--background-accent)]" />
           <div className="h-6 w-1/2 rounded-lg bg-[var(--background-accent)]" />
@@ -425,7 +425,7 @@ function EditorStudioCanvas({
         </div>
       )}
 
-      <div className="w-full pl-12 sm:pl-16 flex flex-col gap-5 sm:gap-6">
+      <div className="w-full pl-0 sm:pl-12 md:pl-16 flex flex-col gap-5 sm:gap-6">
         {/* Banner 401: Sesi Berakhir */}
         {isSessionExpired && (
           <div

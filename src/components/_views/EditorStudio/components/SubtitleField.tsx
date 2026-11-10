@@ -79,7 +79,7 @@ const SubtitleField = forwardRef<HTMLTextAreaElement, SubtitleFieldProps>(
         aria-label="Subjudul artikel"
         className={cn(
           "w-full resize-none overflow-hidden bg-transparent border-0 p-0 focus:outline-none focus:ring-0",
-          "font-sans font-normal text-[17px] sm:text-[19px] leading-relaxed",
+          "font-sans font-normal text-[15px] sm:text-[18px] md:text-[19px] leading-relaxed",
           "text-[var(--muted)] placeholder:text-[var(--muted)]/55",
           className
         )}

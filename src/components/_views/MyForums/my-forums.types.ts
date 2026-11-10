@@ -1,3 +1,9 @@
+export interface CommunityRuleInput {
+  id: number;
+  title: string;
+  description: string;
+}
+
 export interface MyCommunityItem {
   id: string | number;
   name: string;
@@ -8,8 +14,10 @@ export interface MyCommunityItem {
   discussionsCount: string;
   role: "Pembuat" | "Moderator" | "Anggota";
   isPrivate: boolean;
+  avatarUrl?: string;
   avatarColor: string;
   avatarInitial: string;
+  rules?: CommunityRuleInput[];
   lastActive: string;
   isFollowing: boolean;
 }

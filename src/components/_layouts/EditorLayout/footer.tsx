@@ -4,7 +4,7 @@ export default function EditorFooter() {
   return (
     <footer className="w-full border-t border-[var(--dust)] bg-[var(--background)] mt-auto py-3">
       <Wrapper backgroundColor="bg-transparent">
-        <div className="w-full max-w-[920px] mx-auto sm:pl-16 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[var(--muted)]">
+        <div className="w-full max-w-[920px] mx-auto sm:pl-12 md:pl-16 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] sm:text-xs text-[var(--muted)] text-center sm:text-left">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[var(--success)] animate-pulse" />
             <span>Perubahan tersimpan otomatis di draft lokal</span>
