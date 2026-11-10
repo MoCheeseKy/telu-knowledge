@@ -49,6 +49,7 @@ export default function ArticleAuthorSidebar({
   const toggleFollowMutation = useToggleProfileFollow();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsFollowing(Boolean(author.isFollowing));
   }, [author.isFollowing]);
 

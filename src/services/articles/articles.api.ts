@@ -80,6 +80,17 @@ export async function unpublishArticle(
 }
 
 /**
+ * Menghapus artikel milik sendiri (DELETE /proxy/articles/:id).
+ */
+export async function deleteArticle(
+  id: string
+): Promise<ApiEnvelope<null>> {
+  return apiFetch<null>(`/proxy/articles/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
+}
+
+/**
  * Mengambil daftar artikel milik pengguna yang sedang login (GET /proxy/articles/me).
  */
 export async function listMyArticles(
@@ -130,6 +141,7 @@ export const articlesApi = {
   updateArticle,
   publishArticle,
   unpublishArticle,
+  deleteArticle,
   listMyArticles,
   getArticleFeed,
   toggleArticleLike,

@@ -262,6 +262,90 @@ const handleArticleDetail = (req, res, next) => {
 server.get('/api/articles/:id', handleArticleDetail);
 server.get('/articles/:id', handleArticleDetail);
 
+// 2b. Endpoint Daftar Artikel Milik Sendiri (GET /articles/me)
+const handleMyArticles = (req, res) => {
+  const db = router.db.getState();
+  const { status, limit = 20 } = req.query;
+  const numLimit = Math.min(Math.max(parseInt(limit, 10) || 20, 1), 50);
+
+  let userArticles = (db.articles || []).filter(
+    (a) => a.author_id === MOCK_ME_ID
+  );
+
+  if (status) {
+    userArticles = userArticles.filter((a) => a.status === status);
+  }
+
+  userArticles.sort(
+    (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+  );
+
+  const authorProfile = (db.profiles || []).find((p) => p.id === MOCK_ME_ID);
+
+  const items = userArticles.slice(0, numLimit).map((a) => ({
+    id: a.id,
+    title: a.title || 'Tanpa Judul',
+    subtitle: a.subtitle || null,
+    coverImageUrl: a.cover_image_url || null,
+    excerpt: a.excerpt || '',
+    readingTimeMinutes: a.reading_time_minutes || 1,
+    status: a.status,
+    slug: a.slug || null,
+    createdAt: a.created_at,
+    updatedAt: a.updated_at,
+    publishedAt: a.published_at || null,
+    author: {
+      id: authorProfile ? authorProfile.id : MOCK_ME_ID,
+      displayName: authorProfile ? authorProfile.display_name : 'Saya',
+      avatarUrl: authorProfile ? authorProfile.avatar_url : null,
+    },
+  }));
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar artikel berhasil diambil'],
+    data: {
+      items,
+      nextCursor: null,
+    },
+    isError: false,
+  });
+};
+
+server.get('/api/articles/me', handleMyArticles);
+server.get('/articles/me', handleMyArticles);
+
+// 2c. Endpoint Hapus Artikel (DELETE /articles/:id)
+const handleDeleteArticle = (req, res) => {
+  const { id } = req.params;
+  const db = router.db.getState();
+  const articleIndex = (db.articles || []).findIndex(
+    (a) => a.id === id || a.slug === id
+  );
+
+  if (articleIndex === -1) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Artikel tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  db.articles.splice(articleIndex, 1);
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Artikel berhasil dihapus'],
+    data: null,
+    isError: false,
+  });
+};
+
+server.delete('/api/articles/:id', handleDeleteArticle);
+server.delete('/articles/:id', handleDeleteArticle);
+
 // 3. Endpoint Toggle Suka / Like Artikel
 const handleToggleLike = (req, res) => {
   const { id } = req.params;
