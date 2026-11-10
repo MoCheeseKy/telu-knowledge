@@ -10,6 +10,7 @@ import {
   Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import {
   useToggleArticleBookmark,
@@ -67,10 +68,13 @@ export default function ArticleDetailActions({
     }
   };
 
+  const { toast } = useToast();
+
   const handleShare = () => {
     if (typeof window !== "undefined") {
       navigator.clipboard.writeText(window.location.href);
       setCopied(true);
+      toast.success("Tautan artikel berhasil disalin ke clipboard!");
       setTimeout(() => setCopied(false), 2000);
     }
   };

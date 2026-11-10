@@ -4,11 +4,9 @@ import { useRouter } from "next/navigation";
 import { useArticleFeed } from "@/services/articles/articles.queries";
 import {
   useCommunityRecommendations,
-  useTopicRecommendations,
   useWriterRecommendations,
 } from "@/services/recommendations/recommendations.queries";
 import ArticleCard from "@/components/_shared/ArticleCard";
-import TopicRecommenndations from "@/components/_shared/TopicRecommenndations";
 import WritterRecommendations from "@/components/_shared/WritterRecommendations";
 import ActiveForumRecommendations from "@/components/_shared/ActiveForumRecommendations";
 
@@ -63,7 +61,6 @@ function ArticleCardSkeleton() {
 export default function HomeView() {
   const router = useRouter();
   const { data: articles, isLoading, isError, refetch } = useArticleFeed();
-  const { data: topics } = useTopicRecommendations();
   const { data: writers } = useWriterRecommendations();
   const { data: communities } = useCommunityRecommendations();
 

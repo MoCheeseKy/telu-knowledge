@@ -16,6 +16,8 @@ export interface MyArticleCardProps {
     imageUrl?: string;
     status?: "draft" | "published";
     className?: string;
+    isDeleting?: boolean;
+    isPublishing?: boolean;
     onEdit?: () => void;
     onDelete?: () => void;
     onPublish?: () => void;

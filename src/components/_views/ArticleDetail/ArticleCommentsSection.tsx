@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { MessageSquare, Send, Reply } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { useCreateArticleComment } from "@/services/articles/articles.queries";
 import type { ArticleComment } from "@/services/articles/articles.types";
 
@@ -186,6 +187,7 @@ export default function ArticleCommentsSection({
 }: ArticleCommentsSectionProps) {
   const [commentText, setCommentText] = useState("");
   const createCommentMutation = useCreateArticleComment();
+  const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -199,16 +201,30 @@ export default function ArticleCommentsSection({
       {
         onSuccess: () => {
           setCommentText("");
+          toast.success("Komentar berhasil dikirim!");
+        },
+        onError: () => {
+          toast.error("Gagal mengirim komentar.");
         },
       }
     );
   };
 
   const handleReplySubmit = (parentId: string, content: string) => {
-    createCommentMutation.mutate({
-      articleId,
-      payload: { content, parent_id: parentId },
-    });
+    createCommentMutation.mutate(
+      {
+        articleId,
+        payload: { content, parent_id: parentId },
+      },
+      {
+        onSuccess: () => {
+          toast.success("Balasan komentar berhasil dikirim!");
+        },
+        onError: () => {
+          toast.error("Gagal mengirim balasan.");
+        },
+      }
+    );
   };
 
   // Pisahkan root comments (tanpa parent_id) dan replies (berdasarkan parent_id)
