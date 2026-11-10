@@ -79,7 +79,7 @@ const TitleField = forwardRef<HTMLTextAreaElement, TitleFieldProps>(
         aria-label="Judul artikel"
         className={cn(
           "w-full resize-none overflow-hidden bg-transparent border-0 p-0 focus:outline-none focus:ring-0",
-          "font-newsreader font-bold text-[32px] sm:text-[40px] md:text-[44px] leading-[1.2] tracking-tight",
+          "font-newsreader font-bold text-[26px] sm:text-[36px] md:text-[44px] leading-[1.2] tracking-tight",
           "text-[var(--foreground)] placeholder:text-[var(--muted)]/55",
           className
         )}

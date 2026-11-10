@@ -240,9 +240,9 @@ function CommunityCard({
             {/* Community Content */}
             <Link
                 href={`/communities/${community.id}`}
-                className="group flex min-h-[144px] overflow-hidden rounded-[8px] bg-white"
+                className="group flex min-h-[112px] sm:min-h-[144px] overflow-hidden rounded-[8px] bg-white"
             >
-                <div className="h-[144px] w-[144px] shrink-0 overflow-hidden rounded-[8px]">
+                <div className="h-[112px] w-[112px] sm:h-[144px] sm:w-[144px] shrink-0 overflow-hidden rounded-[8px]">
                     <img
                         src={community.image}
                         alt={community.name}
@@ -250,8 +250,8 @@ function CommunityCard({
                     />
                 </div>
 
-                <div className="flex min-w-0 flex-1 flex-col justify-center px-3 py-3 sm:px-4">
-                    <h2 className="mb-2 line-clamp-2 text-[16px] font-bold leading-[1.3] text-[#202020] transition-colors group-hover:text-[#E9231A] sm:text-[17px]">
+                <div className="flex min-w-0 flex-1 flex-col justify-center px-3 py-2.5 sm:px-4 sm:py-3">
+                    <h2 className="mb-1.5 sm:mb-2 line-clamp-2 text-[14px] sm:text-[17px] font-bold leading-[1.3] text-[#202020] transition-colors group-hover:text-[#E9231A]">
                         {community.name}
                     </h2>
 
@@ -260,7 +260,7 @@ function CommunityCard({
                     </p>
 
                     {/* Statistics */}
-                    <div className="mt-4 flex items-center gap-4">
+                    <div className="mt-2.5 sm:mt-4 flex items-center gap-4">
                         <div className="flex items-center gap-1 text-[var(--primary-text)]">
                             <UsersIcon />
                             <span className="text-[9px] font-medium text-black">
@@ -302,13 +302,12 @@ export default function DiscoverForumsView() {
     };
 
     return (
-        <main className="min-h-screen bg-[#FCFAFA] text-[#202020]">
-
-            <section className="mx-auto max-w-[1400px] px-5 pb-20 pt-8 sm:px-8 sm:pt-8 lg:px-10">
+        <div className="w-full py-2 text-[#202020]">
+            <section className="mx-auto w-full pb-12">
                 {/* Search and Create Community */}
-                <div className="mb-8 flex flex-col items-center justify-between gap-5 sm:flex-row">
+                <div className="mb-6 sm:mb-8 flex flex-col items-stretch sm:items-center justify-between gap-3 sm:gap-5 sm:flex-row">
                     {/* Search Input */}
-                    <div className="flex h-[44px] w-full max-w-[395px] items-center rounded-full border border-[#D3D3D3] bg-white px-4 transition focus-within:border-[var(--primary)]">
+                    <div className="flex h-[44px] w-full sm:max-w-[395px] items-center rounded-full border border-[#D3D3D3] bg-white px-4 transition focus-within:border-[var(--primary)]">
                         <input
                             type="text"
                             value={search}
@@ -368,6 +367,6 @@ export default function DiscoverForumsView() {
                     </div>
                 )}
             </section>
-        </main>
+        </div>
     );
 }

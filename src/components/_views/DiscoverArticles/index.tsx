@@ -40,9 +40,9 @@ export default function DiscoverArticles() {
   );
 
   return (
-    <div className="flex w-full flex-col gap-8 py-2">
-      <div className="flex items-center justify-between gap-4">
-        <div className="relative w-full max-w-sm">
+    <div className="flex w-full flex-col gap-6 sm:gap-8 py-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="relative w-full sm:max-w-sm">
           <input
             type="text"
             value={query}
@@ -55,7 +55,7 @@ export default function DiscoverArticles() {
 
         <Link
           href={WRITE_ROUTE}
-          className="flex shrink-0 items-center gap-2 rounded-md bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
+          className="flex w-full sm:w-auto shrink-0 items-center justify-center gap-2 rounded-md bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-700"
         >
           <PenLine className="size-4" />
           Tulis Artikel
@@ -89,13 +89,13 @@ export default function DiscoverArticles() {
                 </button>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex gap-3 sm:gap-4">
                 <Image
                   src={a.image}
                   alt={a.title}
                   width={112}
                   height={112}
-                  className="size-28 shrink-0 rounded-lg object-cover"
+                  className="size-24 sm:size-28 shrink-0 rounded-lg object-cover"
                 />
 
                 <div className="flex min-w-0 flex-1 flex-col">

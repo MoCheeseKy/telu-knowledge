@@ -99,7 +99,7 @@ export default function InsertMenu({
       }}
       className="z-30 flex items-center select-none pointer-events-auto"
     >
-      <div className="flex items-center gap-2.5 -ml-10 sm:-ml-12">
+      <div className="flex items-center gap-2.5 mt-8 sm:mt-0 sm:-ml-10 md:-ml-12">
         <button
           type="button"
           disabled={disabled}

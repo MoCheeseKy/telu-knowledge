@@ -122,6 +122,28 @@ export function usePublishArticle() {
 }
 
 /**
+ * Hook mutasi pembatalan publikasi artikel (POST /proxy/articles/:id/unpublish).
+ * Menggunakan meta.skipAuthRedirect agar 401 saat unpublish tidak memicu hard redirect.
+ */
+export function useUnpublishArticle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => articlesApi.unpublishArticle(id),
+    retry: false,
+    onSuccess: (res) => {
+      if (res?.data?.id) {
+        queryClient.setQueryData(articleKeys.detail(res.data.id), res.data);
+      }
+      void queryClient.invalidateQueries({ queryKey: articleKeys.lists() });
+    },
+    meta: {
+      skipAuthRedirect: true,
+    },
+  });
+}
+
+/**
  * Hook mutasi unggah gambar artikel (POST /proxy/uploads/article-image).
  * Menggunakan meta.skipAuthRedirect agar 401 saat unggah tidak memicu hard redirect.
  */
