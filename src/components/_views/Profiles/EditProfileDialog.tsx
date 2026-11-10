@@ -11,6 +11,7 @@ import {
 import EditProfileForm from "./EditProfileForm";
 import { useProfile } from "./profile.context";
 import { UserProfile } from "./profile.types";
+import { useToast } from "@/components/ui/toast";
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -22,9 +23,11 @@ export default function EditProfileDialog({
   onOpenChange,
 }: EditProfileDialogProps) {
   const { profile, updateProfile } = useProfile();
+  const { toast } = useToast();
 
   const handleSave = (updated: Partial<UserProfile>) => {
     updateProfile(updated);
+    toast.success("Profil berhasil diperbarui!");
   };
 
   return (
