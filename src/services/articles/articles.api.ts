@@ -146,7 +146,6 @@ export const articlesApi = {
   getArticleFeed,
   toggleArticleLike,
   toggleArticleBookmark,
-  createArticleComment,
   toggleProfileFollow,
   uploadArticleImage,
   aiAssist,
@@ -190,23 +189,6 @@ export async function toggleArticleBookmark(
     `/proxy/articles/${encodeURIComponent(id)}/bookmark`,
     {
       method: "POST",
-      source: "mock",
-    }
-  );
-}
-
-/**
- * Kirim komentar baru pada artikel (POST /proxy/articles/:id/comments).
- */
-export async function createArticleComment(
-  id: string,
-  payload: CreateCommentPayload
-): Promise<ApiEnvelope<ArticleComment>> {
-  return apiFetch<ArticleComment>(
-    `/proxy/articles/${encodeURIComponent(id)}/comments`,
-    {
-      method: "POST",
-      body: payload,
       source: "mock",
     }
   );

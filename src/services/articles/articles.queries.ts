@@ -90,26 +90,6 @@ export function useToggleArticleBookmark() {
 }
 
 /**
- * Hook mutasi kirim komentar baru pada artikel.
- */
-export function useCreateArticleComment() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({
-      articleId,
-      payload,
-    }: {
-      articleId: string;
-      payload: CreateCommentPayload;
-    }) => articlesApi.createArticleComment(articleId, payload),
-    onSuccess: (_data, { articleId }) => {
-      queryClient.invalidateQueries({ queryKey: ["article-detail", articleId] });
-      queryClient.invalidateQueries({ queryKey: articleKeys.feeds() });
-    },
-  });
-}
-
-/**
  * Hook mutasi toggle follow profile penulis.
  */
 export function useToggleProfileFollow() {

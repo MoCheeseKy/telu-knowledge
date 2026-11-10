@@ -3,13 +3,11 @@
 import React, { useState } from "react";
 import { MessageSquare, Send, Reply } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
-import { useCreateArticleComment } from "@/services/articles/articles.queries";
 import type { ArticleComment } from "@/services/articles/articles.types";
 
 interface ArticleCommentsSectionProps {
-  articleId: string;
-  initialComments: ArticleComment[];
+  articleId?: string;
+  initialComments?: ArticleComment[];
 }
 
 function formatCommentDate(dateString?: string): string {
@@ -29,16 +27,50 @@ function formatCommentDate(dateString?: string): string {
   }
 }
 
+const DUMMY_COMMENTS: ArticleComment[] = [
+  {
+    id: "c-1",
+    articleId: "",
+    authorId: "1",
+    parentId: null,
+    content:
+      "Penjelasan yang sangat terstruktur dan mudah dipahami untuk persiapan sidang komprehensif. Terima kasih sudah berbagi!",
+    createdAt: "2024-10-09T08:30:00Z",
+    updatedAt: "2024-10-09T08:30:00Z",
+    author: {
+      id: "1",
+      displayName: "Aditya Pratama",
+      avatarUrl: null,
+      avatarColor: "#10B981",
+      major: "S1 Informatika",
+    },
+  },
+  {
+    id: "c-2",
+    articleId: "",
+    authorId: "2",
+    parentId: "c-1",
+    content: "Setuju, bagian tips demo visualisasi metrik sangat membantu!",
+    createdAt: "2024-10-09T09:15:00Z",
+    updatedAt: "2024-10-09T09:15:00Z",
+    author: {
+      id: "2",
+      displayName: "Farhan Danendra",
+      avatarUrl: null,
+      avatarColor: "#EA5753",
+      major: "S1 Informatika",
+    },
+  },
+];
+
 function CommentItem({
   comment,
   replies = [],
   onReplySubmit,
-  isSubmitting,
 }: {
   comment: ArticleComment;
   replies?: ArticleComment[];
   onReplySubmit: (parentId: string, content: string) => void;
-  isSubmitting: boolean;
 }) {
   const [isReplying, setIsReplying] = useState(false);
   const [replyText, setReplyText] = useState("");
@@ -99,38 +131,44 @@ function CommentItem({
         <button
           type="button"
           onClick={() => setIsReplying(!isReplying)}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--muted)] hover:text-[var(--primary-text)] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--primary-text)] font-medium transition-colors cursor-pointer"
         >
           <Reply className="w-3.5 h-3.5" />
           <span>Balas</span>
         </button>
       </div>
 
-      {/* Form balasan komentar inline */}
+      {/* Form balasan komentar jika tombol balas diklik */}
       {isReplying && (
-        <form onSubmit={handleSendReply} className="mt-3 pl-9 flex flex-col gap-2">
+        <form
+          onSubmit={handleSendReply}
+          className="mt-3 pl-9 flex flex-col gap-2"
+        >
           <textarea
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
-            placeholder={`Balas ${author.displayName}...`}
+            placeholder={`Balas komentar ${author.displayName}...`}
             rows={2}
-            className="w-full text-xs sm:text-sm p-3 rounded-lg border border-[var(--dust)] focus:border-[var(--primary-text)] focus:outline-none bg-transparent resize-none"
+            className="w-full p-2.5 rounded-lg border border-[var(--dust)] text-xs font-sans text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] resize-none bg-[var(--background)]"
           />
           <div className="flex items-center justify-end gap-2">
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => setIsReplying(false)}
-              className="text-xs h-7 px-2.5 cursor-pointer"
+              onClick={() => {
+                setIsReplying(false);
+                setReplyText("");
+              }}
+              className="text-xs h-7 px-2.5 cursor-pointer text-[var(--muted)]"
             >
               Batal
             </Button>
             <Button
               type="submit"
               size="sm"
-              disabled={!replyText.trim() || isSubmitting}
-              className="text-xs h-7 px-3 bg-[var(--primary-text)] hover:bg-[var(--primary-hover)] text-white cursor-pointer"
+              disabled={!replyText.trim()}
+              className="text-xs h-7 px-3 bg-[var(--primary-text)] hover:opacity-90 text-white cursor-pointer"
             >
               Kirim Balasan
             </Button>
@@ -138,14 +176,16 @@ function CommentItem({
         </form>
       )}
 
-      {/* Daftar balasan berulang (nested replies) */}
+      {/* Daftar balasan (nested replies) */}
       {replies.length > 0 && (
-        <div className="mt-3 pl-9 space-y-3 border-l-2 border-[var(--dust)]/40 ml-3.5">
+        <div className="mt-3 pl-6 border-l-2 border-[var(--dust)]/50 flex flex-col gap-3">
           {replies.map((reply) => {
             const rAuthor = reply.author;
-            const rInitial = (rAuthor.displayName || "U").charAt(0).toUpperCase();
+            const rInitial = (rAuthor.displayName || "U")
+              .charAt(0)
+              .toUpperCase();
             return (
-              <div key={reply.id} className="pt-2 pl-4 flex flex-col">
+              <div key={reply.id} className="flex flex-col py-1">
                 <div className="flex items-center gap-2">
                   {rAuthor.avatarUrl ? (
                     <img
@@ -156,7 +196,9 @@ function CommentItem({
                   ) : (
                     <div
                       aria-hidden="true"
-                      style={{ backgroundColor: rAuthor.avatarColor || "var(--primary)" }}
+                      style={{
+                        backgroundColor: rAuthor.avatarColor || "var(--primary)",
+                      }}
                       className="w-6 h-6 rounded-[3px] text-white text-[10px] font-bold flex items-center justify-center shrink-0 select-none"
                     >
                       {rInitial}
@@ -181,55 +223,69 @@ function CommentItem({
   );
 }
 
+/**
+ * Komponen Slicing UI Komentar Artikel.
+ * Catatan: Integrasi API komentar tidak dilakukan di sini karena dikerjakan oleh rekan tim.
+ */
 export default function ArticleCommentsSection({
-  articleId,
-  initialComments = [],
+  initialComments,
 }: ArticleCommentsSectionProps) {
+  const [comments, setComments] = useState<ArticleComment[]>(
+    initialComments && initialComments.length > 0
+      ? initialComments
+      : DUMMY_COMMENTS
+  );
   const [commentText, setCommentText] = useState("");
-  const createCommentMutation = useCreateArticleComment();
-  const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentText.trim()) return;
 
-    createCommentMutation.mutate(
-      {
-        articleId,
-        payload: { content: commentText.trim() },
+    // Simulasi penambahan komentar lokal (dummy UI slicing)
+    const newComment: ArticleComment = {
+      id: `local-${Date.now()}`,
+      articleId: "",
+      authorId: "me",
+      parentId: null,
+      content: commentText.trim(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      author: {
+        id: "me",
+        displayName: "Pengguna",
+        avatarUrl: null,
+        avatarColor: "#EA5753",
       },
-      {
-        onSuccess: () => {
-          setCommentText("");
-          toast.success("Komentar berhasil dikirim!");
-        },
-        onError: () => {
-          toast.error("Gagal mengirim komentar.");
-        },
-      }
-    );
+    };
+
+    setComments((prev) => [newComment, ...prev]);
+    setCommentText("");
   };
 
   const handleReplySubmit = (parentId: string, content: string) => {
-    createCommentMutation.mutate(
-      {
-        articleId,
-        payload: { content, parent_id: parentId },
+    // Simulasi penambahan balasan lokal (dummy UI slicing)
+    const newReply: ArticleComment = {
+      id: `local-reply-${Date.now()}`,
+      articleId: "",
+      authorId: "me",
+      parentId,
+      content,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      author: {
+        id: "me",
+        displayName: "Pengguna",
+        avatarUrl: null,
+        avatarColor: "#EA5753",
       },
-      {
-        onSuccess: () => {
-          toast.success("Balasan komentar berhasil dikirim!");
-        },
-        onError: () => {
-          toast.error("Gagal mengirim balasan.");
-        },
-      }
-    );
+    };
+
+    setComments((prev) => [...prev, newReply]);
   };
 
   // Pisahkan root comments (tanpa parent_id) dan replies (berdasarkan parent_id)
-  const rootComments = initialComments.filter((c) => !c.parentId);
-  const repliesMap = initialComments.reduce<Record<string, ArticleComment[]>>(
+  const rootComments = comments.filter((c) => !c.parentId);
+  const repliesMap = comments.reduce<Record<string, ArticleComment[]>>(
     (acc, c) => {
       if (c.parentId) {
         if (!acc[c.parentId]) acc[c.parentId] = [];
@@ -245,7 +301,7 @@ export default function ArticleCommentsSection({
       <div className="flex items-center gap-2 mb-4">
         <MessageSquare className="w-5 h-5 text-[var(--primary-text)]" />
         <h3 className="font-sans text-lg font-bold text-[var(--foreground)]">
-          Komentar & Diskusi ({initialComments.length})
+          Komentar & Diskusi ({comments.length})
         </h3>
       </div>
 
@@ -257,42 +313,38 @@ export default function ArticleCommentsSection({
         <textarea
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
-          placeholder="Tulis tanggapan atau perspektif Anda mengenai artikel ini..."
+          placeholder="Tulis tanggapan atau pertanyaan Anda terkait artikel ini..."
           rows={3}
-          className="w-full text-sm p-2 bg-transparent focus:outline-none resize-none placeholder:text-[var(--muted)]"
+          className="w-full p-3 rounded-lg border border-[var(--dust)] text-xs sm:text-sm font-sans text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] resize-none bg-[var(--background)]"
         />
-        <div className="flex items-center justify-between pt-2 border-t border-[var(--dust)]/40">
-          <p className="text-[11px] text-[var(--muted)]">
-            Berkomentar sebagai civitas akademika Telkom University
-          </p>
+
+        <div className="flex items-center justify-end">
           <Button
             type="submit"
             size="sm"
-            disabled={!commentText.trim() || createCommentMutation.isPending}
-            className="h-8 px-4 gap-1.5 bg-[var(--primary-text)] hover:bg-[var(--primary-hover)] text-white text-xs font-semibold cursor-pointer"
+            disabled={!commentText.trim()}
+            className="gap-1.5 text-xs font-semibold px-4 py-2 bg-[var(--primary-text)] hover:opacity-90 text-white rounded-lg cursor-pointer disabled:opacity-50"
           >
             <Send className="w-3.5 h-3.5" />
-            <span>
-              {createCommentMutation.isPending ? "Mengirim..." : "Kirim Komentar"}
-            </span>
+            <span>Kirim Komentar</span>
           </Button>
         </div>
       </form>
 
-      {/* Daftar Komentar */}
+      {/* Daftar komentar */}
       <div className="mt-6 flex flex-col">
         {rootComments.length === 0 ? (
-          <div className="py-8 text-center text-sm text-[var(--muted)] border border-dashed rounded-xl border-[var(--dust)]">
-            Belum ada tanggapan. Jadilah yang pertama memberikan ulasan!
-          </div>
+          <p className="py-8 text-center text-xs text-[var(--muted)] font-sans">
+            Belum ada komentar pada artikel ini. Jadilah yang pertama memberikan
+            tanggapan!
+          </p>
         ) : (
           rootComments.map((comment) => (
             <CommentItem
               key={comment.id}
               comment={comment}
-              replies={repliesMap[comment.id]}
+              replies={repliesMap[comment.id] || []}
               onReplySubmit={handleReplySubmit}
-              isSubmitting={createCommentMutation.isPending}
             />
           ))
         )}
@@ -300,4 +352,3 @@ export default function ArticleCommentsSection({
     </section>
   );
 }
-
