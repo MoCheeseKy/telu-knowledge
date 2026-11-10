@@ -2,8 +2,16 @@ import { toApiError } from "./errors";
 import { parseApiResponse } from "./parse-response";
 import type { ApiEnvelope } from "./types";
 
+export type DataSource = "backend" | "mock";
+
 export interface ApiFetchOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
+  /**
+   * Target sumber data:
+   * - "backend" (default): diteruskan ke server backend NestJS asli.
+   * - "mock": dialihkan ke mock server (json-server).
+   */
+  source?: DataSource;
 }
 
 /**
@@ -24,6 +32,11 @@ export async function apiFetch<T>(
 
   const requestHeaders = new Headers(init.headers);
   requestHeaders.set("Accept", "application/json");
+
+  // Jika opsi source disetel ke 'mock', sertakan header penanda untuk Next.js proxy
+  if (init.source === "mock") {
+    requestHeaders.set("x-data-source", "mock");
+  }
 
   let requestBody: BodyInit | undefined;
   if (init.body !== undefined) {
