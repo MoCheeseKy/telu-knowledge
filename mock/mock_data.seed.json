@@ -1372,7 +1372,7 @@
     {
       "article_id": "20000000-0000-4000-8000-000000000013",
       "likes_count": 660,
-      "comments_count": 87,
+      "comments_count": 89,
       "reposts_count": 44,
       "bookmarks_count": 120
     },
@@ -1802,6 +1802,24 @@
       "content": "Bagi yang ingin mencoba fine-tuning dataset sendiri, bisa cek notebook referensi di repo kampus.",
       "created_at": "2024-10-05T09:30:00Z",
       "updated_at": "2024-10-05T09:30:00Z"
+    },
+    {
+      "id": "25b7ee43-dfe6-490f-a22e-59a9c13a3383",
+      "article_id": "20000000-0000-4000-8000-000000000013",
+      "author_id": "10000000-0000-4000-8000-000000000001",
+      "parent_id": null,
+      "content": "Testing",
+      "created_at": "2026-11-10T15:28:18.722Z",
+      "updated_at": "2026-11-10T15:28:18.722Z"
+    },
+    {
+      "id": "1735b9d0-8d5c-493a-9223-490e7169da8d",
+      "article_id": "20000000-0000-4000-8000-000000000013",
+      "author_id": "10000000-0000-4000-8000-000000000001",
+      "parent_id": "25b7ee43-dfe6-490f-a22e-59a9c13a3383",
+      "content": "Halo",
+      "created_at": "2026-11-10T15:28:46.782Z",
+      "updated_at": "2026-11-10T15:28:46.782Z"
     }
   ],
   "collections": [
