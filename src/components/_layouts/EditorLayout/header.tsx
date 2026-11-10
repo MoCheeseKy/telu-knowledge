@@ -47,7 +47,7 @@ const SAVE_STATUS_CONFIG: Record<
 export default function EditorHeader({ authorName }: EditorHeaderProps) {
     const router = useRouter();
     const { data: user } = useMe();
-    const { saveStatus, articleStatus, saveDraft, publish, retrySave } =
+    const { saveStatus, articleStatus, saveDraft, publish, unpublish, retrySave } =
         useEditorStudio();
 
     const isPublished = articleStatus === "published";
@@ -56,12 +56,7 @@ export default function EditorHeader({ authorName }: EditorHeaderProps) {
         authorName || (user?.email ? user.email.split("@")[0] : "Penulis");
 
     const statusInfo = SAVE_STATUS_CONFIG[saveStatus];
-    const statusLabel =
-        saveStatus === "idle"
-            ? isPublished
-                ? "Terbit"
-                : "Draf"
-            : statusInfo.label;
+    const statusLabel = statusInfo.label;
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -92,39 +87,41 @@ export default function EditorHeader({ authorName }: EditorHeaderProps) {
                                 {resolvedAuthorName}
                             </span>
 
-                            <span
-                                aria-live="polite"
-                                className={cn(
-                                    "inline-flex items-center gap-1.5 text-xs font-medium transition-colors",
-                                    statusInfo.className
-                                )}
-                            >
-                                {saveStatus === "saving" && (
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                )}
-                                {saveStatus === "saved" && (
-                                    <CheckCircle2 className="w-3.5 h-3.5" />
-                                )}
-                                {saveStatus === "error" && (
-                                    <AlertCircle className="w-3.5 h-3.5" />
-                                )}
-                                <span>{statusLabel}</span>
-                                {saveStatus === "error" && (
-                                    <button
-                                        type="button"
-                                        onClick={retrySave}
-                                        className="inline-flex items-center gap-1 underline underline-offset-2 text-[var(--primary-text)] hover:opacity-80 cursor-pointer ml-1"
-                                    >
-                                        <RotateCcw className="w-3 h-3" />
-                                        <span>Coba lagi</span>
-                                    </button>
-                                )}
-                            </span>
+                            {!isPublished && (
+                                <span
+                                    aria-live="polite"
+                                    className={cn(
+                                        "inline-flex items-center gap-1.5 text-xs font-medium transition-colors",
+                                        statusInfo.className
+                                    )}
+                                >
+                                    {saveStatus === "saving" && (
+                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                    )}
+                                    {saveStatus === "saved" && (
+                                        <CheckCircle2 className="w-3.5 h-3.5" />
+                                    )}
+                                    {saveStatus === "error" && (
+                                        <AlertCircle className="w-3.5 h-3.5" />
+                                    )}
+                                    <span>{statusLabel}</span>
+                                    {saveStatus === "error" && (
+                                        <button
+                                            type="button"
+                                            onClick={retrySave}
+                                            className="inline-flex items-center gap-1 underline underline-offset-2 text-[var(--primary-text)] hover:opacity-80 cursor-pointer ml-1"
+                                        >
+                                            <RotateCcw className="w-3 h-3" />
+                                            <span>Coba lagi</span>
+                                        </button>
+                                    )}
+                                </span>
+                            )}
                         </div>
                     </div>
 
                     <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="flex flex-col items-end">
+                        {isPublished && (
                             <Button
                                 type="button"
                                 variant="primaryOutline"
@@ -134,30 +131,34 @@ export default function EditorHeader({ authorName }: EditorHeaderProps) {
                                 className="h-9 px-3.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg"
                             >
                                 <Bookmark className="w-4 h-4 text-[var(--primary-text)]" />
-                                <span>
-                                    {isPublished
-                                        ? "Simpan perubahan"
-                                        : "Draft Tulisan"}
-                                </span>
+                                <span>Simpan perubahan</span>
                             </Button>
-                            {isPublished && (
-                                <span className="text-[10px] text-[var(--muted)] mt-0.5 leading-none select-none">
-                                    Perubahan langsung tayang
-                                </span>
-                            )}
-                        </div>
+                        )}
 
-                        <Button
-                            type="button"
-                            variant="default"
-                            size="sm"
-                            onClick={publish}
-                            disabled={saveStatus === "saving"}
-                            className="h-9 px-3.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg shadow-xs"
-                        >
-                            <ExternalLink className="w-4 h-4 text-[var(--primary-foreground)]" />
-                            <span>Publikasi</span>
-                        </Button>
+                        {isPublished ? (
+                            <Button
+                                type="button"
+                                variant="default"
+                                size="sm"
+                                onClick={unpublish}
+                                disabled={saveStatus === "saving"}
+                                className="h-9 px-3.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg shadow-xs"
+                            >
+                                <span>Batal Publikasi</span>
+                            </Button>
+                        ) : (
+                            <Button
+                                type="button"
+                                variant="default"
+                                size="sm"
+                                onClick={publish}
+                                disabled={saveStatus === "saving"}
+                                className="h-9 px-3.5 sm:px-4 text-xs sm:text-sm font-medium gap-1.5 sm:gap-2 rounded-lg shadow-xs"
+                            >
+                                <ExternalLink className="w-4 h-4 text-[var(--primary-foreground)]" />
+                                <span>Publikasi</span>
+                            </Button>
+                        )}
 
                         <Link
                             href="/profile"

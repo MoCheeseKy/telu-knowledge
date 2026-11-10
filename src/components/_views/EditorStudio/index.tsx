@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import {
   useArticle,
   usePublishArticle,
+  useUnpublishArticle,
 } from "@/services/articles/articles.queries";
 import type { Article } from "@/services/articles/articles.types";
 import TitleField from "./components/TitleField";
@@ -130,6 +131,12 @@ function EditorStudioCanvas({
   const router = useRouter();
   const { registerActions, setSaveStatus, setArticleStatus } = useEditorStudio();
   const publishMutation = usePublishArticle();
+  const unpublishMutation = useUnpublishArticle();
+
+  const [currentStatus, setCurrentStatus] = useState<"draft" | "published">(
+    () => (initialArticle?.status === "published" ? "published" : "draft")
+  );
+  const isPublished = currentStatus === "published";
 
   const [title, setTitle] = useState<string>(() => initialArticle?.title ?? "");
   const [subtitle, setSubtitle] = useState<string>(
@@ -176,9 +183,10 @@ function EditorStudioCanvas({
 
   useEffect(() => {
     setSaveStatus(initialArticle ? "saved" : "idle");
-    setArticleStatus(
-      initialArticle?.status === "published" ? "published" : "draft"
-    );
+    const status =
+      initialArticle?.status === "published" ? "published" : "draft";
+    setCurrentStatus(status);
+    setArticleStatus(status);
     return () => {
       if (toastTimerRef.current) {
         clearTimeout(toastTimerRef.current);
@@ -206,7 +214,7 @@ function EditorStudioCanvas({
   } = useDraftAutosave({
     initialArticleId: initialArticle?.id ?? null,
     draft: currentSnapshot,
-    enabled: true,
+    enabled: !isPublished,
   });
 
   const handleRestoreBackup = () => {
@@ -249,21 +257,19 @@ function EditorStudioCanvas({
       await flushSave({ forceCreateIfEmpty: true });
       showToast({
         variant: "success",
-        message:
-          initialArticle?.status === "published"
-            ? "Perubahan berhasil disimpan."
-            : "Draft tulisan berhasil disimpan.",
+        message: isPublished
+          ? "Perubahan berhasil disimpan."
+          : "Draft tulisan berhasil disimpan.",
       });
     } catch {
       showToast({
         variant: "error",
-        message:
-          initialArticle?.status === "published"
-            ? "Gagal menyimpan perubahan."
-            : "Gagal menyimpan draft tulisan.",
+        message: isPublished
+          ? "Gagal menyimpan perubahan."
+          : "Gagal menyimpan draft tulisan.",
       });
     }
-  }, [flushSave, initialArticle, showToast]);
+  }, [flushSave, isPublished, showToast]);
 
   const handlePublish = useCallback(async () => {
     setPublishErrors([]);
@@ -280,6 +286,7 @@ function EditorStudioCanvas({
       await publishMutation.mutateAsync(targetId);
 
       clearLocalBackup(targetId);
+      setCurrentStatus("published");
       setArticleStatus("published");
       setSaveStatus("saved");
       showToast({
@@ -316,13 +323,64 @@ function EditorStudioCanvas({
     showToast,
   ]);
 
+  const handleUnpublish = useCallback(async () => {
+    setPublishErrors([]);
+    const targetId = activeArticleId ?? initialArticle?.id;
+    if (!targetId) return;
+
+    try {
+      setSaveStatus("saving");
+      await unpublishMutation.mutateAsync(targetId);
+
+      setCurrentStatus("draft");
+      setArticleStatus("draft");
+      setSaveStatus("saved");
+      showToast({
+        variant: "success",
+        message: "Publikasi artikel berhasil dibatalkan.",
+      });
+    } catch (err) {
+      setSaveStatus("error");
+      if (isApiError(err)) {
+        if (err.statusCode === 401) {
+          setIsSessionExpired(true);
+          setSaveError(
+            "Sesi berakhir, login ulang di tab baru lalu coba lagi"
+          );
+          return;
+        }
+        setPublishErrors(err.messages);
+      } else {
+        setPublishErrors([
+          "Gagal membatalkan publikasi artikel. Silakan coba beberapa saat lagi.",
+        ]);
+      }
+    }
+  }, [
+    activeArticleId,
+    initialArticle?.id,
+    setArticleStatus,
+    setIsSessionExpired,
+    setSaveError,
+    setSaveStatus,
+    showToast,
+    unpublishMutation,
+  ]);
+
   useEffect(() => {
     return registerActions({
       saveDraft: handleSaveDraft,
       publish: handlePublish,
+      unpublish: handleUnpublish,
       retrySave: handleRetrySave,
     });
-  }, [handlePublish, handleRetrySave, handleSaveDraft, registerActions]);
+  }, [
+    handlePublish,
+    handleRetrySave,
+    handleSaveDraft,
+    handleUnpublish,
+    registerActions,
+  ]);
 
   const handleTitleEnter = () => {
     subtitleRef.current?.focus();
@@ -368,14 +426,6 @@ function EditorStudioCanvas({
       )}
 
       <div className="w-full pl-12 sm:pl-16 flex flex-col gap-5 sm:gap-6">
-        {/* Keterangan Artikel Terbit */}
-        {initialArticle?.status === "published" && (
-          <div className="flex items-center gap-2 text-xs text-[var(--muted)] -mb-1 select-none">
-            <span className="w-2 h-2 rounded-full bg-[var(--success)] shrink-0" />
-            <span>Artikel ini telah terbit. Setiap perubahan langsung tayang.</span>
-          </div>
-        )}
-
         {/* Banner 401: Sesi Berakhir */}
         {isSessionExpired && (
           <div
