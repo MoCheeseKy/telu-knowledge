@@ -63,3 +63,120 @@ export interface UpdateArticleVariables {
 export type ListMyArticlesParams = NonNullable<
   operations["ArticlesController_getMyArticles"]["parameters"]["query"]
 >;
+
+export interface ArticleFeedAuthor {
+  id: string;
+  displayName: string;
+  avatarUrl: string | null;
+  username?: string | null;
+  avatarColor?: string;
+}
+
+export interface ArticleFeedStats {
+  likesCount: number;
+  commentsCount: number;
+  repostsCount: number;
+  bookmarksCount: number;
+}
+
+export interface ArticleFeedItem {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  coverImageUrl: string | null;
+  excerpt: string;
+  readingTimeMinutes: number;
+  status: "draft" | "published";
+  slug: string | null;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  topic: string;
+  topicSlug?: string | null;
+  author: ArticleFeedAuthor;
+  stats: ArticleFeedStats;
+  isLiked: boolean;
+  isBookmarked: boolean;
+}
+
+export interface ListArticleFeedParams {
+  topic?: string;
+  limit?: number;
+  source?: "backend" | "mock";
+}
+
+export interface ArticleCommentAuthor {
+  id: string;
+  displayName: string;
+  avatarUrl: string | null;
+  avatarColor?: string;
+  username?: string | null;
+  faculty?: string | null;
+  major?: string | null;
+}
+
+export interface ArticleComment {
+  id: string;
+  articleId: string;
+  authorId: string;
+  parentId: string | null;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+  author: ArticleCommentAuthor;
+}
+
+export interface ArticleDetailAuthor {
+  id: string;
+  displayName: string;
+  avatarUrl: string | null;
+  username?: string | null;
+  avatarColor?: string;
+  bio?: string;
+  faculty?: string | null;
+  major?: string | null;
+  generation?: string | null;
+  website?: string | null;
+  github?: string | null;
+  linkedin?: string | null;
+  isFollowing: boolean;
+}
+
+export interface ArticleDetailData {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  coverImageUrl: string | null;
+  content: TiptapDoc | Record<string, unknown>;
+  excerpt: string;
+  readingTimeMinutes: number;
+  status: "draft" | "published";
+  slug: string | null;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  topic: string;
+  topicSlug?: string | null;
+  author: ArticleDetailAuthor;
+  stats: ArticleFeedStats;
+  isLiked: boolean;
+  isBookmarked: boolean;
+  comments: ArticleComment[];
+}
+
+export interface ToggleLikeResult {
+  isLiked: boolean;
+  likesCount: number;
+}
+
+export interface ToggleBookmarkResult {
+  isBookmarked: boolean;
+  bookmarksCount: number;
+}
+
+export interface CreateCommentPayload {
+  content: string;
+  parent_id?: string | null;
+}
+
+

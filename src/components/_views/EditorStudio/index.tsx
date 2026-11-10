@@ -24,9 +24,9 @@ import {
   useUnpublishArticle,
 } from "@/services/articles/articles.queries";
 import type { Article } from "@/services/articles/articles.types";
-import TitleField from "./components/TitleField";
-import SubtitleField from "./components/SubtitleField";
-import CoverImageField from "./components/CoverImageField";
+import TitleField from "./TitleField";
+import SubtitleField from "./SubtitleField";
+import CoverImageField from "./CoverImageField";
 import RichTextEditor, {
   DEFAULT_INITIAL_CONTENT,
   type RichTextEditorHandle,
@@ -39,7 +39,7 @@ import {
   useDraftAutosave,
   type EditorDraftSnapshot,
   type EditorLocalBackup,
-} from "./hooks/useDraftAutosave";
+} from "../../../hooks/useDraftAutosave";
 
 export interface EditorStudioViewProps {
   articleId?: string;
@@ -185,6 +185,7 @@ function EditorStudioCanvas({
     setSaveStatus(initialArticle ? "saved" : "idle");
     const status =
       initialArticle?.status === "published" ? "published" : "draft";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentStatus(status);
     setArticleStatus(status);
     return () => {

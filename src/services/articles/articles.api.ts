@@ -3,9 +3,16 @@ import type { ApiEnvelope } from "@/lib/api/types";
 import { aiAssist } from "@/services/ai/ai.api";
 import type {
   Article,
+  ArticleComment,
+  ArticleDetailData,
+  ArticleFeedItem,
   CreateArticlePayload,
+  CreateCommentPayload,
+  ListArticleFeedParams,
   ListMyArticlesParams,
   MyArticlesListData,
+  ToggleBookmarkResult,
+  ToggleLikeResult,
   UpdateArticlePayload,
   UploadedArticleImageData,
 } from "./articles.types";
@@ -119,11 +126,118 @@ export { aiAssist };
 export const articlesApi = {
   createArticle,
   getArticle,
+  getArticleDetail,
   updateArticle,
   publishArticle,
   unpublishArticle,
   listMyArticles,
+  getArticleFeed,
+  toggleArticleLike,
+  toggleArticleBookmark,
+  createArticleComment,
+  toggleProfileFollow,
   uploadArticleImage,
   aiAssist,
 };
+
+/**
+ * Mengambil detail artikel publik lengkap (GET /proxy/articles/:id).
+ */
+export async function getArticleDetail(
+  id: string,
+  options?: { source?: "backend" | "mock" }
+): Promise<ApiEnvelope<ArticleDetailData>> {
+  return apiFetch<ArticleDetailData>(`/proxy/articles/${encodeURIComponent(id)}`, {
+    method: "GET",
+    source: options?.source ?? "mock",
+  });
+}
+
+/**
+ * Toggle suka artikel (POST /proxy/articles/:id/like).
+ */
+export async function toggleArticleLike(
+  id: string
+): Promise<ApiEnvelope<ToggleLikeResult>> {
+  return apiFetch<ToggleLikeResult>(
+    `/proxy/articles/${encodeURIComponent(id)}/like`,
+    {
+      method: "POST",
+      source: "mock",
+    }
+  );
+}
+
+/**
+ * Toggle bookmark artikel (POST /proxy/articles/:id/bookmark).
+ */
+export async function toggleArticleBookmark(
+  id: string
+): Promise<ApiEnvelope<ToggleBookmarkResult>> {
+  return apiFetch<ToggleBookmarkResult>(
+    `/proxy/articles/${encodeURIComponent(id)}/bookmark`,
+    {
+      method: "POST",
+      source: "mock",
+    }
+  );
+}
+
+/**
+ * Kirim komentar baru pada artikel (POST /proxy/articles/:id/comments).
+ */
+export async function createArticleComment(
+  id: string,
+  payload: CreateCommentPayload
+): Promise<ApiEnvelope<ArticleComment>> {
+  return apiFetch<ArticleComment>(
+    `/proxy/articles/${encodeURIComponent(id)}/comments`,
+    {
+      method: "POST",
+      body: payload,
+      source: "mock",
+    }
+  );
+}
+
+/**
+ * Toggle follow profil penulis (POST /proxy/profiles/:id/follow).
+ */
+export async function toggleProfileFollow(
+  profileId: string
+): Promise<ApiEnvelope<{ isFollowing: boolean }>> {
+  return apiFetch<{ isFollowing: boolean }>(
+    `/proxy/profiles/${encodeURIComponent(profileId)}/follow`,
+    {
+      method: "POST",
+      source: "mock",
+    }
+  );
+}
+
+/**
+ * Mengambil daftar feed artikel publik untuk halaman Home dan Discover (GET /proxy/articles/feed).
+ * Default source menggunakan 'mock' jika backend belum menyediakan feed publik.
+ */
+export async function getArticleFeed(
+  params?: ListArticleFeedParams
+): Promise<ApiEnvelope<ArticleFeedItem[]>> {
+  const searchParams = new URLSearchParams();
+  if (params?.topic) {
+    searchParams.set("topic", params.topic);
+  }
+  if (typeof params?.limit === "number") {
+    searchParams.set("limit", String(params.limit));
+  }
+
+  const queryString = searchParams.toString();
+  const path = queryString
+    ? `/proxy/articles/feed?${queryString}`
+    : "/proxy/articles/feed";
+
+  return apiFetch<ArticleFeedItem[]>(path, {
+    method: "GET",
+    source: params?.source ?? "mock",
+  });
+}
 

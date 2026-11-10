@@ -3,7 +3,11 @@ import { useAiAssist } from "@/services/ai/ai.queries";
 import { articlesApi } from "./articles.api";
 import type {
   Article,
+  ArticleDetailData,
+  ArticleFeedItem,
   CreateArticlePayload,
+  CreateCommentPayload,
+  ListArticleFeedParams,
   ListMyArticlesParams,
   MyArticlesListData,
   UpdateArticleVariables,
@@ -14,6 +18,9 @@ export const articleKeys = {
   lists: () => [...articleKeys.all, "list"] as const,
   list: (params?: ListMyArticlesParams) =>
     [...articleKeys.lists(), params ?? {}] as const,
+  feeds: () => [...articleKeys.all, "feed"] as const,
+  feed: (params?: ListArticleFeedParams) =>
+    [...articleKeys.feeds(), params ?? {}] as const,
   details: () => [...articleKeys.all, "detail"] as const,
   detail: (id: string) => [...articleKeys.details(), id] as const,
 };
@@ -36,6 +43,96 @@ export function useArticle(id?: string | null) {
     enabled: Boolean(id),
     staleTime: Infinity,
     refetchOnWindowFocus: false,
+  });
+}
+
+/**
+ * Hook query detail artikel publik lengkap (GET /proxy/articles/:id).
+ */
+export function useArticleDetail(id?: string | null) {
+  return useQuery<ArticleDetailData>({
+    queryKey: ["article-detail", id ?? ""],
+    queryFn: async (): Promise<ArticleDetailData> => {
+      if (!id) throw new Error("ID artikel wajib diisi");
+      const res = await articlesApi.getArticleDetail(id);
+      return res.data;
+    },
+    enabled: Boolean(id),
+  });
+}
+
+/**
+ * Hook mutasi toggle like artikel.
+ */
+export function useToggleArticleLike() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (articleId: string) => articlesApi.toggleArticleLike(articleId),
+    onSuccess: (_data, articleId) => {
+      queryClient.invalidateQueries({ queryKey: ["article-detail", articleId] });
+      queryClient.invalidateQueries({ queryKey: articleKeys.feeds() });
+    },
+  });
+}
+
+/**
+ * Hook mutasi toggle bookmark artikel.
+ */
+export function useToggleArticleBookmark() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (articleId: string) => articlesApi.toggleArticleBookmark(articleId),
+    onSuccess: (_data, articleId) => {
+      queryClient.invalidateQueries({ queryKey: ["article-detail", articleId] });
+      queryClient.invalidateQueries({ queryKey: articleKeys.feeds() });
+    },
+  });
+}
+
+/**
+ * Hook mutasi kirim komentar baru pada artikel.
+ */
+export function useCreateArticleComment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      articleId,
+      payload,
+    }: {
+      articleId: string;
+      payload: CreateCommentPayload;
+    }) => articlesApi.createArticleComment(articleId, payload),
+    onSuccess: (_data, { articleId }) => {
+      queryClient.invalidateQueries({ queryKey: ["article-detail", articleId] });
+      queryClient.invalidateQueries({ queryKey: articleKeys.feeds() });
+    },
+  });
+}
+
+/**
+ * Hook mutasi toggle follow profile penulis.
+ */
+export function useToggleProfileFollow() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (profileId: string) => articlesApi.toggleProfileFollow(profileId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["article-detail"] });
+      queryClient.invalidateQueries({ queryKey: ["recommendations", "writers"] });
+    },
+  });
+}
+
+/**
+ * Hook query feed artikel publik untuk halaman Home dan Discover (GET /proxy/articles/feed).
+ */
+export function useArticleFeed(params?: ListArticleFeedParams) {
+  return useQuery<ArticleFeedItem[]>({
+    queryKey: articleKeys.feed(params),
+    queryFn: async (): Promise<ArticleFeedItem[]> => {
+      const res = await articlesApi.getArticleFeed(params);
+      return res.data;
+    },
   });
 }
 

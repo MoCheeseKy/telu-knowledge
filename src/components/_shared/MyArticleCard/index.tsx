@@ -54,7 +54,6 @@ export default function MyArticleCard({
                     className
                 )}
             >
-                {/* 1. BAGIAN KIRI: Cover Image, Judul, dan Deskripsi */}
                 <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
                     {imageUrl ? (
                         <img
@@ -76,7 +75,6 @@ export default function MyArticleCard({
                     </div>
                 </div>
 
-                {/* 2. BAGIAN KANAN: Aksi (Hapus, Edit, dan Publikasi untuk Draft) */}
                 <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     <button
                         type="button"
