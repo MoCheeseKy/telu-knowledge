@@ -12,6 +12,12 @@ export interface ServerFetchOptions {
   token?: string;
   headers?: HeadersInit;
   clientIp?: string;
+  /**
+   * Target sumber data:
+   * - "backend" (default): diarahkan ke API_BASE_URL backend NestJS.
+   * - "mock": diarahkan ke MOCK_API_BASE_URL (json-server).
+   */
+  source?: "backend" | "mock";
 }
 
 let hasWarnedMissingTrustedIp = false;
@@ -87,7 +93,12 @@ export async function serverFetch<T>(
     ? path
     : `/${path}`;
 
-  const url = `${serverEnv.API_BASE_URL}/api${normalizedPath}`;
+  const baseUrl =
+    options.source === "mock"
+      ? serverEnv.MOCK_API_BASE_URL
+      : serverEnv.API_BASE_URL;
+
+  const url = `${baseUrl}/api${normalizedPath}`;
 
   const requestHeaders = new Headers(options.headers);
   requestHeaders.set("Accept", "application/json");
