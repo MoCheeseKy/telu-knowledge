@@ -16,6 +16,7 @@ import {
 import { useEditorStudio } from "@/components/_layouts/EditorLayout";
 import FormAlert from "@/components/_shared/FormAlert";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { isApiError } from "@/lib/api/errors";
 import { cn } from "@/lib/utils";
 import {
@@ -156,21 +157,21 @@ function EditorStudioCanvas({
     null
   );
   const [publishErrors, setPublishErrors] = useState<string[]>([]);
-  const [toast, setToast] = useState<ToastState | null>(null);
+  const { toast: globalToast } = useToast();
 
   const subtitleRef = useRef<HTMLTextAreaElement | null>(null);
   const editorRef = useRef<RichTextEditorHandle | null>(null);
-  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const showToast = useCallback((nextToast: ToastState) => {
-    if (toastTimerRef.current) {
-      clearTimeout(toastTimerRef.current);
-    }
-    setToast(nextToast);
-    toastTimerRef.current = setTimeout(() => {
-      setToast(null);
-    }, 3500);
-  }, []);
+  const showToast = useCallback(
+    (nextToast: ToastState) => {
+      if (nextToast.variant === "success") {
+        globalToast.success(nextToast.message);
+      } else {
+        globalToast.error(nextToast.message);
+      }
+    },
+    [globalToast]
+  );
 
   // Periksa cadangan lokal dari localStorage di client setelah komponen mount
   useEffect(() => {
@@ -188,11 +189,6 @@ function EditorStudioCanvas({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentStatus(status);
     setArticleStatus(status);
-    return () => {
-      if (toastTimerRef.current) {
-        clearTimeout(toastTimerRef.current);
-      }
-    };
   }, [initialArticle, setArticleStatus, setSaveStatus]);
 
   const currentSnapshot = useMemo<EditorDraftSnapshot>(
@@ -397,35 +393,6 @@ function EditorStudioCanvas({
 
   return (
     <div className="w-full max-w-[920px] mx-auto py-4 sm:py-6">
-      {/* Toast Notifikasi */}
-      {toast && (
-        <div
-          role="status"
-          aria-live="polite"
-          className={cn(
-            "fixed bottom-6 right-6 z-50 max-w-sm rounded-xl border px-4 py-3 shadow-lg flex items-center gap-2.5 text-xs sm:text-sm font-medium transition-all",
-            toast.variant === "success"
-              ? "border-[var(--success)] bg-[var(--success-soft)] text-[var(--success-text)]"
-              : "border-[var(--failed)] bg-[var(--failed-soft)] text-[var(--failed-text)]"
-          )}
-        >
-          {toast.variant === "success" ? (
-            <CheckCircle2 className="w-4 h-4 shrink-0" />
-          ) : (
-            <AlertTriangle className="w-4 h-4 shrink-0" />
-          )}
-          <span className="flex-1">{toast.message}</span>
-          <button
-            type="button"
-            onClick={() => setToast(null)}
-            aria-label="Tutup notifikasi"
-            className="p-0.5 rounded-md hover:bg-[var(--background)]/50 cursor-pointer"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      )}
-
       <div className="w-full pl-0 sm:pl-12 md:pl-16 flex flex-col gap-5 sm:gap-6">
         {/* Banner 401: Sesi Berakhir */}
         {isSessionExpired && (

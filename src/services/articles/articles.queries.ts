@@ -241,6 +241,21 @@ export function useUnpublishArticle() {
 }
 
 /**
+ * Hook mutasi penghapusan artikel milik sendiri (DELETE /proxy/articles/:id).
+ */
+export function useDeleteArticle() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => articlesApi.deleteArticle(id),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: articleKeys.lists() });
+      void queryClient.invalidateQueries({ queryKey: articleKeys.feeds() });
+    },
+  });
+}
+
+/**
  * Hook mutasi unggah gambar artikel (POST /proxy/uploads/article-image).
  * Menggunakan meta.skipAuthRedirect agar 401 saat unggah tidak memicu hard redirect.
  */
