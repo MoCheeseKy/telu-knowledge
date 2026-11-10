@@ -1,0 +1,2941 @@
+{
+    "profiles": [
+        {
+            "id": "10000000-0000-4000-8000-000000000001",
+            "display_name": "Satria Mahardika",
+            "avatar_url": null,
+            "created_at": "2024-08-15T08:00:00Z",
+            "username": "satriam",
+            "bio": "Mahasiswa Rekayasa Perangkat Lunak Telkom University. Minat pada Clean Architecture, UI Engineering, dan Game Development.",
+            "faculty": "Fakultas Informatika",
+            "major": "S1 Rekayasa Perangkat Lunak",
+            "generation": "2022",
+            "banner_url": "/images/persona-c4.jpg",
+            "avatar_color": "#0A3AB5",
+            "website": "https://satria.dev",
+            "github": "https://github.com/satriam",
+            "linkedin": "https://linkedin.com/in/satriam",
+            "show_email": true,
+            "show_communities": true,
+            "followers_count": 4,
+            "following_count": 3
+        },
+        {
+            "id": "10000000-0000-4000-8000-000000000002",
+            "display_name": "Farhan Danendra",
+            "avatar_url": null,
+            "created_at": "2024-08-20T09:30:00Z",
+            "username": "farhandanendra",
+            "bio": "Game dev enthusiast & Pixel artist. Suka riset gameplay mechanics dan procedural generation.",
+            "faculty": "Fakultas Informatika",
+            "major": "S1 Informatika",
+            "generation": "2021",
+            "banner_url": "/images/persona-c4.jpg",
+            "avatar_color": "#EA5753",
+            "website": "https://farhan.games",
+            "github": "https://github.com/farhandanendra",
+            "linkedin": "https://linkedin.com/in/farhandanendra",
+            "show_email": true,
+            "show_communities": true,
+            "followers_count": 12,
+            "following_count": 5
+        },
+        {
+            "id": "10000000-0000-4000-8000-000000000003",
+            "display_name": "Nadia Larasati",
+            "avatar_url": null,
+            "created_at": "2024-09-01T10:15:00Z",
+            "username": "nadialaras",
+            "bio": "UI/UX researcher & Design system builder. Mengembangkan desain inklusif untuk aplikasi kampus.",
+            "faculty": "Fakultas Industri Kreatif",
+            "major": "S1 Desain Komunikasi Visual",
+            "generation": "2022",
+            "banner_url": "/images/repost-cover.png",
+            "avatar_color": "#7C3AED",
+            "website": "https://nadialaras.design",
+            "github": null,
+            "linkedin": "https://linkedin.com/in/nadialaras",
+            "show_email": true,
+            "show_communities": true,
+            "followers_count": 28,
+            "following_count": 8
+        },
+        {
+            "id": "10000000-0000-4000-8000-000000000004",
+            "display_name": "Bagas Wicaksana",
+            "avatar_url": null,
+            "created_at": "2024-09-05T11:00:00Z",
+            "username": "bagaswicak",
+            "bio": "Penikmat kopi dan penjelajah kuliner Bojongsoang - Buah Batu. Kontributor panduan makan mahasiswa.",
+            "faculty": "Fakultas Komunikasi dan Bisnis",
+            "major": "S1 Ilmu Komunikasi",
+            "generation": "2023",
+            "banner_url": "/images/repost-cover.png",
+            "avatar_color": "#D97706",
+            "website": null,
+            "github": null,
+            "linkedin": "https://linkedin.com/in/bagaswicak",
+            "show_email": false,
+            "show_communities": true,
+            "followers_count": 15,
+            "following_count": 10
+        },
+        {
+            "id": "10000000-0000-4000-8000-000000000005",
+            "display_name": "Aditya Pratama",
+            "avatar_url": null,
+            "created_at": "2024-09-10T14:20:00Z",
+            "username": "adityapratama",
+            "bio": "Cybersecurity researcher & CTF player. Membahas secure coding dan cloud infrastructure.",
+            "faculty": "Fakultas Informatika",
+            "major": "S1 Teknologi Informasi",
+            "generation": "2021",
+            "banner_url": "/images/persona-c4.jpg",
+            "avatar_color": "#059669",
+            "website": "https://aditya.sec",
+            "github": "https://github.com/adityapratama",
+            "linkedin": "https://linkedin.com/in/adityapratama",
+            "show_email": true,
+            "show_communities": false,
+            "followers_count": 34,
+            "following_count": 14
+        },
+        {
+            "id": "10000000-0000-4000-8000-000000000006",
+            "display_name": "Rania Savitri",
+            "avatar_url": null,
+            "created_at": "2024-09-15T16:45:00Z",
+            "username": "raniasavitri",
+            "bio": "Data Science & NLP student. Eksplorasi LLM untuk analisis literatur ilmiah Indonesia.",
+            "faculty": "Fakultas Informatika",
+            "major": "S1 Sains Data",
+            "generation": "2022",
+            "banner_url": "/images/persona-c4.jpg",
+            "avatar_color": "#E11D48",
+            "website": null,
+            "github": "https://github.com/raniasavitri",
+            "linkedin": "https://linkedin.com/in/raniasavitri",
+            "show_email": true,
+            "show_communities": true,
+            "followers_count": 19,
+            "following_count": 6
+        }
+    ],
+    "follows": [
+        {
+            "id": "11000000-0000-4000-8000-000000000001",
+            "follower_id": "10000000-0000-4000-8000-000000000001",
+            "following_id": "10000000-0000-4000-8000-000000000002",
+            "created_at": "2024-09-20T08:00:00Z"
+        },
+        {
+            "id": "11000000-0000-4000-8000-000000000002",
+            "follower_id": "10000000-0000-4000-8000-000000000001",
+            "following_id": "10000000-0000-4000-8000-000000000003",
+            "created_at": "2024-09-20T08:05:00Z"
+        },
+        {
+            "id": "11000000-0000-4000-8000-000000000003",
+            "follower_id": "10000000-0000-4000-8000-000000000001",
+            "following_id": "10000000-0000-4000-8000-000000000005",
+            "created_at": "2024-09-20T08:10:00Z"
+        },
+        {
+            "id": "11000000-0000-4000-8000-000000000004",
+            "follower_id": "10000000-0000-4000-8000-000000000002",
+            "following_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-21T09:00:00Z"
+        },
+        {
+            "id": "11000000-0000-4000-8000-000000000005",
+            "follower_id": "10000000-0000-4000-8000-000000000003",
+            "following_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-21T09:30:00Z"
+        },
+        {
+            "id": "11000000-0000-4000-8000-000000000006",
+            "follower_id": "10000000-0000-4000-8000-000000000004",
+            "following_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-22T10:00:00Z"
+        },
+        {
+            "id": "11000000-0000-4000-8000-000000000007",
+            "follower_id": "10000000-0000-4000-8000-000000000006",
+            "following_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-22T11:00:00Z"
+        },
+        {
+            "id": "11000000-0000-4000-8000-000000000008",
+            "follower_id": "10000000-0000-4000-8000-000000000002",
+            "following_id": "10000000-0000-4000-8000-000000000005",
+            "created_at": "2024-09-23T14:00:00Z"
+        }
+    ],
+    "articles": [
+        {
+            "id": "20000000-0000-4000-8000-000000000001",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "title": "Apakah C4 Model Menggantikan Diagram UML Konvensional?",
+            "subtitle": "Tinjauan praktis memetakan arsitektur software bertingkat untuk presentasi proyek kampus.",
+            "cover_image_url": "/images/persona-c4.jpg",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Apakah C4 Model Menggantikan Diagram UML Konvensional?"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Tinjauan praktis memetakan arsitektur software bertingkat untuk presentasi proyek kampus."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Diagram UML sering kali terasa terlalu kaku dan rumit ketika digunakan untuk menjelaskan arsitektur perangkat lunak modern kepada audiens multi-disiplin. Di sinilah pendekatan C4 Model hadir sebagai alternatif yang lebih berjenjang dan praktis."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Abstraksi arsitektur yang baik adalah yang mampu dipahami oleh developer baru dalam waktu kurang dari 30 menit."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "C4 Model membagi arsitektur menjadi empat tingkatan abstraksi: Context, Containers, Components, dan Code. Dengan struktur ini, pengembang dapat menjelaskan gambaran besar sistem tanpa langsung terjebak pada detail implementasi baris kode."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Untuk proyek Tugas Akhir maupun kompetisi software engineering, C4 model terbukti memudahkan dosen pembimbing dan reviewer memahami interaksi antar-layanan secara cepat."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "C4 model menawarkan cara baru memvisualisasikan arsitektur sistem software dari level konteks hingga komponen kode secara intuitif.",
+            "reading_time_minutes": 4,
+            "status": "published",
+            "slug": "apakah-c4-model-menggantikan-diagram-uml-konvensional",
+            "published_at": "2024-09-12T10:00:00Z",
+            "created_at": "2024-09-10T12:00:00Z",
+            "updated_at": "2024-09-12T10:00:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000002",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "title": "Menerapkan Clean Architecture pada Proyek Tugas Akhir",
+            "subtitle": "Menata domain logic, use case, dan adapter agar codebase mudah diuji dan dikembangkan.",
+            "cover_image_url": "/images/repost-cover.png",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Menerapkan Clean Architecture pada Proyek Tugas Akhir"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Menata domain logic, use case, dan adapter agar codebase mudah diuji dan dikembangkan."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Banyak mahasiswa tingkat akhir terjebak dalam perangkap 'spaghetti code' ketika aplikasi mereka mulai bertambah besar. Mencampur query database langsung di dalam controller sering kali membuat unit test mustahil dijalankan."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Source code dependencies must point only inward, toward higher-level policies."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Clean Architecture memisahkan urusan sistem ke dalam lingkaran independen. Inti bisnis (entities dan use cases) tidak boleh mengetahui detail tentang database Postgres, library HTTP, atau framework frontend yang dipakai."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Dengan menerapkan dependency inversion, kita dapat mengganti database mock dengan database PostgreSQL asli tanpa mengubah sebaris pun logika bisnis utama aplikasi."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Panduan menyusun struktur layer aplikasi berbasis Clean Architecture agar bisnis logika terisolasi dari framework eksternal dan database.",
+            "reading_time_minutes": 5,
+            "status": "published",
+            "slug": "menerapkan-clean-architecture-pada-proyek-tugas-akhir",
+            "published_at": "2024-09-14T08:30:00Z",
+            "created_at": "2024-09-13T07:00:00Z",
+            "updated_at": "2024-09-14T08:30:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000003",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "title": "Refleksi Pengalaman Magang Frontend Developer di Bandung",
+            "subtitle": "Pelajaran berharga seputar code review, kerja tim lintas divisi, dan delivery sprint nyata.",
+            "cover_image_url": "/images/persona-c4.jpg",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Refleksi Pengalaman Magang Frontend Developer di Bandung"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Pelajaran berharga seputar code review, kerja tim lintas divisi, dan delivery sprint nyata."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Memasuki bulan pertama magang, perbedaan paling kentara antara proyek kuliah dan proyek industri terletak pada standar kualitas kode dan proses peninjauan (code review)."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Menulis kode yang berjalan itu mudah, menulis kode yang mudah dirawat oleh rekan tim adalah seni sesungguhnya."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Tidak ada kode yang langsung masuk ke branch utama tanpa disetujui oleh minimal dua peer reviewer. Di sinilah kemampuan menerima kritik teknis secara objektif menjadi keterampilan krusial."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Kerapihan dokumentasi pull request dan penyusunan commit message yang deskriptif menyelamatkan banyak waktu saat tim harus melakukan root-cause analysis pada bug produksi."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Catatan pembelajaran langsung dari dunia industri: dari adaptasi kebiasaan git rebase hingga pentingnya komunikasi asinkron yang efektif.",
+            "reading_time_minutes": 3,
+            "status": "published",
+            "slug": "refleksi-pengalaman-magang-frontend-developer-di-bandung",
+            "published_at": "2024-09-16T14:00:00Z",
+            "created_at": "2024-09-15T15:00:00Z",
+            "updated_at": "2024-09-16T14:00:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000004",
+            "author_id": "10000000-0000-4000-8000-000000000002",
+            "title": "Membedah Arsitektur Finite State Machine dalam Game RPG",
+            "subtitle": "Bagaimana mengelola status karakter, transisi animasi, dan AI musuh tanpa bug tumpang tindih.",
+            "cover_image_url": "/images/persona-c4.jpg",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Membedah Arsitektur Finite State Machine dalam Game RPG"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Bagaimana mengelola status karakter, transisi animasi, dan AI musuh tanpa bug tumpang tindih."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Dalam pengembangan game aksi RPG, karakter utama bisa memiliki belasan status: berjalan, melompat, menyerang kombinasi, terkena stun, atau mengelak. Jika status ini hanya dikelola oleh flag boolean percabangan if-else, kode akan segera berubah menjadi mimpi buruk."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Satu state yang terisolasi dengan rapi mencegah lusinan bug perilaku karakter yang tak terduga."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Dengan State Machine, setiap status diisolasi ke dalam class mandiri yang memiliki siklus hidup enter(), update(), dan exit(). Karakter tidak akan bisa beralih ke animasi melompat ketika sedang dalam status stun."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Pola ini juga diadopsi secara luas pada game indie legendaris seperti Hollow Knight dan Celeste untuk menghasilkan kontrol karakter yang tajam dan responsif."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Pola Finite State Machine (FSM) adalah solusi paling kokoh dalam mengendalikan logika status karakter game dari status idle, attack, hingga hurt.",
+            "reading_time_minutes": 6,
+            "status": "published",
+            "slug": "membedah-arsitektur-finite-state-machine-dalam-game-rpg",
+            "published_at": "2024-09-18T09:00:00Z",
+            "created_at": "2024-09-17T11:00:00Z",
+            "updated_at": "2024-09-18T09:00:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000005",
+            "author_id": "10000000-0000-4000-8000-000000000002",
+            "title": "Tips Menata Asset Pipeline Game 2D Menggunakan Aseprite",
+            "subtitle": "Otomasi ekspor spritesheet dan sinkronisasi metadata atlas ke game engine.",
+            "cover_image_url": "/images/repost-cover.png",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Tips Menata Asset Pipeline Game 2D Menggunakan Aseprite"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Otomasi ekspor spritesheet dan sinkronisasi metadata atlas ke game engine."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Menggambar lusinan animasi karakter dengan puluhan frame adalah pekerjaan yang memakan waktu. Namun yang sering kali menguras energi adalah proses mengekspor ulang setiap kali ada sedikit revisi warna palet."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Otomasi pipeline aset seni memberikan lebih banyak waktu bagi kreator untuk fokus menyempurnakan game feel."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Aseprite menyediakan CLI (Command Line Interface) yang sangat powerful. Kita dapat menyusun script bash atau PowerShell sederhana untuk mengekspor semua file .aseprite ke format spritesheet PNG dan JSON atlas secara instan."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Hasil ekspor otomatis ini dapat langsung dikenali oleh Godot atau Unity tanpa perlu konfigurasi slicing ulang di editor."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Alur kerja mengotomasi ekspor animasi pixel art dari Aseprite langsung ke game engine tanpa proses manual yang rawan salah.",
+            "reading_time_minutes": 4,
+            "status": "published",
+            "slug": "tips-menata-asset-pipeline-game-2d-menggunakan-aseprite",
+            "published_at": "2024-09-20T11:20:00Z",
+            "created_at": "2024-09-19T13:00:00Z",
+            "updated_at": "2024-09-20T11:20:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000006",
+            "author_id": "10000000-0000-4000-8000-000000000003",
+            "title": "Membangun Design System Kampus Menggunakan Figma dan Tailwind",
+            "subtitle": "Standardisasi warna Telkom University, tipografi, dan komponen UI yang konsisten.",
+            "cover_image_url": "/images/persona-c4.jpg",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Membangun Design System Kampus Menggunakan Figma dan Tailwind"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Standardisasi warna Telkom University, tipografi, dan komponen UI yang konsisten."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Salah satu tantangan terbesar aplikasi buatan unit kegiatan atau riset mahasiswa adalah tampilan visual yang tidak seragam. Ada yang menggunakan merah marun, ada yang menggunakan merah terang tanpa pedoman kontras rasio."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Design system bukan sekadar kumpulan komponen tombol, melainkan bahasa visual bersama antara desainer dan programmer."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Kami menyusun design token Tel-U Knowledge dengan mendefinisikan palet warna primer (#EA5753), sekunder, dan netral ke dalam Figma Variables, lalu memetakan langsung ke variabel CSS dan Tailwind theme."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Hasilnya, pengembang tidak perlu menebak ukuran font atau radius tombol; semua komponen memiliki estetika seragam yang mencerminkan identitas kampus."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Langkah terpadu menerjemahkan design tokens dari Figma variables ke Tailwind CSS config untuk ekosistem aplikasi mahasiswa.",
+            "reading_time_minutes": 5,
+            "status": "published",
+            "slug": "membangun-design-system-kampus-menggunakan-figma-dan-tailwind",
+            "published_at": "2024-09-22T08:00:00Z",
+            "created_at": "2024-09-21T10:00:00Z",
+            "updated_at": "2024-09-22T08:00:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000007",
+            "author_id": "10000000-0000-4000-8000-000000000003",
+            "title": "Prinsip Aksesibilitas Web untuk Portal Layanan Mahasiswa",
+            "subtitle": "Memastikan navigasi keyboard, screen reader, dan kontras warna ramah untuk semua pengguna.",
+            "cover_image_url": null,
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Prinsip Aksesibilitas Web untuk Portal Layanan Mahasiswa"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Memastikan navigasi keyboard, screen reader, dan kontras warna ramah untuk semua pengguna."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Aksesibilitas sering kali dikesampingkan saat tenggat waktu sprint semakin dekat. Padahal bagi teman-teman mahasiswa dengan kebutuhan khusus, portal akademik yang tidak ramah screen reader bisa menjadi hambatan besar."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Aksesibilitas bukan fitur tambahan, melainkan hak mendasar bagi setiap pengguna aplikasi digital."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Langkah sederhana seperti memastikan atribut aria-label pada tombol ikon, urutan fokus keyboard yang logis, dan kontras warna minimal 4.5:1 untuk teks normal dapat meningkatkan kegunaan aplikasi secara drastis."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Komponen modern seperti Radix UI dan Shadcn telah menyediakan fondasi aksesibilitas yang solid sejak awal, tinggal bagaimana kita menjaga struktur semantik HTML-nya."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Penerapan standar WCAG 2.1 level AA pada aplikasi layanan akademik agar dapat diakses dengan nyaman oleh seluruh civitas akademika.",
+            "reading_time_minutes": 4,
+            "status": "published",
+            "slug": "prinsip-aksesibilitas-web-untuk-portal-layanan-mahasiswa",
+            "published_at": "2024-09-24T13:40:00Z",
+            "created_at": "2024-09-23T14:00:00Z",
+            "updated_at": "2024-09-24T13:40:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000008",
+            "author_id": "10000000-0000-4000-8000-000000000004",
+            "title": "Panduan Eksplorasi Kuliner Malam Ramah Dompet di Bojongsoang",
+            "subtitle": "Rekomendasi warung makan enak, porsi mahasiswa, dan buka hingga larut malam.",
+            "cover_image_url": "/images/repost-cover.png",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Panduan Eksplorasi Kuliner Malam Ramah Dompet di Bojongsoang"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Rekomendasi warung makan enak, porsi mahasiswa, dan buka hingga larut malam."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Begadang mengerjakan tugas besar atau belajar kuis sudah menjadi bagian tak terpisahkan dari kehidupan anak kos Telkom University. Masalah klasik yang selalu muncul pada pukul 23.00: cari makan di mana?"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Makanan enak dan hangat adalah bahan bakar terbaik untuk menyelesaikan deadline tugas besar tepat waktu."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Kawasan Bojongsoang dan gang Sukabirus menawarkan banyak pilihan legendaris, mulai dari nasi bebek madura rempah gurih, mi dok-dok kuah kental, hingga warmindo dengan aneka topping."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Artikel ini merangkum 5 spot kuliner terfavorit lengkap dengan kisaran harga dan jam operasional untuk referensi nugas malam kalian."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Kompilasi warung makan malam favorit mahasiswa Telkom University di sekitar gerbang Bojongsoang dan Sukabirus yang bersahabat di kantong.",
+            "reading_time_minutes": 3,
+            "status": "published",
+            "slug": "panduan-eksplorasi-kuliner-malam-ramah-dompet-di-bojongsoang",
+            "published_at": "2024-09-26T17:15:00Z",
+            "created_at": "2024-09-25T16:00:00Z",
+            "updated_at": "2024-09-26T17:15:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000009",
+            "author_id": "10000000-0000-4000-8000-000000000004",
+            "title": "Daftar Coworking Space dan Cafe Nyaman Buat Nugas di Buah Batu",
+            "subtitle": "Spot dengan colokan melimpah, wifi kencang, dan suasana tenang untuk fokus belajar.",
+            "cover_image_url": "/images/persona-c4.jpg",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Daftar Coworking Space dan Cafe Nyaman Buat Nugas di Buah Batu"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Spot dengan colokan melimpah, wifi kencang, dan suasana tenang untuk fokus belajar."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Ketika suasana kamar kos mulai membosankan dan perpustakaan kampus sedang penuh sesak, mencari ruang baru dengan suasana segar menjadi solusi ampuh memulihkan fokus belajar."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Lingkungan kerja yang tepat dapat menggandakan kecepatan berpikir dan kreativitas kita."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Kawasan Buah Batu yang hanya berjarak 10-15 menit dari kampus memiliki deretan cafe yang sengaja didesain untuk mahasiswa yang membawa laptop."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Parameter utama yang kami uji adalah ketersediaan colokan listrik di setiap meja, kebisingan musik latar, dan stabilitas kecepatan unduh wifi."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Kurasi tempat nugas dan diskusi kelompok di koridor Buah Batu dengan koneksi internet stabil dan tempat duduk ergonomis.",
+            "reading_time_minutes": 4,
+            "status": "published",
+            "slug": "daftar-coworking-space-dan-cafe-nyaman-buat-nugas-di-buah-batu",
+            "published_at": "2024-09-28T10:00:00Z",
+            "created_at": "2024-09-27T09:00:00Z",
+            "updated_at": "2024-09-28T10:00:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000010",
+            "author_id": "10000000-0000-4000-8000-000000000005",
+            "title": "Mitigasi Kerentanan SQL Injection dan XSS pada Web API",
+            "subtitle": "Teknik pertahanan berlapis menggunakan parameterized queries dan input sanitization.",
+            "cover_image_url": "/images/repost-cover.png",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Mitigasi Kerentanan SQL Injection dan XSS pada Web API"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Teknik pertahanan berlapis menggunakan parameterized queries dan input sanitization."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Meskipun ORM modern telah banyak membantu, celah keamanan injeksi SQL masih kerap ditemukan akibat penggunaan raw query string concatenation yang tidak aman."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Never trust user input. Validasi pada gerbang masuk, sanitasi sebelum disimpan, dan escape sebelum dirender."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Selain SQL Injection, payload XSS yang tersimpan di database dapat dieksekusi oleh peramban pengguna lain jika output rendering tidak disanitasi secara memadai."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Gunakan library validasi skema seperti Zod di sisi backend dan pastikan semua query parameterized dijalankan melalui interface yang terlindungi."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Strategi praktis mengamankan endpoint API dari serangan SQL Injection dan Cross-Site Scripting dengan validasi input ketat.",
+            "reading_time_minutes": 5,
+            "status": "published",
+            "slug": "mitigasi-kerentanan-sql-injection-dan-xss-pada-web-api",
+            "published_at": "2024-09-30T09:30:00Z",
+            "created_at": "2024-09-29T10:00:00Z",
+            "updated_at": "2024-09-30T09:30:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000011",
+            "author_id": "10000000-0000-4000-8000-000000000005",
+            "title": "Implementasi JWT Authentication dengan Refresh Token Rotation",
+            "subtitle": "Menjaga keamanan sesi pengguna tanpa mengorbankan performa stateless authentication.",
+            "cover_image_url": null,
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Implementasi JWT Authentication dengan Refresh Token Rotation"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Menjaga keamanan sesi pengguna tanpa mengorbankan performa stateless authentication."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Banyak tutorial web menyimpan access token JWT di localStorage dengan masa aktif berminggu-minggu. Praktik ini sangat berbahaya karena token dapat dicuri melalui serangan XSS sederhana."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Keamanan sesi bukan tentang kenyamanan tanpa batas, melainkan tentang pembatasan dampak risiko seminimal mungkin."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Pola yang jauh lebih aman adalah menetapkan access token dengan masa berlaku singkat (misal 15 menit) di memory state, dan menyimpan refresh token di cookie bertipe httpOnly dan sameSite strict."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Setiap kali access token diperbarui, refresh token lama harus dibatalkan dan digantikan dengan refresh token baru untuk mencegah token replay attack."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Desain sistem autentikasi aman menggunakan token JWT berumur pendek dipadukan dengan rotasi refresh token otomatis di cookie httpOnly.",
+            "reading_time_minutes": 6,
+            "status": "published",
+            "slug": "implementasi-jwt-authentication-dengan-refresh-token-rotation",
+            "published_at": "2024-10-02T15:00:00Z",
+            "created_at": "2024-10-01T12:00:00Z",
+            "updated_at": "2024-10-02T15:00:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000012",
+            "author_id": "10000000-0000-4000-8000-000000000006",
+            "title": "Pengenalan Ekstraksi Informasi Teks Menggunakan Transformer",
+            "subtitle": "Pemanfaatan model IndoBERT untuk Named Entity Recognition pada dokumen tugas akhir.",
+            "cover_image_url": "/images/persona-c4.jpg",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Pengenalan Ekstraksi Informasi Teks Menggunakan Transformer"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Pemanfaatan model IndoBERT untuk Named Entity Recognition pada dokumen tugas akhir."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Koleksi repository skripsi Telkom University menyimpan puluhan ribu dokumen ilmiah berharga. Namun pencarian berbasis kata kunci konvensional sering kali gagal memahami konteks semantik."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Natural Language Processing modern memungkinkan kita menggali intisari pengetahuan dari lautan teks ilmiah yang tak terhingga."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Arsitektur Transformer dengan mekanisme self-attention memungkinkan komputer memahami hubungan antar kata dalam bahasa Indonesia secara lebih mendalam dibandingkan metode n-gram terdahulu."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Dengan melakukan fine-tuning ringan pada model IndoBERT, sistem dapat mengelompokkan topik penelitian secara otomatis dengan akurasi di atas 90 persen."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Eksplorasi penggunaan model bahasa pra-latih IndoBERT untuk mengenali entitas nama, institusi, dan kata kunci pada abstrak skripsi bahasa Indonesia.",
+            "reading_time_minutes": 5,
+            "status": "published",
+            "slug": "pengenalan-ekstraksi-informasi-teks-menggunakan-transformer",
+            "published_at": "2024-10-05T08:45:00Z",
+            "created_at": "2024-10-04T10:00:00Z",
+            "updated_at": "2024-10-05T08:45:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000013",
+            "author_id": "10000000-0000-4000-8000-000000000006",
+            "title": "Strategi Persiapan Sidang Komprehensif dan Tugas Akhir Sains Data",
+            "subtitle": "Tips menyusun slide presentasi, demo visualisasi metrik, dan antisipasi pertanyaan penguji.",
+            "cover_image_url": "/images/repost-cover.png",
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Strategi Persiapan Sidang Komprehensif dan Tugas Akhir Sains Data"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Tips menyusun slide presentasi, demo visualisasi metrik, dan antisipasi pertanyaan penguji."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Sidang tugas akhir bukan sekadar pameran baris formula matematika atau skor akurasi model. Dosen penguji ingin melihat sejauh mana mahasiswa memahami kontribusi metodologi dan batasan risetnya."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "blockquote",
+                        "content": [
+                            {
+                                "type": "paragraph",
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "Keberhasilan presentasi ilmiah diukur dari seberapa jelas ide kompleks dapat dipahami oleh pendengar."
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Fokuskan slide pembuka pada urgensi masalah dunia nyata yang ingin dipecahkan, alih-alih langsung melompat ke arsitektur deep learning yang rumit."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Siapkan visualisasi perbandingan baseline model secara jujur dan transparan untuk menjawab pertanyaan seputar validitas eksperimen."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Panduan taktis bagi mahasiswa tingkat akhir dalam mempersiapkan presentasi sidang riset data science secara meyakinkan dan terstruktur.",
+            "reading_time_minutes": 4,
+            "status": "published",
+            "slug": "strategi-persiapan-sidang-komprehensif-dan-tugas-akhir-sains-data",
+            "published_at": "2024-10-08T11:00:00Z",
+            "created_at": "2024-10-07T09:00:00Z",
+            "updated_at": "2024-10-08T11:00:00Z"
+        },
+        {
+            "id": "20000000-0000-4000-8000-000000000014",
+            "author_id": "10000000-0000-4000-8000-000000000002",
+            "title": "Catatan Eksplorasi ECS Pattern pada Game Engine Godot 4",
+            "subtitle": "Draf awal perbandingan arsitektur Entity Component System versus node inheritance bawaan.",
+            "cover_image_url": null,
+            "content": {
+                "type": "doc",
+                "content": [
+                    {
+                        "type": "heading",
+                        "attrs": {
+                            "level": 2
+                        },
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Catatan Eksplorasi ECS Pattern pada Game Engine Godot 4"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Draf awal perbandingan arsitektur Entity Component System versus node inheritance bawaan."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Ini adalah draft tulisan yang masih dalam proses pengerjaan. Rencananya akan mengulas eksperimen benchmarking performa antara pendekatan object-oriented tradisional di Godot dengan modul ECS pihak ketiga."
+                            }
+                        ]
+                    },
+                    {
+                        "type": "paragraph",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": "Beberapa data pengujian frame rate saat spawning 5.000 partikel masih perlu divalidasi kembali pada perangkat dengan spesifikasi berbeda sebelum artikel ini siap dipublikasikan."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "excerpt": "Draf catatan teknis mengenai potensi performa Entity Component System dalam menangani simulasi ribuan entitas secara bersamaan pada Godot 4.",
+            "reading_time_minutes": 2,
+            "status": "draft",
+            "slug": null,
+            "published_at": null,
+            "created_at": "2024-10-10T14:00:00Z",
+            "updated_at": "2024-10-10T14:30:00Z"
+        }
+    ],
+    "article_stats": [
+        {
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "likes_count": 120,
+            "comments_count": 15,
+            "reposts_count": 8,
+            "bookmarks_count": 24
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000002",
+            "likes_count": 165,
+            "comments_count": 21,
+            "reposts_count": 11,
+            "bookmarks_count": 32
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000003",
+            "likes_count": 210,
+            "comments_count": 27,
+            "reposts_count": 14,
+            "bookmarks_count": 40
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000004",
+            "likes_count": 255,
+            "comments_count": 33,
+            "reposts_count": 17,
+            "bookmarks_count": 48
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000005",
+            "likes_count": 300,
+            "comments_count": 39,
+            "reposts_count": 20,
+            "bookmarks_count": 56
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000006",
+            "likes_count": 345,
+            "comments_count": 45,
+            "reposts_count": 23,
+            "bookmarks_count": 64
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000007",
+            "likes_count": 390,
+            "comments_count": 51,
+            "reposts_count": 26,
+            "bookmarks_count": 72
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000008",
+            "likes_count": 435,
+            "comments_count": 57,
+            "reposts_count": 29,
+            "bookmarks_count": 80
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000009",
+            "likes_count": 480,
+            "comments_count": 63,
+            "reposts_count": 32,
+            "bookmarks_count": 88
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000010",
+            "likes_count": 525,
+            "comments_count": 69,
+            "reposts_count": 35,
+            "bookmarks_count": 96
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000011",
+            "likes_count": 570,
+            "comments_count": 75,
+            "reposts_count": 38,
+            "bookmarks_count": 104
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000012",
+            "likes_count": 615,
+            "comments_count": 81,
+            "reposts_count": 41,
+            "bookmarks_count": 112
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000013",
+            "likes_count": 660,
+            "comments_count": 87,
+            "reposts_count": 44,
+            "bookmarks_count": 120
+        },
+        {
+            "article_id": "20000000-0000-4000-8000-000000000014",
+            "likes_count": 0,
+            "comments_count": 0,
+            "reposts_count": 0,
+            "bookmarks_count": 0
+        }
+    ],
+    "topics": [
+        {
+            "id": "21000000-0000-4000-8000-000000000001",
+            "name": "Software Engineering",
+            "slug": "software-engineering",
+            "description": "Arsitektur perangkat lunak, clean code, design pattern, dan best practices pengembangan sistem.",
+            "articles_count": 32,
+            "created_at": "2024-08-01T00:00:00Z"
+        },
+        {
+            "id": "21000000-0000-4000-8000-000000000002",
+            "name": "Game Development",
+            "slug": "game-development",
+            "description": "Perancangan mekanik game, game engine, pixel art, sound design, dan game jamming kampus.",
+            "articles_count": 24,
+            "created_at": "2024-08-01T00:00:00Z"
+        },
+        {
+            "id": "21000000-0000-4000-8000-000000000003",
+            "name": "Frontend Website",
+            "slug": "frontend-website",
+            "description": "Teknologi web modern, React, Next.js, performa render, dan interaksi visual.",
+            "articles_count": 28,
+            "created_at": "2024-08-01T00:00:00Z"
+        },
+        {
+            "id": "21000000-0000-4000-8000-000000000004",
+            "name": "Backend Security",
+            "slug": "backend-security",
+            "description": "Keamanan web service, otentikasi aman, proteksi API, dan arsitektur microservices.",
+            "articles_count": 18,
+            "created_at": "2024-08-01T00:00:00Z"
+        },
+        {
+            "id": "21000000-0000-4000-8000-000000000005",
+            "name": "UI/UX Design",
+            "slug": "uiux-design",
+            "description": "Riset pengguna, design system, prototipe Figma, dan prinsip aksesibilitas digital.",
+            "articles_count": 22,
+            "created_at": "2024-08-01T00:00:00Z"
+        },
+        {
+            "id": "21000000-0000-4000-8000-000000000006",
+            "name": "Karier & Akademik",
+            "slug": "karier-akademik",
+            "description": "Panduan tugas akhir, magang industri, review portofolio, dan kehidupan kampus Tel-U.",
+            "articles_count": 30,
+            "created_at": "2024-08-01T00:00:00Z"
+        }
+    ],
+    "article_topics": [
+        {
+            "id": "22000000-0000-4000-8000-000000000001",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "topic_id": "21000000-0000-4000-8000-000000000001"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000002",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "topic_id": "21000000-0000-4000-8000-000000000006"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000003",
+            "article_id": "20000000-0000-4000-8000-000000000002",
+            "topic_id": "21000000-0000-4000-8000-000000000001"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000004",
+            "article_id": "20000000-0000-4000-8000-000000000002",
+            "topic_id": "21000000-0000-4000-8000-000000000004"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000005",
+            "article_id": "20000000-0000-4000-8000-000000000003",
+            "topic_id": "21000000-0000-4000-8000-000000000003"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000006",
+            "article_id": "20000000-0000-4000-8000-000000000003",
+            "topic_id": "21000000-0000-4000-8000-000000000006"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000007",
+            "article_id": "20000000-0000-4000-8000-000000000004",
+            "topic_id": "21000000-0000-4000-8000-000000000002"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000008",
+            "article_id": "20000000-0000-4000-8000-000000000004",
+            "topic_id": "21000000-0000-4000-8000-000000000001"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000009",
+            "article_id": "20000000-0000-4000-8000-000000000005",
+            "topic_id": "21000000-0000-4000-8000-000000000002"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000010",
+            "article_id": "20000000-0000-4000-8000-000000000006",
+            "topic_id": "21000000-0000-4000-8000-000000000005"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000011",
+            "article_id": "20000000-0000-4000-8000-000000000006",
+            "topic_id": "21000000-0000-4000-8000-000000000003"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000012",
+            "article_id": "20000000-0000-4000-8000-000000000007",
+            "topic_id": "21000000-0000-4000-8000-000000000005"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000013",
+            "article_id": "20000000-0000-4000-8000-000000000007",
+            "topic_id": "21000000-0000-4000-8000-000000000003"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000014",
+            "article_id": "20000000-0000-4000-8000-000000000008",
+            "topic_id": "21000000-0000-4000-8000-000000000006"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000015",
+            "article_id": "20000000-0000-4000-8000-000000000009",
+            "topic_id": "21000000-0000-4000-8000-000000000006"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000016",
+            "article_id": "20000000-0000-4000-8000-000000000010",
+            "topic_id": "21000000-0000-4000-8000-000000000004"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000017",
+            "article_id": "20000000-0000-4000-8000-000000000011",
+            "topic_id": "21000000-0000-4000-8000-000000000004"
+        },
+        {
+            "id": "22000000-0000-4000-8000-000000000018",
+            "article_id": "20000000-0000-4000-8000-000000000012",
+            "topic_id": "21000000-0000-4000-8000-000000000001"
+        }
+    ],
+    "article_likes": [
+        {
+            "id": "23000000-0000-4000-8000-000000000001",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-12T12:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000002",
+            "article_id": "20000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-18T10:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000003",
+            "article_id": "20000000-0000-4000-8000-000000000006",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-22T09:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000004",
+            "article_id": "20000000-0000-4000-8000-000000000010",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-30T10:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000005",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "created_at": "2024-09-12T13:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000006",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "created_at": "2024-09-12T14:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000007",
+            "article_id": "20000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "created_at": "2024-09-14T10:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000008",
+            "article_id": "20000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000005",
+            "created_at": "2024-09-14T11:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000009",
+            "article_id": "20000000-0000-4000-8000-000000000003",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "created_at": "2024-09-16T15:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000010",
+            "article_id": "20000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "created_at": "2024-09-18T12:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000011",
+            "article_id": "20000000-0000-4000-8000-000000000005",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-20T12:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000012",
+            "article_id": "20000000-0000-4000-8000-000000000006",
+            "user_id": "10000000-0000-4000-8000-000000000004",
+            "created_at": "2024-09-22T10:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000013",
+            "article_id": "20000000-0000-4000-8000-000000000008",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-26T18:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000014",
+            "article_id": "20000000-0000-4000-8000-000000000009",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "created_at": "2024-09-28T11:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000015",
+            "article_id": "20000000-0000-4000-8000-000000000010",
+            "user_id": "10000000-0000-4000-8000-000000000006",
+            "created_at": "2024-09-30T11:00:00Z"
+        },
+        {
+            "id": "23000000-0000-4000-8000-000000000016",
+            "article_id": "20000000-0000-4000-8000-000000000012",
+            "user_id": "10000000-0000-4000-8000-000000000005",
+            "created_at": "2024-10-05T09:00:00Z"
+        }
+    ],
+    "article_bookmarks": [
+        {
+            "id": "24000000-0000-4000-8000-000000000001",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-12T15:00:00Z"
+        },
+        {
+            "id": "24000000-0000-4000-8000-000000000002",
+            "article_id": "20000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-18T14:00:00Z"
+        },
+        {
+            "id": "24000000-0000-4000-8000-000000000003",
+            "article_id": "20000000-0000-4000-8000-000000000008",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-26T19:00:00Z"
+        },
+        {
+            "id": "24000000-0000-4000-8000-000000000004",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "created_at": "2024-09-12T16:00:00Z"
+        },
+        {
+            "id": "24000000-0000-4000-8000-000000000005",
+            "article_id": "20000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "created_at": "2024-09-14T12:00:00Z"
+        },
+        {
+            "id": "24000000-0000-4000-8000-000000000006",
+            "article_id": "20000000-0000-4000-8000-000000000006",
+            "user_id": "10000000-0000-4000-8000-000000000005",
+            "created_at": "2024-09-22T11:00:00Z"
+        },
+        {
+            "id": "24000000-0000-4000-8000-000000000007",
+            "article_id": "20000000-0000-4000-8000-000000000010",
+            "user_id": "10000000-0000-4000-8000-000000000004",
+            "created_at": "2024-09-30T12:00:00Z"
+        },
+        {
+            "id": "24000000-0000-4000-8000-000000000008",
+            "article_id": "20000000-0000-4000-8000-000000000011",
+            "user_id": "10000000-0000-4000-8000-000000000006",
+            "created_at": "2024-10-02T16:00:00Z"
+        }
+    ],
+    "article_reposts": [
+        {
+            "id": "25000000-0000-4000-8000-000000000001",
+            "article_id": "20000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-19T08:00:00Z"
+        },
+        {
+            "id": "25000000-0000-4000-8000-000000000002",
+            "article_id": "20000000-0000-4000-8000-000000000006",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-23T08:00:00Z"
+        },
+        {
+            "id": "25000000-0000-4000-8000-000000000003",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "created_at": "2024-09-13T09:00:00Z"
+        },
+        {
+            "id": "25000000-0000-4000-8000-000000000004",
+            "article_id": "20000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000005",
+            "created_at": "2024-09-15T10:00:00Z"
+        },
+        {
+            "id": "25000000-0000-4000-8000-000000000005",
+            "article_id": "20000000-0000-4000-8000-000000000010",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "created_at": "2024-10-01T09:00:00Z"
+        },
+        {
+            "id": "25000000-0000-4000-8000-000000000006",
+            "article_id": "20000000-0000-4000-8000-000000000012",
+            "user_id": "10000000-0000-4000-8000-000000000004",
+            "created_at": "2024-10-06T10:00:00Z"
+        }
+    ],
+    "article_comments": [
+        {
+            "id": "26000000-0000-4000-8000-000000000001",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "author_id": "10000000-0000-4000-8000-000000000002",
+            "parent_id": null,
+            "content": "Sangat setuju! C4 Model jauh lebih mudah dipresentasikan ke tim non-teknis dibanding class diagram UML.",
+            "created_at": "2024-09-12T11:00:00Z",
+            "updated_at": "2024-09-12T11:00:00Z"
+        },
+        {
+            "id": "26000000-0000-4000-8000-000000000002",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "parent_id": "26000000-0000-4000-8000-000000000001",
+            "content": "Betul Farhan, terutama di level Context dan Container sangat membantu menyamakan persepsi arsitektur.",
+            "created_at": "2024-09-12T11:30:00Z",
+            "updated_at": "2024-09-12T11:30:00Z"
+        },
+        {
+            "id": "26000000-0000-4000-8000-000000000003",
+            "article_id": "20000000-0000-4000-8000-000000000002",
+            "author_id": "10000000-0000-4000-8000-000000000005",
+            "parent_id": null,
+            "content": "Pemisahan domain layer memang butuh boilerplate di awal, tapi sebanding saat harus maintain jangka panjang.",
+            "created_at": "2024-09-14T09:00:00Z",
+            "updated_at": "2024-09-14T09:00:00Z"
+        },
+        {
+            "id": "26000000-0000-4000-8000-000000000004",
+            "article_id": "20000000-0000-4000-8000-000000000004",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "parent_id": null,
+            "content": "Keren pembahasannya! Apakah implementasi FSM ini juga disambungkan dengan hierarchical state machine?",
+            "created_at": "2024-09-18T10:30:00Z",
+            "updated_at": "2024-09-18T10:30:00Z"
+        },
+        {
+            "id": "26000000-0000-4000-8000-000000000005",
+            "article_id": "20000000-0000-4000-8000-000000000004",
+            "author_id": "10000000-0000-4000-8000-000000000002",
+            "parent_id": "26000000-0000-4000-8000-000000000004",
+            "content": "Bisa banget Satria, untuk AI bos biasanya kita pakai sub-state machine di dalam combat state utama.",
+            "created_at": "2024-09-18T11:00:00Z",
+            "updated_at": "2024-09-18T11:00:00Z"
+        },
+        {
+            "id": "26000000-0000-4000-8000-000000000006",
+            "article_id": "20000000-0000-4000-8000-000000000006",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "parent_id": null,
+            "content": "Sangat inspiratif! Pendekatan design tokens ini langsung kami adaptasi untuk komponen dialog profil.",
+            "created_at": "2024-09-22T09:30:00Z",
+            "updated_at": "2024-09-22T09:30:00Z"
+        },
+        {
+            "id": "26000000-0000-4000-8000-000000000007",
+            "article_id": "20000000-0000-4000-8000-000000000008",
+            "author_id": "10000000-0000-4000-8000-000000000003",
+            "parent_id": null,
+            "content": "Bebek madura di dekat gapura itu memang juaranya sambal rempah!",
+            "created_at": "2024-09-26T18:30:00Z",
+            "updated_at": "2024-09-26T18:30:00Z"
+        },
+        {
+            "id": "26000000-0000-4000-8000-000000000008",
+            "article_id": "20000000-0000-4000-8000-000000000010",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "parent_id": null,
+            "content": "Artikel daging nih untuk mahasiswa yang mau ambil sertifikasi security atau ikut lomba CTF.",
+            "created_at": "2024-09-30T10:15:00Z",
+            "updated_at": "2024-09-30T10:15:00Z"
+        },
+        {
+            "id": "26000000-0000-4000-8000-000000000009",
+            "article_id": "20000000-0000-4000-8000-000000000011",
+            "author_id": "10000000-0000-4000-8000-000000000002",
+            "parent_id": null,
+            "content": "Rotasi refresh token ini efektif banget buat menangkal pencurian sesi dari peramban.",
+            "created_at": "2024-10-02T16:20:00Z",
+            "updated_at": "2024-10-02T16:20:00Z"
+        },
+        {
+            "id": "26000000-0000-4000-8000-000000000010",
+            "article_id": "20000000-0000-4000-8000-000000000012",
+            "author_id": "10000000-0000-4000-8000-000000000006",
+            "parent_id": null,
+            "content": "Bagi yang ingin mencoba fine-tuning dataset sendiri, bisa cek notebook referensi di repo kampus.",
+            "created_at": "2024-10-05T09:30:00Z",
+            "updated_at": "2024-10-05T09:30:00Z"
+        }
+    ],
+    "collections": [
+        {
+            "id": "30000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "title": "Skripsi & Riset",
+            "is_private": true,
+            "cover_image_url": "/images/persona-c4.jpg",
+            "story_count": 4,
+            "created_at": "2024-09-01T00:00:00Z",
+            "updated_at": "2024-09-20T00:00:00Z"
+        },
+        {
+            "id": "30000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "title": "Ide Projek Software",
+            "is_private": false,
+            "cover_image_url": "/images/repost-cover.png",
+            "story_count": 3,
+            "created_at": "2024-09-05T00:00:00Z",
+            "updated_at": "2024-09-25T00:00:00Z"
+        },
+        {
+            "id": "30000000-0000-4000-8000-000000000003",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "title": "Referensi Game Design",
+            "is_private": true,
+            "cover_image_url": "/images/persona-c4.jpg",
+            "story_count": 3,
+            "created_at": "2024-09-10T00:00:00Z",
+            "updated_at": "2024-09-28T00:00:00Z"
+        },
+        {
+            "id": "30000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "title": "Inspirasi UI/UX",
+            "is_private": false,
+            "cover_image_url": "/images/repost-cover.png",
+            "story_count": 3,
+            "created_at": "2024-09-15T00:00:00Z",
+            "updated_at": "2024-10-01T00:00:00Z"
+        }
+    ],
+    "collection_articles": [
+        {
+            "id": "31000000-0000-4000-8000-000000000001",
+            "collection_id": "30000000-0000-4000-8000-000000000001",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "added_at": "2024-09-12T16:00:00Z"
+        },
+        {
+            "id": "31000000-0000-4000-8000-000000000002",
+            "collection_id": "30000000-0000-4000-8000-000000000001",
+            "article_id": "20000000-0000-4000-8000-000000000002",
+            "added_at": "2024-09-14T13:00:00Z"
+        },
+        {
+            "id": "31000000-0000-4000-8000-000000000003",
+            "collection_id": "30000000-0000-4000-8000-000000000001",
+            "article_id": "20000000-0000-4000-8000-000000000010",
+            "added_at": "2024-09-30T14:00:00Z"
+        },
+        {
+            "id": "31000000-0000-4000-8000-000000000004",
+            "collection_id": "30000000-0000-4000-8000-000000000001",
+            "article_id": "20000000-0000-4000-8000-000000000012",
+            "added_at": "2024-10-05T10:00:00Z"
+        },
+        {
+            "id": "31000000-0000-4000-8000-000000000005",
+            "collection_id": "30000000-0000-4000-8000-000000000002",
+            "article_id": "20000000-0000-4000-8000-000000000002",
+            "added_at": "2024-09-15T11:00:00Z"
+        },
+        {
+            "id": "31000000-0000-4000-8000-000000000006",
+            "collection_id": "30000000-0000-4000-8000-000000000002",
+            "article_id": "20000000-0000-4000-8000-000000000006",
+            "added_at": "2024-09-22T12:00:00Z"
+        },
+        {
+            "id": "31000000-0000-4000-8000-000000000007",
+            "collection_id": "30000000-0000-4000-8000-000000000002",
+            "article_id": "20000000-0000-4000-8000-000000000011",
+            "added_at": "2024-10-03T09:00:00Z"
+        },
+        {
+            "id": "31000000-0000-4000-8000-000000000008",
+            "collection_id": "30000000-0000-4000-8000-000000000003",
+            "article_id": "20000000-0000-4000-8000-000000000001",
+            "added_at": "2024-09-12T17:00:00Z"
+        },
+        {
+            "id": "31000000-0000-4000-8000-000000000009",
+            "collection_id": "30000000-0000-4000-8000-000000000003",
+            "article_id": "20000000-0000-4000-8000-000000000004",
+            "added_at": "2024-09-18T15:00:00Z"
+        },
+        {
+            "id": "31000000-0000-4000-8000-000000000010",
+            "collection_id": "30000000-0000-4000-8000-000000000003",
+            "article_id": "20000000-0000-4000-8000-000000000005",
+            "added_at": "2024-09-20T14:00:00Z"
+        }
+    ],
+    "communities": [
+        {
+            "id": "40000000-0000-4000-8000-000000000001",
+            "creator_id": "10000000-0000-4000-8000-000000000002",
+            "name": "Game Dev +++",
+            "slug": "gamedev-telu",
+            "description": "Wadah bertukar pikiran seputar game engine, mekanik gameplay, pixel art, dan proyek indie mahasiswa Telkom University.",
+            "category": "Teknologi",
+            "visibility": "publik",
+            "avatar_url": null,
+            "avatar_color": "#EA5753",
+            "banner_url": "/images/persona-c4.jpg",
+            "member_count": 128000,
+            "post_count": 1420,
+            "created_at": "2024-08-01T00:00:00Z",
+            "updated_at": "2024-09-20T00:00:00Z"
+        },
+        {
+            "id": "40000000-0000-4000-8000-000000000002",
+            "creator_id": "10000000-0000-4000-8000-000000000001",
+            "name": "Software Engineering Tel-U",
+            "slug": "se-telu",
+            "description": "Ruang diskusi arsitektur perangkat lunak, clean code, agile sprint, design patterns, dan review tugas besar.",
+            "category": "Akademik",
+            "visibility": "publik",
+            "avatar_url": null,
+            "avatar_color": "#0A3AB5",
+            "banner_url": "/images/repost-cover.png",
+            "member_count": 95000,
+            "post_count": 3210,
+            "created_at": "2024-08-05T00:00:00Z",
+            "updated_at": "2024-09-22T00:00:00Z"
+        },
+        {
+            "id": "40000000-0000-4000-8000-000000000003",
+            "creator_id": "10000000-0000-4000-8000-000000000004",
+            "name": "Kuliner Telkom Bandung",
+            "slug": "kuliner-telkom",
+            "description": "Rekomendasi tempat makan murah, enak, dan nyaman buat nongkrong atau nugas sekitaran Buah Batu & Dayeuhkolot.",
+            "category": "Kuliner",
+            "visibility": "publik",
+            "avatar_url": null,
+            "avatar_color": "#D97706",
+            "banner_url": "/images/repost-cover.png",
+            "member_count": 145000,
+            "post_count": 4890,
+            "created_at": "2024-08-10T00:00:00Z",
+            "updated_at": "2024-09-24T00:00:00Z"
+        },
+        {
+            "id": "40000000-0000-4000-8000-000000000004",
+            "creator_id": "10000000-0000-4000-8000-000000000003",
+            "name": "UI/UX & Product Design",
+            "slug": "uiux-telu",
+            "description": "Bedah desain aplikasi, design system Figma, case study portofolio, dan uji usability antarmuka kampus.",
+            "category": "Desain",
+            "visibility": "publik",
+            "avatar_url": null,
+            "avatar_color": "#7C3AED",
+            "banner_url": "/images/persona-c4.jpg",
+            "member_count": 62000,
+            "post_count": 890,
+            "created_at": "2024-08-15T00:00:00Z",
+            "updated_at": "2024-09-25T00:00:00Z"
+        },
+        {
+            "id": "40000000-0000-4000-8000-000000000005",
+            "creator_id": "10000000-0000-4000-8000-000000000004",
+            "name": "Wisata & Jelajah Bandung",
+            "slug": "wisata-telkom",
+            "description": "Komunitas jalan-jalan, rekomendasi spot healing akhir pekan, dan fotografi lanskap sekitar Bandung Raya.",
+            "category": "Hobi",
+            "visibility": "publik",
+            "avatar_url": null,
+            "avatar_color": "#059669",
+            "banner_url": "/images/repost-cover.png",
+            "member_count": 38000,
+            "post_count": 420,
+            "created_at": "2024-08-20T00:00:00Z",
+            "updated_at": "2024-09-26T00:00:00Z"
+        },
+        {
+            "id": "40000000-0000-4000-8000-000000000006",
+            "creator_id": "10000000-0000-4000-8000-000000000005",
+            "name": "Riset & Karya Ilmiah Informatika",
+            "slug": "riset-informatika",
+            "description": "Kelompok diskusi privat pra-sidang, telaah paper konferensi IEEE/ACM, dan review instrumen pengujian skripsi.",
+            "category": "Akademik",
+            "visibility": "privat",
+            "avatar_url": null,
+            "avatar_color": "#E11D48",
+            "banner_url": "/images/persona-c4.jpg",
+            "member_count": 1500,
+            "post_count": 180,
+            "created_at": "2024-08-25T00:00:00Z",
+            "updated_at": "2024-09-28T00:00:00Z"
+        }
+    ],
+    "community_rules": [
+        {
+            "id": "41000000-0000-4000-8000-000000000001",
+            "community_id": "40000000-0000-4000-8000-000000000001",
+            "order_index": 1,
+            "title": "Jaga etika, kesopanan, dan sportivitas akademik",
+            "description": "Saling menghargai sesama pengembang game dan gunakan bahasa yang santun dalam diskusi.",
+            "created_at": "2024-08-01T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000002",
+            "community_id": "40000000-0000-4000-8000-000000000001",
+            "order_index": 2,
+            "title": "Gunakan spoiler tag untuk plot game terbaru",
+            "description": "Beri peringatan sebelum membagikan detail cerita game rilisan baru.",
+            "created_at": "2024-08-01T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000003",
+            "community_id": "40000000-0000-4000-8000-000000000001",
+            "order_index": 3,
+            "title": "Dilarang menyebarkan materi bajakan atau link berbahaya",
+            "description": "Aset game, source code, dan tools yang dibagikan harus legal dan aman.",
+            "created_at": "2024-08-01T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000004",
+            "community_id": "40000000-0000-4000-8000-000000000002",
+            "order_index": 1,
+            "title": "Sertakan konteks dan snippet kode saat bertanya",
+            "description": "Gunakan format markdown yang rapi agar masalah mudah direproduksi rekan lain.",
+            "created_at": "2024-08-05T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000005",
+            "community_id": "40000000-0000-4000-8000-000000000002",
+            "order_index": 2,
+            "title": "Hargai perbedaan arsitektur dan teknologi stack",
+            "description": "Hindari toxic tech debate; diskusikan kelebihan dan kekurangan secara objektif.",
+            "created_at": "2024-08-05T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000006",
+            "community_id": "40000000-0000-4000-8000-000000000002",
+            "order_index": 3,
+            "title": "Dilarang membagikan jawaban ujian resmi",
+            "description": "Diskusi konsep dipersilakan, namun pelanggaran integritas akademik akan ditindak.",
+            "created_at": "2024-08-05T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000007",
+            "community_id": "40000000-0000-4000-8000-000000000003",
+            "order_index": 1,
+            "title": "Cantumkan nama tempat dan kisaran harga",
+            "description": "Berikan ulasan yang jujur serta informatif untuk membantu sesama mahasiswa.",
+            "created_at": "2024-08-10T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000008",
+            "community_id": "40000000-0000-4000-8000-000000000003",
+            "order_index": 2,
+            "title": "Dilarang spam promosi berlebihan tanpa izin",
+            "description": "Promosi usaha diperbolehkan hanya pada thread mingguan yang disediakan.",
+            "created_at": "2024-08-10T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000009",
+            "community_id": "40000000-0000-4000-8000-000000000004",
+            "order_index": 1,
+            "title": "Berikan kritik desain yang konstruktif",
+            "description": "Fokus pada prinsip UX, kegunaan, dan kemudahan akses pengguna.",
+            "created_at": "2024-08-15T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000010",
+            "community_id": "40000000-0000-4000-8000-000000000004",
+            "order_index": 2,
+            "title": "Sertakan kredit bagi pembuat aset referensi",
+            "description": "Cantumkan sumber inspirasi figma community atau dribbble jika menggunakan referensi luar.",
+            "created_at": "2024-08-15T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000011",
+            "community_id": "40000000-0000-4000-8000-000000000005",
+            "order_index": 1,
+            "title": "Jaga kebersihan lingkungan wisata",
+            "description": "Dukung pariwisata yang bertanggung jawab dan ramah lingkungan.",
+            "created_at": "2024-08-20T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000012",
+            "community_id": "40000000-0000-4000-8000-000000000005",
+            "order_index": 2,
+            "title": "Informasikan akses rute dan kondisi jalan",
+            "description": "Beritahu kondisi parkir dan kelayakan jalan motor/mobil.",
+            "created_at": "2024-08-20T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000013",
+            "community_id": "40000000-0000-4000-8000-000000000006",
+            "order_index": 1,
+            "title": "Kerahasiaan data riset sebelum publikasi resmi",
+            "description": "Dilarang menyebarluaskan dataset mentah atau draft paper tanpa persetujuan penulis.",
+            "created_at": "2024-08-25T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000014",
+            "community_id": "40000000-0000-4000-8000-000000000006",
+            "order_index": 2,
+            "title": "Saling dukung dalam simulasi tanya jawab sidang",
+            "description": "Berikan pertanyaan kritis dengan tujuan melatih kesiapan mental pemateri.",
+            "created_at": "2024-08-25T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000015",
+            "community_id": "40000000-0000-4000-8000-000000000001",
+            "order_index": 4,
+            "title": "Fokus pada game design dan analisis teknis",
+            "description": "Arahkan pembicaraan pada mekanika, estetika visual, dan audio.",
+            "created_at": "2024-08-01T00:00:00Z"
+        },
+        {
+            "id": "41000000-0000-4000-8000-000000000016",
+            "community_id": "40000000-0000-4000-8000-000000000002",
+            "order_index": 4,
+            "title": "Gunakan thread tagging yang relevan",
+            "description": "Pilih flair yang tepat seperti Diskusi, Tips, atau Tanya untuk memudahkan pencarian.",
+            "created_at": "2024-08-05T00:00:00Z"
+        }
+    ],
+    "community_members": [
+        {
+            "id": "42000000-0000-4000-8000-000000000001",
+            "community_id": "40000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "role": "owner",
+            "joined_at": "2024-08-01T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000002",
+            "community_id": "40000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "role": "owner",
+            "joined_at": "2024-08-05T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000003",
+            "community_id": "40000000-0000-4000-8000-000000000003",
+            "user_id": "10000000-0000-4000-8000-000000000004",
+            "role": "owner",
+            "joined_at": "2024-08-10T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000004",
+            "community_id": "40000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "role": "owner",
+            "joined_at": "2024-08-15T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000005",
+            "community_id": "40000000-0000-4000-8000-000000000005",
+            "user_id": "10000000-0000-4000-8000-000000000004",
+            "role": "owner",
+            "joined_at": "2024-08-20T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000006",
+            "community_id": "40000000-0000-4000-8000-000000000006",
+            "user_id": "10000000-0000-4000-8000-000000000005",
+            "role": "owner",
+            "joined_at": "2024-08-25T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000007",
+            "community_id": "40000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "role": "moderator",
+            "joined_at": "2024-08-02T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000008",
+            "community_id": "40000000-0000-4000-8000-000000000003",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "role": "member",
+            "joined_at": "2024-08-11T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000009",
+            "community_id": "40000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "role": "member",
+            "joined_at": "2024-08-16T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000010",
+            "community_id": "40000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "role": "member",
+            "joined_at": "2024-08-06T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000011",
+            "community_id": "40000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000005",
+            "role": "moderator",
+            "joined_at": "2024-08-06T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000012",
+            "community_id": "40000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000004",
+            "role": "member",
+            "joined_at": "2024-08-03T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000013",
+            "community_id": "40000000-0000-4000-8000-000000000003",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "role": "member",
+            "joined_at": "2024-08-12T00:00:00Z"
+        },
+        {
+            "id": "42000000-0000-4000-8000-000000000014",
+            "community_id": "40000000-0000-4000-8000-000000000006",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "role": "member",
+            "joined_at": "2024-08-26T00:00:00Z"
+        }
+    ],
+    "forum_posts": [
+        {
+            "id": "50000000-0000-4000-8000-000000000001",
+            "community_id": "40000000-0000-4000-8000-000000000001",
+            "author_id": "10000000-0000-4000-8000-000000000002",
+            "title": "Game Persona 5 Rilis yang Baru? Tinjauan Game Design dan Nilai Filosofis Interface",
+            "content": "Halo teman-teman pengembang dan penikmat game di Tel-U! Kemarin sempat ramai perbincangan di kalangan komunitas mengenai kelanjutan franchise Persona dan adaptasi terbarunya.\n\nDari kacamata Game Design dan UI/UX, Persona selalu menjadi benchmark luar biasa dalam menerapkan typography dinamis, transisi screen yang snappy, dan integrasi soundtrack acid jazz yang menyatu erat dengan gameplay loop sehari-hari.\n\nPertanyaan reflektif untuk rekan-rekan di Fakultas Informatika dan Desain Komunikasi Visual:\n1. Apakah pendekatan UI yang highly stylized seperti ini masih efektif untuk game modern berdurasi 100+ jam?\n2. Bagaimana menurut kalian relevansi arsitektur state machine yang mereka gunakan jika kita terapkan dalam proyek game jam kampus?\n\nYuk diskusikan di kolom komentar bawah! Sangat terbuka untuk ide kolaborasi game jam semester ini.",
+            "callout": "Catatan: UI Persona 5 membuktikan bahwa interface bukan sekadar penunjuk status, melainkan elemen kunci dalam world-building dan identitas emosional pemain.",
+            "cover_image_url": "/images/persona-c4.jpg",
+            "image_caption": "Visualisasi estetika interface dan palet warna kontras Persona 5 — referensi desain UI.",
+            "flair": "Diskusi",
+            "tags": [
+                "GameDev",
+                "GameDesign",
+                "Persona5",
+                "TelUKnowledge",
+                "UIUX"
+            ],
+            "status": "pin",
+            "is_highlighted": true,
+            "score": 428,
+            "likes_count": 435,
+            "comments_count": 18,
+            "reposts_count": 54,
+            "created_at": "2024-09-12T08:00:00Z",
+            "updated_at": "2024-09-12T08:00:00Z"
+        },
+        {
+            "id": "50000000-0000-4000-8000-000000000002",
+            "community_id": "40000000-0000-4000-8000-000000000002",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "title": "Tanya Jawab Seputar Pemilihan Arsitektur Monolith vs Modular Microservices untuk Proyek Aplikasi Tugas Akhir yang Berkelanjutan dan Mudah Diuji oleh Penguji",
+            "content": "Banyak rekan seangkatan yang bingung menentukan apakah proyek TA sebaiknya langsung dibuat microservices atau cukup modular monolith.\n\nSaran saya: mulailah dengan monolith yang terstruktur dengan boundary modul yang tegas sebelum memutuskan untuk memisahkan service ke repositori berbeda.",
+            "callout": null,
+            "cover_image_url": "/images/repost-cover.png",
+            "image_caption": null,
+            "flair": "Tanya",
+            "tags": [
+                "SoftwareEngineering",
+                "TugasAkhir",
+                "Architecture"
+            ],
+            "status": "aktif",
+            "is_highlighted": true,
+            "score": 85,
+            "likes_count": 90,
+            "comments_count": 12,
+            "reposts_count": 14,
+            "created_at": "2024-09-15T09:30:00Z",
+            "updated_at": "2024-09-15T09:30:00Z"
+        },
+        {
+            "id": "50000000-0000-4000-8000-000000000003",
+            "community_id": "40000000-0000-4000-8000-000000000003",
+            "author_id": "10000000-0000-4000-8000-000000000004",
+            "title": "Rekomendasi Nasi Kulit Krispi Murah Meriah di Sukabirus",
+            "content": "Buat yang lagi nugas malam dan kelaparan di daerah Sukabirus, ada warung nasi kulit baru yang sambal bawangnya juara.\n\nPorsinya pas untuk mahasiswa dan harganya di bawah dua puluh ribu rupiah sudah termasuk es teh manis.",
+            "callout": null,
+            "cover_image_url": null,
+            "image_caption": null,
+            "flair": "Rekomendasi",
+            "tags": [
+                "Kuliner",
+                "Sukabirus",
+                "MakanMurah"
+            ],
+            "status": "aktif",
+            "is_highlighted": false,
+            "score": 112,
+            "likes_count": 115,
+            "comments_count": 8,
+            "reposts_count": 6,
+            "created_at": "2024-09-18T18:00:00Z",
+            "updated_at": "2024-09-18T18:00:00Z"
+        },
+        {
+            "id": "50000000-0000-4000-8000-000000000004",
+            "community_id": "40000000-0000-4000-8000-000000000004",
+            "author_id": "10000000-0000-4000-8000-000000000003",
+            "title": "Showcase Portofolio Redesign Portal iGracias Mobile",
+            "content": "Halo semua! Saya baru saja menyelesaikan studi kasus desain ulang aplikasi iGracias Mobile dengan fokus pada kemudahan pengisian KRS dan akses jadwal kuliah harian.\n\nFeedback seputar hierarki visual dan keterbacaan font sangat dinantikan dari teman-teman!",
+            "callout": "Tujuan utama redesign ini adalah mengurangi jumlah klik untuk melihat jadwal kuliah hari ini dari 4 klik menjadi 1 klik di dashboard utama.",
+            "cover_image_url": "/images/persona-c4.jpg",
+            "image_caption": "Tampilan dashboard baru iGracias Mobile konsep redesign mahasiswa.",
+            "flair": "Showcase",
+            "tags": [
+                "UIUX",
+                "CaseStudy",
+                "Figma",
+                "Redesign"
+            ],
+            "status": "aktif",
+            "is_highlighted": true,
+            "score": 240,
+            "likes_count": 245,
+            "comments_count": 19,
+            "reposts_count": 32,
+            "created_at": "2024-09-20T10:00:00Z",
+            "updated_at": "2024-09-20T10:00:00Z"
+        },
+        {
+            "id": "50000000-0000-4000-8000-000000000005",
+            "community_id": "40000000-0000-4000-8000-000000000001",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "title": "Pengumuman Game Jam Kampus Tel-U 2024: Tema dan Ketentuan",
+            "content": "Pendaftaran Game Jam tahunan kampus resmi dibuka! Lomba berlangsung selama 48 jam penuh secara hybrid.\n\nSeluruh tim wajib mengunggah build game ke itch.io sebelum batas waktu berakhir. Dilarang menggunakan aset berhak cipta tanpa lisensi.",
+            "callout": null,
+            "cover_image_url": "/images/repost-cover.png",
+            "image_caption": null,
+            "flair": "Info",
+            "tags": [
+                "GameJam",
+                "Kompetisi",
+                "GameDev"
+            ],
+            "status": "pin",
+            "is_highlighted": true,
+            "score": 310,
+            "likes_count": 315,
+            "comments_count": 25,
+            "reposts_count": 48,
+            "created_at": "2024-09-22T08:00:00Z",
+            "updated_at": "2024-09-22T08:00:00Z"
+        },
+        {
+            "id": "50000000-0000-4000-8000-000000000006",
+            "community_id": "40000000-0000-4000-8000-000000000002",
+            "author_id": "10000000-0000-4000-8000-000000000005",
+            "title": "Tips Lolos Uji Keamanan Aplikasi saat Sidang Tugas Akhir",
+            "subtitle": null,
+            "content": "Banyak dosen penguji yang kini mulai menguji input form dengan script injection sederhana.\n\nPastikan CORS di-lock dengan benar, sanitasi input diterapkan di DTO, dan helmet middleware diaktifkan pada server Express atau NestJS kalian.",
+            "callout": null,
+            "cover_image_url": null,
+            "image_caption": null,
+            "flair": "Tips",
+            "tags": [
+                "CyberSecurity",
+                "TugasAkhir",
+                "WebSecurity"
+            ],
+            "status": "aktif",
+            "is_highlighted": false,
+            "score": 95,
+            "likes_count": 98,
+            "comments_count": 7,
+            "reposts_count": 11,
+            "created_at": "2024-09-24T14:00:00Z",
+            "updated_at": "2024-09-24T14:00:00Z"
+        },
+        {
+            "id": "50000000-0000-4000-8000-000000000007",
+            "community_id": "40000000-0000-4000-8000-000000000005",
+            "author_id": "10000000-0000-4000-8000-000000000004",
+            "title": "Sunrise Hunting di Tebing Keraton: Rute Alternatif Hindari Macet",
+            "content": "Buat yang butuh refreshing sehabis submit laporan, pemandangan kabut pagi di Tebing Keraton selalu jadi obat mujarab.\n\nDisarankan berangkat pukul 04.30 dari Buah Batu dan gunakan motor matic atau manual yang sehat untuk tanjakan Dago Atas.",
+            "callout": null,
+            "cover_image_url": "/images/persona-c4.jpg",
+            "image_caption": "Suasana kabut fajar di Tebing Keraton Bandung.",
+            "flair": "Tips",
+            "tags": [
+                "Wisata",
+                "Bandung",
+                "Healing"
+            ],
+            "status": "aktif",
+            "is_highlighted": false,
+            "score": 78,
+            "likes_count": 80,
+            "comments_count": 5,
+            "reposts_count": 4,
+            "created_at": "2024-09-27T06:00:00Z",
+            "updated_at": "2024-09-27T06:00:00Z"
+        },
+        {
+            "id": "50000000-0000-4000-8000-000000000008",
+            "community_id": "40000000-0000-4000-8000-000000000006",
+            "author_id": "10000000-0000-4000-8000-000000000005",
+            "title": "Simulasi Ujian Sidang Tertutup Paper Riset: Jadwal Pekan Depan",
+            "content": "Bagi anggota kelompok riset yang akan maju sidang periode November, mohon mendaftarkan draf slide dan paper paling lambat hari Jumat.\n\nSesi gladi bersih akan dilakukan di lab lantai 3 dengan format 15 menit presentasi dan 20 menit tanya jawab mendalam.",
+            "callout": null,
+            "cover_image_url": "/images/repost-cover.png",
+            "image_caption": null,
+            "flair": "Info",
+            "tags": [
+                "Riset",
+                "Sidang",
+                "Informatika"
+            ],
+            "status": "terkunci",
+            "is_highlighted": false,
+            "score": 45,
+            "likes_count": 45,
+            "comments_count": 2,
+            "reposts_count": 1,
+            "created_at": "2024-09-29T11:00:00Z",
+            "updated_at": "2024-09-29T11:00:00Z"
+        },
+        {
+            "id": "50000000-0000-4000-8000-000000000009",
+            "community_id": "40000000-0000-4000-8000-000000000002",
+            "author_id": "10000000-0000-4000-8000-000000000003",
+            "title": "Kolaborasi Frontend Dev dan UI Designer: Menghindari Miss-Komunikasi",
+            "content": "Sering kali desain yang dibuat di Figma terlihat berbeda ketika sudah di-slicing ke kode web.\n\nMari kita sepakati penggunaan auto-layout, penamaan variable tokens, dan penyerahan aset SVG yang bersih agar proses development berjalan mulus.",
+            "callout": null,
+            "cover_image_url": "/images/persona-c4.jpg",
+            "image_caption": null,
+            "flair": "Diskusi",
+            "tags": [
+                "Frontend",
+                "UIUX",
+                "Workflow"
+            ],
+            "status": "aktif",
+            "is_highlighted": false,
+            "score": 130,
+            "likes_count": 135,
+            "comments_count": 11,
+            "reposts_count": 15,
+            "created_at": "2024-10-02T13:00:00Z",
+            "updated_at": "2024-10-02T13:00:00Z"
+        },
+        {
+            "id": "50000000-0000-4000-8000-000000000010",
+            "community_id": "40000000-0000-4000-8000-000000000001",
+            "author_id": "10000000-0000-4000-8000-000000000006",
+            "title": "Pemanfaatan Algoritma Pathfinding A* untuk Karakter NPC Game",
+            "content": "Dalam game top-down 2D, kalkulasi navigasi rute karakter NPC dapat memakan resource CPU yang tinggi jika grid map berukuran besar.\n\nEksplorasi optimasi hierarchical pathfinding dan navigasi waypoint berbasis flowfield akan kita bahas pada pertemuan sabtu sore.",
+            "callout": null,
+            "cover_image_url": "/images/repost-cover.png",
+            "image_caption": null,
+            "flair": "Tips",
+            "tags": [
+                "GameDev",
+                "Algorithms",
+                "AI"
+            ],
+            "status": "aktif",
+            "is_highlighted": false,
+            "score": 88,
+            "likes_count": 90,
+            "comments_count": 6,
+            "reposts_count": 8,
+            "created_at": "2024-10-05T15:00:00Z",
+            "updated_at": "2024-10-05T15:00:00Z"
+        }
+    ],
+    "forum_post_votes": [
+        {
+            "id": "51000000-0000-4000-8000-000000000001",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-09-12T09:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000002",
+            "post_id": "50000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-09-15T10:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000003",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "vote_value": 1,
+            "created_at": "2024-09-12T10:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000004",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000004",
+            "vote_value": 1,
+            "created_at": "2024-09-12T11:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000005",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000005",
+            "vote_value": 1,
+            "created_at": "2024-09-12T12:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000006",
+            "post_id": "50000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "vote_value": 1,
+            "created_at": "2024-09-15T11:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000007",
+            "post_id": "50000000-0000-4000-8000-000000000003",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-09-18T19:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000008",
+            "post_id": "50000000-0000-4000-8000-000000000003",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "vote_value": 1,
+            "created_at": "2024-09-18T19:30:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000009",
+            "post_id": "50000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-09-20T11:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000010",
+            "post_id": "50000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000005",
+            "vote_value": 1,
+            "created_at": "2024-09-20T12:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000011",
+            "post_id": "50000000-0000-4000-8000-000000000005",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "vote_value": 1,
+            "created_at": "2024-09-22T09:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000012",
+            "post_id": "50000000-0000-4000-8000-000000000005",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "vote_value": 1,
+            "created_at": "2024-09-22T10:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000013",
+            "post_id": "50000000-0000-4000-8000-000000000006",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-09-24T15:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000014",
+            "post_id": "50000000-0000-4000-8000-000000000007",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "vote_value": 1,
+            "created_at": "2024-09-27T08:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000015",
+            "post_id": "50000000-0000-4000-8000-000000000008",
+            "user_id": "10000000-0000-4000-8000-000000000006",
+            "vote_value": 1,
+            "created_at": "2024-09-29T12:00:00Z"
+        },
+        {
+            "id": "51000000-0000-4000-8000-000000000016",
+            "post_id": "50000000-0000-4000-8000-000000000009",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-10-02T14:00:00Z"
+        }
+    ],
+    "forum_post_saves": [
+        {
+            "id": "52000000-0000-4000-8000-000000000001",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-12T10:00:00Z"
+        },
+        {
+            "id": "52000000-0000-4000-8000-000000000002",
+            "post_id": "50000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-20T12:00:00Z"
+        },
+        {
+            "id": "52000000-0000-4000-8000-000000000003",
+            "post_id": "50000000-0000-4000-8000-000000000005",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-22T10:00:00Z"
+        },
+        {
+            "id": "52000000-0000-4000-8000-000000000004",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "created_at": "2024-09-12T11:00:00Z"
+        },
+        {
+            "id": "52000000-0000-4000-8000-000000000005",
+            "post_id": "50000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000005",
+            "created_at": "2024-09-15T12:00:00Z"
+        }
+    ],
+    "forum_post_reposts": [
+        {
+            "id": "53000000-0000-4000-8000-000000000001",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-12T11:00:00Z"
+        },
+        {
+            "id": "53000000-0000-4000-8000-000000000002",
+            "post_id": "50000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "created_at": "2024-09-20T13:00:00Z"
+        },
+        {
+            "id": "53000000-0000-4000-8000-000000000003",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000004",
+            "created_at": "2024-09-12T12:00:00Z"
+        },
+        {
+            "id": "53000000-0000-4000-8000-000000000004",
+            "post_id": "50000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "created_at": "2024-09-15T14:00:00Z"
+        },
+        {
+            "id": "53000000-0000-4000-8000-000000000005",
+            "post_id": "50000000-0000-4000-8000-000000000005",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "created_at": "2024-09-22T11:00:00Z"
+        },
+        {
+            "id": "53000000-0000-4000-8000-000000000006",
+            "post_id": "50000000-0000-4000-8000-000000000009",
+            "user_id": "10000000-0000-4000-8000-000000000004",
+            "created_at": "2024-10-02T15:00:00Z"
+        }
+    ],
+    "forum_comments": [
+        {
+            "id": "54000000-0000-4000-8000-000000000001",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "parent_id": null,
+            "content": "Setuju banget soal transisi menu yang snappy! Di web dev kita sering mencoba meniru feel transisi seperti ini menggunakan Framer Motion atau CSS spring animations.",
+            "score": 42,
+            "created_at": "2024-09-12T09:15:00Z",
+            "updated_at": "2024-09-12T09:15:00Z"
+        },
+        {
+            "id": "54000000-0000-4000-8000-000000000002",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "author_id": "10000000-0000-4000-8000-000000000003",
+            "parent_id": "54000000-0000-4000-8000-000000000001",
+            "content": "Betul Satria, kuncinya ada pada easing curve 'cubic-bezier' yang agresif di awal lalu melambat secara halus di akhir. Jangan pakai linear easing.",
+            "score": 28,
+            "created_at": "2024-09-12T09:45:00Z",
+            "updated_at": "2024-09-12T09:45:00Z"
+        },
+        {
+            "id": "54000000-0000-4000-8000-000000000003",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "author_id": "10000000-0000-4000-8000-000000000002",
+            "parent_id": "54000000-0000-4000-8000-000000000002",
+            "content": "Di Godot 4 kami pakai Tween dengan TransitionType.TRANS_BACK dan EaseType.EASE_OUT, efek pantulannya pas banget!",
+            "score": 19,
+            "created_at": "2024-09-12T10:15:00Z",
+            "updated_at": "2024-09-12T10:15:00Z"
+        },
+        {
+            "id": "54000000-0000-4000-8000-000000000004",
+            "post_id": "50000000-0000-4000-8000-000000000001",
+            "author_id": "10000000-0000-4000-8000-000000000005",
+            "parent_id": null,
+            "content": "Satu hal yang jarang dibahas adalah sound effect feedback di setiap klik menu; Persona punya SFX yang sangat rewarding.",
+            "score": 35,
+            "created_at": "2024-09-12T11:00:00Z",
+            "updated_at": "2024-09-12T11:00:00Z"
+        },
+        {
+            "id": "54000000-0000-4000-8000-000000000005",
+            "post_id": "50000000-0000-4000-8000-000000000002",
+            "author_id": "10000000-0000-4000-8000-000000000005",
+            "parent_id": null,
+            "content": "Untuk sidang TA, modular monolith jauh lebih mudah dideploy dan didemokan tanpa risiko jaringan antar-kontainer terputus.",
+            "score": 18,
+            "created_at": "2024-09-15T11:00:00Z",
+            "updated_at": "2024-09-15T11:00:00Z"
+        },
+        {
+            "id": "54000000-0000-4000-8000-000000000006",
+            "post_id": "50000000-0000-4000-8000-000000000002",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "parent_id": "54000000-0000-4000-8000-000000000005",
+            "content": "Setuju Aditya, apalagi kalau cuma jalan di laptop saat sidang offline, monolith hemat memori RAM.",
+            "score": 14,
+            "created_at": "2024-09-15T11:30:00Z",
+            "updated_at": "2024-09-15T11:30:00Z"
+        },
+        {
+            "id": "54000000-0000-4000-8000-000000000007",
+            "post_id": "50000000-0000-4000-8000-000000000003",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "parent_id": null,
+            "content": "Patokannya sebelah mana ya Bagas? Mau coba mampir nanti malam sehabis praktikum.",
+            "score": 9,
+            "created_at": "2024-09-18T19:30:00Z",
+            "updated_at": "2024-09-18T19:30:00Z"
+        },
+        {
+            "id": "54000000-0000-4000-8000-000000000008",
+            "post_id": "50000000-0000-4000-8000-000000000003",
+            "author_id": "10000000-0000-4000-8000-000000000004",
+            "parent_id": "54000000-0000-4000-8000-000000000007",
+            "content": "Persis di seberang minimarket Sukabirus Sat, plangnya warna oranye terang.",
+            "score": 11,
+            "created_at": "2024-09-18T20:00:00Z",
+            "updated_at": "2024-09-18T20:00:00Z"
+        },
+        {
+            "id": "54000000-0000-4000-8000-000000000009",
+            "post_id": "50000000-0000-4000-8000-000000000004",
+            "author_id": "10000000-0000-4000-8000-000000000001",
+            "parent_id": null,
+            "content": "Desainnya fresh banget Nadia! Komponen kartu jadwal kuliahnya bersih dan gampang dibaca sekilas.",
+            "score": 22,
+            "created_at": "2024-09-20T11:15:00Z",
+            "updated_at": "2024-09-20T11:15:00Z"
+        },
+        {
+            "id": "54000000-0000-4000-8000-000000000010",
+            "post_id": "50000000-0000-4000-8000-000000000005",
+            "author_id": "10000000-0000-4000-8000-000000000002",
+            "parent_id": null,
+            "content": "Siap meramaikan! Tim kami sudah menyiapkan engine Godot dan template pixel art 16x16.",
+            "score": 16,
+            "created_at": "2024-09-22T09:30:00Z",
+            "updated_at": "2024-09-22T09:30:00Z"
+        }
+    ],
+    "forum_comment_votes": [
+        {
+            "id": "55000000-0000-4000-8000-000000000001",
+            "comment_id": "54000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "vote_value": 1,
+            "created_at": "2024-09-12T09:20:00Z"
+        },
+        {
+            "id": "55000000-0000-4000-8000-000000000002",
+            "comment_id": "54000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "vote_value": 1,
+            "created_at": "2024-09-12T09:30:00Z"
+        },
+        {
+            "id": "55000000-0000-4000-8000-000000000003",
+            "comment_id": "54000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-09-12T09:50:00Z"
+        },
+        {
+            "id": "55000000-0000-4000-8000-000000000004",
+            "comment_id": "54000000-0000-4000-8000-000000000003",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-09-12T10:20:00Z"
+        },
+        {
+            "id": "55000000-0000-4000-8000-000000000005",
+            "comment_id": "54000000-0000-4000-8000-000000000004",
+            "user_id": "10000000-0000-4000-8000-000000000002",
+            "vote_value": 1,
+            "created_at": "2024-09-12T11:10:00Z"
+        },
+        {
+            "id": "55000000-0000-4000-8000-000000000006",
+            "comment_id": "54000000-0000-4000-8000-000000000005",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-09-15T11:10:00Z"
+        },
+        {
+            "id": "55000000-0000-4000-8000-000000000007",
+            "comment_id": "54000000-0000-4000-8000-000000000007",
+            "user_id": "10000000-0000-4000-8000-000000000004",
+            "vote_value": 1,
+            "created_at": "2024-09-18T19:40:00Z"
+        },
+        {
+            "id": "55000000-0000-4000-8000-000000000008",
+            "comment_id": "54000000-0000-4000-8000-000000000008",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-09-18T20:10:00Z"
+        },
+        {
+            "id": "55000000-0000-4000-8000-000000000009",
+            "comment_id": "54000000-0000-4000-8000-000000000009",
+            "user_id": "10000000-0000-4000-8000-000000000003",
+            "vote_value": 1,
+            "created_at": "2024-09-20T11:30:00Z"
+        },
+        {
+            "id": "55000000-0000-4000-8000-000000000010",
+            "comment_id": "54000000-0000-4000-8000-000000000010",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "vote_value": 1,
+            "created_at": "2024-09-22T09:40:00Z"
+        }
+    ],
+    "notifications": [
+        {
+            "id": "60000000-0000-4000-8000-000000000001",
+            "recipient_id": "10000000-0000-4000-8000-000000000001",
+            "actor_id": "10000000-0000-4000-8000-000000000002",
+            "type": "like",
+            "target_type": "article",
+            "target_id": "20000000-0000-4000-8000-000000000001",
+            "message": "Menyukai artikelmu:",
+            "target_title": "Apakah C4 Model Menggantikan Diagram UML Konvensional?",
+            "is_read": false,
+            "created_at": "2024-09-12T13:05:00Z"
+        },
+        {
+            "id": "60000000-0000-4000-8000-000000000002",
+            "recipient_id": "10000000-0000-4000-8000-000000000001",
+            "actor_id": "10000000-0000-4000-8000-000000000005",
+            "type": "comment",
+            "target_type": "forum_post",
+            "target_id": "50000000-0000-4000-8000-000000000002",
+            "message": "Mengomentari postingan diskusimu:",
+            "target_title": "Tanya Jawab Seputar Pemilihan Arsitektur Monolith vs Modular Microservices",
+            "is_read": false,
+            "created_at": "2024-09-15T11:05:00Z"
+        },
+        {
+            "id": "60000000-0000-4000-8000-000000000003",
+            "recipient_id": "10000000-0000-4000-8000-000000000001",
+            "actor_id": "10000000-0000-4000-8000-000000000003",
+            "type": "mention",
+            "target_type": "forum_post",
+            "target_id": "50000000-0000-4000-8000-000000000001",
+            "message": "Menyebutmu dalam balasan diskusi:",
+            "target_title": "Game Persona 5 Rilis yang Baru?",
+            "is_read": true,
+            "created_at": "2024-09-12T09:46:00Z"
+        },
+        {
+            "id": "60000000-0000-4000-8000-000000000004",
+            "recipient_id": "10000000-0000-4000-8000-000000000001",
+            "actor_id": "10000000-0000-4000-8000-000000000004",
+            "type": "follow",
+            "target_type": "profile",
+            "target_id": "10000000-0000-4000-8000-000000000001",
+            "message": "Mulai mengikutimu",
+            "target_title": "Satria Mahardika",
+            "is_read": true,
+            "created_at": "2024-09-22T10:05:00Z"
+        },
+        {
+            "id": "60000000-0000-4000-8000-000000000005",
+            "recipient_id": "10000000-0000-4000-8000-000000000001",
+            "actor_id": null,
+            "type": "forum",
+            "target_type": "community",
+            "target_id": "40000000-0000-4000-8000-000000000001",
+            "message": "12 postingan baru di forum ini",
+            "target_title": "Game Dev +++",
+            "is_read": true,
+            "created_at": "2024-09-23T07:00:00Z"
+        },
+        {
+            "id": "60000000-0000-4000-8000-000000000006",
+            "recipient_id": "10000000-0000-4000-8000-000000000002",
+            "actor_id": "10000000-0000-4000-8000-000000000001",
+            "type": "like",
+            "target_type": "article",
+            "target_id": "20000000-0000-4000-8000-000000000004",
+            "message": "Menyukai artikelmu:",
+            "target_title": "Membedah Arsitektur Finite State Machine dalam Game RPG",
+            "is_read": true,
+            "created_at": "2024-09-18T10:05:00Z"
+        },
+        {
+            "id": "60000000-0000-4000-8000-000000000007",
+            "recipient_id": "10000000-0000-4000-8000-000000000003",
+            "actor_id": "10000000-0000-4000-8000-000000000001",
+            "type": "repost",
+            "target_type": "article",
+            "target_id": "20000000-0000-4000-8000-000000000006",
+            "message": "Membagikan ulang artikelmu:",
+            "target_title": "Membangun Design System Kampus Menggunakan Figma dan Tailwind",
+            "is_read": true,
+            "created_at": "2024-09-23T08:05:00Z"
+        },
+        {
+            "id": "60000000-0000-4000-8000-000000000008",
+            "recipient_id": "10000000-0000-4000-8000-000000000004",
+            "actor_id": "10000000-0000-4000-8000-000000000001",
+            "type": "like",
+            "target_type": "article",
+            "target_id": "20000000-0000-4000-8000-000000000008",
+            "message": "Menyukai artikelmu:",
+            "target_title": "Panduan Eksplorasi Kuliner Malam Ramah Dompet di Bojongsoang",
+            "is_read": true,
+            "created_at": "2024-09-26T18:05:00Z"
+        }
+    ]
+}

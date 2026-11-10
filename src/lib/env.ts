@@ -19,6 +19,10 @@ export const serverEnv = {
   get API_BASE_URL(): string {
     return getRequiredServerEnv("API_BASE_URL");
   },
+  get MOCK_API_BASE_URL(): string {
+    const val = process.env.MOCK_API_BASE_URL?.trim();
+    return val && val !== "" ? val.replace(/\/+$/, "") : "http://localhost:4000";
+  },
   get APP_ORIGIN(): string {
     return getRequiredServerEnv("APP_ORIGIN");
   },

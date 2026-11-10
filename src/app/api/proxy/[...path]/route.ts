@@ -76,11 +76,16 @@ async function handleProxy(request: Request, context: RouteContext) {
     );
   }
 
-  // 4. Bangun target URL dengan aman dari API_BASE_URL (mencegah open redirect)
-  const reqUrl = new URL(request.url);
-  const targetUrl = `${serverEnv.API_BASE_URL}/api/${path.join("/")}${reqUrl.search}`;
+  // 4. Bangun target URL (mendukung Data Source Switching via header x-data-source)
+  const isMockSource = request.headers.get("x-data-source") === "mock";
+  const baseUrl = isMockSource
+    ? serverEnv.MOCK_API_BASE_URL
+    : serverEnv.API_BASE_URL;
 
-  // 4. Baca body request jika bukan metode GET / HEAD (disimpan sebagai ArrayBuffer agar bisa diulang jika 401)
+  const reqUrl = new URL(request.url);
+  const targetUrl = `${baseUrl}/api/${path.join("/")}${reqUrl.search}`;
+
+  // 5. Baca body request jika bukan metode GET / HEAD (disimpan sebagai ArrayBuffer agar bisa diulang jika 401)
   let bodyBuffer: ArrayBuffer | undefined;
   if (request.method !== "GET" && request.method !== "HEAD") {
     try {
@@ -95,7 +100,8 @@ async function handleProxy(request: Request, context: RouteContext) {
 
   const clientIp = getClientIp(new Headers(request.headers));
 
-  if (!accessToken && refreshToken) {
+  // Hanya jalankan auto-refresh token untuk request backend asli
+  if (!isMockSource && !accessToken && refreshToken) {
     try {
       const refreshRes = await serverFetch<BackendLoginData>("/auth/refresh", {
         method: "POST",
