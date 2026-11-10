@@ -105,6 +105,7 @@ export interface RichTextEditorProps {
   onEditorReady?: (editor: Editor | null) => void;
   onRequestAiHelp?: () => void;
   className?: string;
+  ariaLabel?: string;
 }
 
 export interface RichTextEditorHandle {
@@ -121,6 +122,7 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(
       onEditorReady,
       onRequestAiHelp,
       className,
+      ariaLabel = "Isi artikel",
     },
     ref
   ) {
@@ -319,7 +321,7 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(
       editorProps: {
         attributes: {
           class: "editor-content focus:outline-none min-h-[280px] w-full",
-          "aria-label": "Isi artikel",
+          "aria-label": ariaLabel,
         },
         handleDrop: (view, event, _slice, moved) => {
           if (moved) return false;
