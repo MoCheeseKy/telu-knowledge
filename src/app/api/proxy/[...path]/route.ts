@@ -76,11 +76,16 @@ async function handleProxy(request: Request, context: RouteContext) {
     );
   }
 
-  // 4. Bangun target URL dengan aman dari API_BASE_URL (mencegah open redirect)
-  const reqUrl = new URL(request.url);
-  const targetUrl = `${serverEnv.API_BASE_URL}/api/${path.join("/")}${reqUrl.search}`;
+  // 4. Bangun target URL (mendukung Data Source Switching via header x-data-source)
+  const isMockSource = request.headers.get("x-data-source") === "mock";
+  const baseUrl = isMockSource
+    ? serverEnv.MOCK_API_BASE_URL
+    : serverEnv.API_BASE_URL;
 
-  // 4. Baca body request jika bukan metode GET / HEAD (disimpan sebagai ArrayBuffer agar bisa diulang jika 401)
+  const reqUrl = new URL(request.url);
+  const targetUrl = `${baseUrl}/api/${path.join("/")}${reqUrl.search}`;
+
+  // 5. Baca body request jika bukan metode GET / HEAD (disimpan sebagai ArrayBuffer agar bisa diulang jika 401)
   let bodyBuffer: ArrayBuffer | undefined;
   if (request.method !== "GET" && request.method !== "HEAD") {
     try {
@@ -90,14 +95,13 @@ async function handleProxy(request: Request, context: RouteContext) {
     }
   }
 
-  // 5. Baca token autentikasi dari cookie HttpOnly
   let accessToken = await getAccessToken();
   const refreshToken = await getRefreshToken();
 
   const clientIp = getClientIp(new Headers(request.headers));
 
-  // Jika accessToken tidak ada tetapi refreshToken ada, lakukan refresh terlebih dahulu
-  if (!accessToken && refreshToken) {
+  // Hanya jalankan auto-refresh token untuk request backend asli
+  if (!isMockSource && !accessToken && refreshToken) {
     try {
       const refreshRes = await serverFetch<BackendLoginData>("/auth/refresh", {
         method: "POST",
@@ -120,7 +124,6 @@ async function handleProxy(request: Request, context: RouteContext) {
     }
   }
 
-  // Helper untuk mengeksekusi request ke backend
   const executeBackendFetch = async (token?: string): Promise<Response> => {
     const forwardHeaders = new Headers();
     if (clientIp) forwardHeaders.set("X-Forwarded-For", clientIp);
@@ -135,19 +138,21 @@ async function handleProxy(request: Request, context: RouteContext) {
       forwardHeaders.set("Authorization", `Bearer ${token}`);
     }
 
+    const isAiPath = path[0]?.toLowerCase() === "ai";
+    const timeoutMs = isAiPath ? 25000 : 10000;
+
     return fetch(targetUrl, {
       method: request.method,
       headers: forwardHeaders,
       body: bodyBuffer,
       cache: "no-store",
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   };
 
   try {
     let backendResponse = await executeBackendFetch(accessToken);
 
-    // Jika backend membalas 401 dan kita memiliki refreshToken, coba refresh SATU kali lalu ulangi request
     if (backendResponse.status === 401 && refreshToken) {
       try {
         const refreshRes = await serverFetch<BackendLoginData>(

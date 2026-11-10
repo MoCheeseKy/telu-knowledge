@@ -14,7 +14,7 @@ export const dummyForums: ForumItem[] = [
         description: "Cari Kulineran Telkom yang wa...",
         activeMemberCount: "128.000 Anggota",
         isFollowing: false,
-        href: "/discussion-forums",
+        href: "/communities/1",
     },
     {
         id: 2,
@@ -22,7 +22,7 @@ export const dummyForums: ForumItem[] = [
         description: "Cari Kulineran Telkom yang wa...",
         activeMemberCount: "128.000 Anggota",
         isFollowing: false,
-        href: "/discussion-forums",
+        href: "/communities/2",
     },
     {
         id: 3,
@@ -30,7 +30,7 @@ export const dummyForums: ForumItem[] = [
         description: "Cari Kulineran Telkom yang wa...",
         activeMemberCount: "128.000 Anggota",
         isFollowing: true,
-        href: "/discussion-forums",
+        href: "/communities/3",
     },
 ];
 

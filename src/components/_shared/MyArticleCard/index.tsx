@@ -1,61 +1,152 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Pencil, Trash2 } from "lucide-react";
 import { MyArticleCardProps } from "./_types";
+import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 export default function MyArticleCard({
+    id,
     title,
     description,
-    readTime,
-    updatedAt,
     imageUrl,
+    status = "draft",
     className = "",
-    onMoreClick,
+    onEdit,
+    onDelete,
+    onPublish,
 }: MyArticleCardProps) {
-    return (
-        <div
-            className={cn(
-                "flex items-center justify-between py-4 border-b border-[var(--dust)]/40 gap-4 group",
-                className
-            )}
-        >
-            {/* 1. BAGIAN KIRI: Kotak Thumbnail & Teks Info */}
-            <div className="flex items-center gap-4 flex-1 min-w-0">
-                {/* Gambar / Kotak Abu-abu */}
-                {imageUrl ? (
-                    <img
-                        src={imageUrl}
-                        alt={title}
-                        className="w-[100px] h-[70px] sm:w-[120px] sm:h-[80px] rounded-[4px] object-cover shrink-0 bg-[#D9D9D9]"
-                    />
-                ) : (
-                    <div className="w-[100px] h-[70px] sm:w-[120px] sm:h-[80px] rounded-[4px] bg-[#D9D9D9] shrink-0" />
-                )}
+    const router = useRouter();
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-                {/* Teks Judul, Deskripsi, dan Waktu Baca */}
-                <div className="flex flex-col gap-1 min-w-0 flex-1">
-                    <h3 className="font-sans text-[16px] font-bold text-[var(--foreground)] truncate">
-                        {title}
-                    </h3>
-                    <p className="font-sans text-[13px] text-[var(--muted)] truncate">
-                        {description}
-                    </p>
-                    <span className="font-sans text-[12px] text-[var(--muted)] mt-1">
-                        {readTime} &bull; {updatedAt}
-                    </span>
+    const handleEditClick = () => {
+        if (onEdit) {
+            onEdit();
+            return;
+        }
+        if (id !== undefined) {
+            router.push(`/editor-studio/${id}`);
+        } else {
+            router.push("/editor-studio");
+        }
+    };
+
+    const handleConfirmDelete = () => {
+        setIsDeleteDialogOpen(false);
+        onDelete?.();
+    };
+
+    return (
+        <>
+            <div
+                className={cn(
+                    "flex items-center justify-between py-4 border-b border-[var(--dust)]/40 gap-4 group",
+                    className
+                )}
+            >
+                {/* 1. BAGIAN KIRI: Cover Image, Judul, dan Deskripsi */}
+                <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt={title}
+                            className="w-[100px] h-[70px] sm:w-[120px] sm:h-[80px] rounded-[4px] object-cover shrink-0 bg-[#D9D9D9]"
+                        />
+                    ) : (
+                        <div className="w-[100px] h-[70px] sm:w-[120px] sm:h-[80px] rounded-[4px] bg-[#D9D9D9] shrink-0" />
+                    )}
+
+                    <div className="flex flex-col gap-1 min-w-0 flex-1">
+                        <h3 className="font-sans text-[15px] sm:text-[16px] font-bold text-[var(--foreground)] truncate">
+                            {title}
+                        </h3>
+                        <p className="font-sans text-[13px] text-[var(--muted)] truncate">
+                            {description}
+                        </p>
+                    </div>
+                </div>
+
+                {/* 2. BAGIAN KANAN: Aksi (Hapus, Edit, dan Publikasi untuk Draft) */}
+                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                    <button
+                        type="button"
+                        onClick={() => setIsDeleteDialogOpen(true)}
+                        className="p-2 rounded-lg text-[var(--muted)] hover:text-[var(--failed)] hover:bg-[var(--failed)]/10 transition-colors cursor-pointer"
+                        aria-label={`Hapus ${title}`}
+                        title="Hapus"
+                    >
+                        <Trash2 className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={handleEditClick}
+                        className="p-2 rounded-lg text-[var(--muted)] hover:text-[var(--foreground)] hover:bg-[var(--background-accent)] transition-colors cursor-pointer"
+                        aria-label={`Edit ${title}`}
+                        title="Edit"
+                    >
+                        <Pencil className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                    </button>
+
+                    {status === "draft" && (
+                        <Button
+                            type="button"
+                            size="sm"
+                            onClick={onPublish}
+                            className="h-8 px-3 sm:px-3.5 text-xs font-semibold rounded-lg bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white cursor-pointer ml-1"
+                        >
+                            Publikasi
+                        </Button>
+                    )}
                 </div>
             </div>
 
-            {/* 2. BAGIAN KANAN: Tombol Aksi Titik Tiga (...) */}
-            <button
-                type="button"
-                onClick={onMoreClick}
-                className="p-2 rounded-full hover:bg-[var(--background-accent)] text-[var(--foreground)] transition-colors shrink-0"
-                aria-label="Opsi lainnya"
-            >
-                <MoreHorizontal className="w-5 h-5 text-[var(--foreground)]" />
-            </button>
-        </div>
+            {/* Dialog Konfirmasi Hapus */}
+            <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Hapus Artikel?</DialogTitle>
+                        <DialogDescription className="pt-1">
+                            Apakah Anda yakin ingin menghapus artikel{" "}
+                            <span className="font-semibold text-[var(--foreground)]">
+                                &ldquo;{title}&rdquo;
+                            </span>
+                            ? Tindakan ini tidak dapat dibatalkan.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <DialogFooter className="pt-2">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => setIsDeleteDialogOpen(false)}
+                            className="rounded-lg border border-[var(--dust)] bg-transparent text-[var(--foreground)] hover:bg-[var(--background-accent)] cursor-pointer"
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            onClick={handleConfirmDelete}
+                            className="rounded-lg bg-[var(--failed)] hover:opacity-90 text-white cursor-pointer"
+                        >
+                            Hapus
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
     );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import ForumPostCardProps from "./_types";
 import { ThumbsUp, MessageSquareMore, Repeat2, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ const actionButtonClass =
     "h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4";
 
 export default function ForumPostCard({
+    id = 1,
     topic,
     publisher,
     postDate,
@@ -24,9 +26,19 @@ export default function ForumPostCard({
     className = "",
     onClick,
 }: ForumPostCardProps) {
+    const router = useRouter();
+
+    const handleCardClick = () => {
+        if (onClick) {
+            onClick();
+        } else {
+            router.push(`/discussion-forums/${id}`);
+        }
+    };
+
     return (
         <article
-            onClick={onClick}
+            onClick={handleCardClick}
             className={cn(
                 "w-full max-w-[679px] flex flex-col select-none cursor-pointer group",
                 className
@@ -58,11 +70,11 @@ export default function ForumPostCard({
             </div>
 
             {/* Judul dan deskripsi */}
-            <div className="mt-6 flex flex-col gap-2">
-                <h2 className="font-newsreader font-normal text-[24px] uppercase leading-tight text-[var(--foreground)] group-hover:text-[var(--primary-text)] transition-colors">
+            <div className="mt-4 sm:mt-6 flex flex-col gap-2">
+                <h2 className="font-newsreader font-normal text-[20px] sm:text-[24px] uppercase leading-tight text-[var(--foreground)] group-hover:text-[var(--primary-text)] transition-colors">
                     {title}
                 </h2>
-                <p className="font-sans font-normal text-[16px] leading-relaxed text-[var(--foreground)]">
+                <p className="font-sans font-normal text-[14px] sm:text-[16px] leading-relaxed text-[var(--foreground)]">
                     {description}
                 </p>
             </div>
@@ -103,7 +115,10 @@ export default function ForumPostCard({
                     size="sm"
                     className={actionButtonClass}
                     aria-label="Komentar"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/discussion-forums/${id}#komentar`);
+                    }}
                 >
                     <MessageSquareMore />
                     <span className="font-sans text-xs font-bold">{commentsCount}</span>
@@ -127,7 +142,14 @@ export default function ForumPostCard({
                     size="icon"
                     className="h-7 w-7 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4"
                     aria-label="Bagikan"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        if (typeof window !== "undefined") {
+                            navigator.clipboard.writeText(
+                                `${window.location.origin}/discussion-forums/${id}`
+                            );
+                        }
+                    }}
                 >
                     <Share2 />
                 </Button>
