@@ -82,12 +82,16 @@ export default function DiscussionForumDetailView({
         <ForumDetailHeader post={post} />
         <ForumDetailContent post={post} />
         <ForumDetailActions
+          postId={post.id}
           initialScore={post.score}
           commentsCount={post.commentsCount}
           repostsCount={post.repostsCount}
           isSaved={post.isSaved}
         />
-        <ForumCommentsThread initialComments={post.comments} />
+        <ForumCommentsThread
+          postId={post.id}
+          initialComments={post.comments}
+        />
       </div>
 
       {/* Sidebar kanan (konsisten dengan sidebar DiscussionForumsView dan HomeView) */}

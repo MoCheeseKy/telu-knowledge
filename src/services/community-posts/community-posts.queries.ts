@@ -5,6 +5,10 @@ import type {
   CreateCommunityPostVariables,
   DeleteCommunityPostVariables,
   UpdateCommunityPostVariables,
+  ForumCommentDto,
+  CreateForumCommentVariables,
+  UpdateForumCommentVariables,
+  DeleteForumCommentVariables,
 } from "./community-posts.types";
 
 export const communityPostKeys = {
@@ -14,6 +18,8 @@ export const communityPostKeys = {
     [...communityPostKeys.lists(), communityId] as const,
   details: () => [...communityPostKeys.all, "detail"] as const,
   detail: (id: string) => [...communityPostKeys.details(), id] as const,
+  comments: (postId: string) =>
+    [...communityPostKeys.detail(postId), "comments"] as const,
 };
 
 /**
@@ -137,6 +143,86 @@ export function useCreateCommunityPost() {
       // Siapkan invalidasi untuk langkah integrasi daftar postingan (GET)
       void queryClient.invalidateQueries({
         queryKey: communityPostKeys.list(communityId),
+      });
+    },
+  });
+}
+
+/**
+ * Hook query daftar komentar postingan forum (GET /proxy/forum-posts/:postId/comments).
+ */
+export function useForumPostComments(postId?: string | null) {
+  return useQuery<ForumCommentDto[]>({
+    queryKey: communityPostKeys.comments(postId ?? ""),
+    queryFn: async (): Promise<ForumCommentDto[]> => {
+      if (!postId) {
+        throw new Error("ID postingan wajib diisi");
+      }
+      const res = await communityPostsApi.getForumPostComments(postId);
+      return res.data;
+    },
+    enabled: Boolean(postId),
+  });
+}
+
+/**
+ * Hook mutasi penambahan komentar atau balasan pada postingan forum
+ * (POST /proxy/forum-posts/:postId/comments).
+ */
+export function useCreateForumComment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ postId, payload }: CreateForumCommentVariables) =>
+      communityPostsApi.createForumComment(postId, payload),
+    retry: false,
+    onSuccess: (_res, { postId }) => {
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.comments(postId),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.detail(postId),
+      });
+    },
+  });
+}
+
+/**
+ * Hook mutasi pembaruan isi komentar pada postingan forum
+ * (PATCH /proxy/forum-posts/:postId/comments/:commentId).
+ */
+export function useUpdateForumComment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ postId, commentId, payload }: UpdateForumCommentVariables) =>
+      communityPostsApi.updateForumComment(postId, commentId, payload),
+    retry: false,
+    onSuccess: (_res, { postId }) => {
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.comments(postId),
+      });
+    },
+  });
+}
+
+/**
+ * Hook mutasi penghapusan komentar pada postingan forum
+ * (DELETE /proxy/forum-posts/:postId/comments/:commentId).
+ */
+export function useDeleteForumComment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ postId, commentId }: DeleteForumCommentVariables) =>
+      communityPostsApi.deleteForumComment(postId, commentId),
+    retry: false,
+    onSuccess: (_res, { postId }) => {
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.comments(postId),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.detail(postId),
       });
     },
   });

@@ -70,6 +70,58 @@ export interface DeleteCommunityPostVariables {
 }
 
 /**
+ * Tipe data komentar postingan forum (mock server: forum_comments).
+ */
+export interface ForumCommentAuthor {
+  id: string;
+  displayName: string;
+  avatarUrl: string | null;
+  avatarColor?: string;
+  username: string | null;
+  faculty?: string | null;
+  major?: string | null;
+  generation?: string | null;
+}
+
+export interface ForumCommentDto {
+  id: string;
+  postId: string;
+  authorId: string;
+  parentId: string | null;
+  content: string;
+  score: number;
+  userVote: 1 | -1 | 0;
+  createdAt: string;
+  updatedAt: string;
+  author: ForumCommentAuthor;
+}
+
+export interface CreateForumCommentPayload {
+  content: string;
+  parentId?: string | null;
+}
+
+export interface UpdateForumCommentPayload {
+  content: string;
+}
+
+export interface CreateForumCommentVariables {
+  postId: string;
+  payload: CreateForumCommentPayload;
+}
+
+export interface UpdateForumCommentVariables {
+  postId: string;
+  commentId: string;
+  payload: UpdateForumCommentPayload;
+}
+
+export interface DeleteForumCommentVariables {
+  postId: string;
+  commentId: string;
+}
+
+/**
  * Identitas penulis/viewer tetap mock (lihat docs/integrasi-community-posts/README.md
  * bagian "Identitas Penulis di Mock"). Dipakai untuk cek kepemilikan postingan di UI.
  */

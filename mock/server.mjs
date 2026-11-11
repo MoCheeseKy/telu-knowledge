@@ -1092,6 +1092,249 @@ const handleDeleteCommunityPost = (req, res) => {
 server.delete('/api/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 server.delete('/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 
+// 11. Endpoint Komentar Postingan Forum (CRUD Forum Post Comments)
+const enrichForumComment = (comment, db) => {
+  const author = (db.profiles || []).find((p) => p.id === comment.author_id);
+  const vote = (db.forum_comment_votes || []).find(
+    (v) => v.comment_id === comment.id && v.user_id === MOCK_ME_ID
+  );
+  const userVote = vote
+    ? vote.vote_value === 1
+      ? 1
+      : vote.vote_value === -1
+      ? -1
+      : 0
+    : 0;
+
+  return {
+    id: comment.id,
+    postId: comment.post_id,
+    authorId: comment.author_id,
+    parentId: comment.parent_id || null,
+    content: comment.content,
+    score: typeof comment.score === 'number' ? comment.score : 0,
+    userVote,
+    createdAt: comment.created_at,
+    updatedAt: comment.updated_at,
+    author: {
+      id: author ? author.id : comment.author_id,
+      displayName: author ? author.display_name : 'Pengguna Tel-U',
+      avatarUrl: author ? author.avatar_url : null,
+      avatarColor: author ? author.avatar_color : '#E53E3E',
+      username: author ? author.username : null,
+      faculty: author ? author.faculty : null,
+      major: author ? author.major : null,
+      generation: author ? author.generation : null,
+    },
+  };
+};
+
+// 11a. Get Forum Post Comments (GET /forum-posts/:postId/comments)
+const handleGetForumPostComments = (req, res) => {
+  const db = router.db.getState();
+  const postId = req.params.postId;
+
+  const comments = (db.forum_comments || []).filter(
+    (c) =>
+      c.post_id === postId ||
+      (postId === '1' && c.post_id === '50000000-0000-4000-8000-000000000001')
+  );
+
+  comments.sort(
+    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+  );
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar komentar berhasil diambil'],
+    data: comments.map((c) => enrichForumComment(c, db)),
+    isError: false,
+  });
+};
+
+// 11b. Create Forum Post Comment (POST /forum-posts/:postId/comments)
+const handleCreateForumPostComment = (req, res) => {
+  const postId = req.params.postId;
+  const { content, parentId, parent_id } = req.body || {};
+
+  const trimmedContent = typeof content === 'string' ? content.trim() : '';
+  if (!trimmedContent) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: ['Isi komentar wajib diisi.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const db = router.db.getState();
+  const post = (db.forum_posts || []).find(
+    (p) =>
+      p.id === postId ||
+      (postId === '1' && p.id === '50000000-0000-4000-8000-000000000001')
+  );
+
+  const resolvedPostId = post ? post.id : postId;
+  const resolvedParentId = parentId || parent_id || null;
+
+  const now = new Date().toISOString();
+  const newComment = {
+    id: crypto.randomUUID(),
+    post_id: resolvedPostId,
+    author_id: MOCK_ME_ID,
+    parent_id: resolvedParentId,
+    content: trimmedContent,
+    score: 0,
+    created_at: now,
+    updated_at: now,
+  };
+
+  if (!db.forum_comments) db.forum_comments = [];
+  db.forum_comments.push(newComment);
+
+  if (post) {
+    post.comments_count = (post.comments_count || 0) + 1;
+  }
+
+  router.db.write();
+
+  return res.status(201).json({
+    statusCode: 201,
+    message: ['Komentar berhasil dikirim'],
+    data: enrichForumComment(newComment, db),
+    isError: false,
+  });
+};
+
+// 11c. Update Forum Post Comment (PATCH /forum-posts/:postId/comments/:commentId)
+const handleUpdateForumPostComment = (req, res) => {
+  const commentId = req.params.commentId;
+  const { content } = req.body || {};
+
+  const trimmedContent = typeof content === 'string' ? content.trim() : '';
+  if (!trimmedContent) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: ['Isi komentar wajib diisi.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const db = router.db.getState();
+  const comment = (db.forum_comments || []).find((c) => c.id === commentId);
+
+  if (!comment) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Komentar tidak ditemukan.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (comment.author_id !== MOCK_ME_ID) {
+    return res.status(403).json({
+      statusCode: 403,
+      message: ['Hanya pemilik yang dapat menyunting komentar ini.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  comment.content = trimmedContent;
+  comment.updated_at = new Date().toISOString();
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Komentar berhasil diperbarui'],
+    data: enrichForumComment(comment, db),
+    isError: false,
+  });
+};
+
+// 11d. Delete Forum Post Comment (DELETE /forum-posts/:postId/comments/:commentId)
+const handleDeleteForumPostComment = (req, res) => {
+  const commentId = req.params.commentId;
+  const db = router.db.getState();
+  const comment = (db.forum_comments || []).find((c) => c.id === commentId);
+
+  if (!comment) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Komentar tidak ditemukan.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (comment.author_id !== MOCK_ME_ID) {
+    return res.status(403).json({
+      statusCode: 403,
+      message: ['Hanya pemilik yang dapat menghapus komentar ini.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const toDelete = new Set([comment.id]);
+  let added = true;
+  while (added) {
+    added = false;
+    for (const c of db.forum_comments || []) {
+      if (c.parent_id && toDelete.has(c.parent_id) && !toDelete.has(c.id)) {
+        toDelete.add(c.id);
+        added = true;
+      }
+    }
+  }
+
+  const totalDeleted = toDelete.size;
+
+  db.forum_comments = (db.forum_comments || []).filter((c) => !toDelete.has(c.id));
+  if (db.forum_comment_votes) {
+    db.forum_comment_votes = db.forum_comment_votes.filter(
+      (v) => !toDelete.has(v.comment_id)
+    );
+  }
+
+  const post = (db.forum_posts || []).find((p) => p.id === comment.post_id);
+  if (post) {
+    post.comments_count = Math.max(0, (post.comments_count || 0) - totalDeleted);
+  }
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Komentar berhasil dihapus'],
+    data: null,
+    isError: false,
+  });
+};
+
+server.get('/api/forum-posts/:postId/comments', handleGetForumPostComments);
+server.get('/forum-posts/:postId/comments', handleGetForumPostComments);
+server.get('/api/communities/:communityId/posts/:postId/comments', handleGetForumPostComments);
+server.get('/communities/:communityId/posts/:postId/comments', handleGetForumPostComments);
+
+server.post('/api/forum-posts/:postId/comments', handleCreateForumPostComment);
+server.post('/forum-posts/:postId/comments', handleCreateForumPostComment);
+server.post('/api/communities/:communityId/posts/:postId/comments', handleCreateForumPostComment);
+server.post('/communities/:communityId/posts/:postId/comments', handleCreateForumPostComment);
+
+server.patch('/api/forum-posts/:postId/comments/:commentId', handleUpdateForumPostComment);
+server.patch('/forum-posts/:postId/comments/:commentId', handleUpdateForumPostComment);
+server.patch('/api/forum-comments/:commentId', handleUpdateForumPostComment);
+server.patch('/forum-comments/:commentId', handleUpdateForumPostComment);
+
+server.delete('/api/forum-posts/:postId/comments/:commentId', handleDeleteForumPostComment);
+server.delete('/forum-posts/:postId/comments/:commentId', handleDeleteForumPostComment);
+server.delete('/api/forum-comments/:commentId', handleDeleteForumPostComment);
+server.delete('/forum-comments/:commentId', handleDeleteForumPostComment);
+
 // Mount router pada /api dan /
 server.use('/api', router);
 server.use(router);

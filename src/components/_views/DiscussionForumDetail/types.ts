@@ -1,13 +1,18 @@
-import type { CommunityPostDto } from "@/services/community-posts/community-posts.types";
+import type {
+  CommunityPostDto,
+  ForumCommentDto,
+} from "@/services/community-posts/community-posts.types";
 
 export interface ForumComment {
   id: string | number;
+  authorId?: string;
   author: {
     name: string;
     avatarUrl?: string;
     initial: string;
     badge?: string;
     department?: string;
+    avatarColor?: string;
   };
   createdAt: string;
   content: string;
@@ -52,6 +57,71 @@ const detailDateFormatter = new Intl.DateTimeFormat("id-ID", {
   month: "long",
   year: "numeric",
 });
+
+export function formatForumCommentDate(dateString?: string): string {
+  if (!dateString) return "";
+  try {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    return new Intl.DateTimeFormat("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(d);
+  } catch {
+    return dateString;
+  }
+}
+
+export function buildForumCommentTree(dtos: ForumCommentDto[]): ForumComment[] {
+  const map = new Map<string, ForumComment>();
+  const rootComments: ForumComment[] = [];
+
+  for (const dto of dtos) {
+    const initial = (dto.author.displayName?.trim()?.[0] ?? "U").toUpperCase();
+    const generationLabel = dto.author.generation
+      ? `'${dto.author.generation.slice(-2)}`
+      : null;
+    const department =
+      [dto.author.major, generationLabel].filter(Boolean).join(" ") ||
+      dto.author.faculty ||
+      undefined;
+
+    const item: ForumComment = {
+      id: dto.id,
+      authorId: dto.authorId,
+      author: {
+        name: dto.author.displayName,
+        avatarUrl: dto.author.avatarUrl ?? undefined,
+        avatarColor: dto.author.avatarColor,
+        initial,
+        badge: dto.author.faculty ?? undefined,
+        department,
+      },
+      createdAt: formatForumCommentDate(dto.createdAt),
+      content: dto.content,
+      score: dto.score,
+      userVote: dto.userVote,
+      replies: [],
+    };
+    map.set(String(dto.id), item);
+  }
+
+  for (const dto of dtos) {
+    const item = map.get(String(dto.id))!;
+    if (dto.parentId && map.has(String(dto.parentId))) {
+      const parent = map.get(String(dto.parentId))!;
+      parent.replies = parent.replies || [];
+      parent.replies.push(item);
+    } else {
+      rootComments.push(item);
+    }
+  }
+
+  return rootComments;
+}
 
 /**
  * Mengubah CommunityPostDto (mock server) menjadi ForumPostDetail.

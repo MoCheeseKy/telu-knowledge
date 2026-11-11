@@ -4,6 +4,9 @@ import type {
   CommunityPostDto,
   CreateCommunityPostPayload,
   UpdateCommunityPostPayload,
+  ForumCommentDto,
+  CreateForumCommentPayload,
+  UpdateForumCommentPayload,
 } from "./community-posts.types";
 
 /**
@@ -115,6 +118,76 @@ export async function deleteCommunityPost(
   );
 }
 
+/**
+ * Mengambil daftar komentar pada postingan forum (GET /proxy/forum-posts/:postId/comments).
+ */
+export async function getForumPostComments(
+  postId: string
+): Promise<ApiEnvelope<ForumCommentDto[]>> {
+  return apiFetch<ForumCommentDto[]>(
+    `/proxy/forum-posts/${encodeURIComponent(postId)}/comments`,
+    {
+      method: "GET",
+      source: "mock",
+    }
+  );
+}
+
+/**
+ * Membuat komentar atau balasan baru pada postingan forum (POST /proxy/forum-posts/:postId/comments).
+ */
+export async function createForumComment(
+  postId: string,
+  payload: CreateForumCommentPayload
+): Promise<ApiEnvelope<ForumCommentDto>> {
+  return apiFetch<ForumCommentDto>(
+    `/proxy/forum-posts/${encodeURIComponent(postId)}/comments`,
+    {
+      method: "POST",
+      body: payload,
+      source: "mock",
+    }
+  );
+}
+
+/**
+ * Memperbarui isi komentar milik sendiri (PATCH /proxy/forum-posts/:postId/comments/:commentId).
+ */
+export async function updateForumComment(
+  postId: string,
+  commentId: string,
+  payload: UpdateForumCommentPayload
+): Promise<ApiEnvelope<ForumCommentDto>> {
+  return apiFetch<ForumCommentDto>(
+    `/proxy/forum-posts/${encodeURIComponent(postId)}/comments/${encodeURIComponent(
+      commentId
+    )}`,
+    {
+      method: "PATCH",
+      body: payload,
+      source: "mock",
+    }
+  );
+}
+
+/**
+ * Menghapus komentar milik sendiri (DELETE /proxy/forum-posts/:postId/comments/:commentId).
+ */
+export async function deleteForumComment(
+  postId: string,
+  commentId: string
+): Promise<ApiEnvelope<null>> {
+  return apiFetch<null>(
+    `/proxy/forum-posts/${encodeURIComponent(postId)}/comments/${encodeURIComponent(
+      commentId
+    )}`,
+    {
+      method: "DELETE",
+      source: "mock",
+    }
+  );
+}
+
 export const communityPostsApi = {
   createCommunityPost,
   listCommunityPosts,
@@ -122,4 +195,8 @@ export const communityPostsApi = {
   getForumPostDetail,
   updateCommunityPost,
   deleteCommunityPost,
+  getForumPostComments,
+  createForumComment,
+  updateForumComment,
+  deleteForumComment,
 };
