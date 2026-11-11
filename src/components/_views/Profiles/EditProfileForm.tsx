@@ -10,6 +10,7 @@ import FormAlert from "@/components/_shared/FormAlert";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import DeleteAccountSection from "./DeleteAccountSection";
 
 const MAX_AVATAR_SIZE_BYTES = 4 * 1024 * 1024;
 
@@ -325,6 +326,9 @@ export default function EditProfileForm({
           </Button>
         </div>
       </div>
+
+      {/* 8. Zona Berbahaya: Hapus Akun (soft delete — konten tetap tersimpan) */}
+      <DeleteAccountSection />
     </form>
   );
 }

@@ -28,7 +28,21 @@ export async function updateMyProfile(
   });
 }
 
+/**
+ * Menghapus akun milik sendiri (DELETE /proxy/profiles/me).
+ * Soft delete: baris profil ditandai `deleted_at` — SELURUH konten (artikel,
+ * komentar, post forum, komentar forum) beserta nama penulis TETAP tersimpan
+ * untuk ditelusuri. Lihat docs/integrasi-profil/03-delete-account.md.
+ */
+export async function deleteMyAccount(): Promise<ApiEnvelope<null>> {
+  return apiFetch<null>("/proxy/profiles/me", {
+    method: "DELETE",
+    source: "mock",
+  });
+}
+
 export const profilesApi = {
   getMyProfile,
   updateMyProfile,
+  deleteMyAccount,
 };

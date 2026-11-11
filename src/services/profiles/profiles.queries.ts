@@ -42,3 +42,16 @@ export function useUpdateMyProfile() {
     },
   });
 }
+
+/**
+ * Hook mutasi penghapusan akun (soft delete — DELETE /proxy/profiles/me).
+ * Konten yang dibuat pengguna TETAP tersimpan (lihat
+ * docs/integrasi-profil/03-delete-account.md). Setelah sukses, pemanggil harus
+ * mengakhiri sesi (useLogout) dan mengarahkan ke halaman login.
+ */
+export function useDeleteMyAccount() {
+  return useMutation({
+    mutationFn: () => profilesApi.deleteMyAccount(),
+    retry: false,
+  });
+}

@@ -1132,6 +1132,17 @@ const handleGetMyProfile = (req, res) => {
     });
   }
 
+  // Mirror sesi dicabut pada backend asli: akun yang sudah dihapus tidak dapat
+  // lagi mengakses profil (frontend diarahkan ke halaman login oleh handler 401)
+  if (profile.deleted_at) {
+    return res.status(401).json({
+      statusCode: 401,
+      message: ['Akun telah dihapus.'],
+      isError: true,
+      data: null,
+    });
+  }
+
   return res.json({
     statusCode: 200,
     message: ['Profil berhasil diambil'],
@@ -1154,6 +1165,16 @@ const handleUpdateMyProfile = (req, res) => {
     return res.status(404).json({
       statusCode: 404,
       message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  // Akun yang sudah dihapus tidak dapat lagi menyunting profil
+  if (profile.deleted_at) {
+    return res.status(401).json({
+      statusCode: 401,
+      message: ['Akun telah dihapus.'],
       isError: true,
       data: null,
     });
@@ -1227,6 +1248,50 @@ const handleUpdateMyProfile = (req, res) => {
 
 server.patch('/api/profiles/me', handleUpdateMyProfile);
 server.patch('/profiles/me', handleUpdateMyProfile);
+
+// 11c. Endpoint Hapus Akun (DELETE /profiles/me) — SOFT DELETE, nama tetap
+// Keputusan desain (lihat docs/integrasi-profil/03-delete-account.md):
+// - Akun hanya DITANDAI lewat kolom `deleted_at` (baris profil TIDAK dihapus).
+// - SELURUH konten yang dibuat (artikel, komentar artikel, post forum, komentar
+//   forum) TIDAK disentuh — beserta nama penulisnya, agar dapat ditelusuri
+//   (tracing). Tidak ada baris di tabel lain yang diubah.
+// - Akun terhapus tidak dapat lagi mengakses/menyunting profil (401), dan di
+//   sisi frontend sesi langsung diakhiri (logout).
+const handleDeleteMyAccount = (req, res) => {
+  const db = router.db.getState();
+  const profile = (db.profiles || []).find((p) => p.id === MOCK_ME_ID);
+
+  if (!profile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (profile.deleted_at) {
+    return res.status(401).json({
+      statusCode: 401,
+      message: ['Akun telah dihapus.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  profile.deleted_at = new Date().toISOString();
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Akun berhasil dihapus. Konten yang Anda buat tetap tersimpan.'],
+    data: null,
+    isError: false,
+  });
+};
+
+server.delete('/api/profiles/me', handleDeleteMyAccount);
+server.delete('/profiles/me', handleDeleteMyAccount);
 
 // Mount router pada /api dan /
 server.use('/api', router);
