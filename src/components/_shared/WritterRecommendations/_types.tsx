@@ -2,6 +2,8 @@ export interface WriterItem {
     id?: string | number;
     name: string;
     avatarUrl?: string;
+    avatarColor?: string;
+    followersCount?: number;
     isFollowing?: boolean;
     username?: string;
 }
@@ -15,6 +17,7 @@ export const dummyWriters: WriterItem[] = [
 export interface WritterRecommendationCardProps {
     name?: string;
     avatarUrl?: string;
+    avatarColor?: string;
     isFollowing?: boolean;
     onFollowToggle?: () => void;
     className?: string;

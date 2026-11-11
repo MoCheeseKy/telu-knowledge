@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Newsreader, Geist } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { QueryProvider } from "@/lib/query/provider";
+import { ToastProvider } from "@/components/ui/toast";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -34,7 +36,9 @@ export default function RootLayout({
       className={cn("h-full", "antialiased", plusJakartaSans.variable, newsreader.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-full flex flex-col font-sans bg-[var(--background)] text-[var(--foreground)]">
-        {children}
+        <QueryProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </QueryProvider>
       </body>
     </html>
   );

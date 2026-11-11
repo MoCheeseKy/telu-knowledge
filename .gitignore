@@ -8,6 +8,7 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
+/docs
 
 # Build outputs
 /dist
@@ -39,3 +40,6 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Agent rules
+AGENTS.md
