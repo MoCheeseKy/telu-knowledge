@@ -25,6 +25,22 @@ export async function createCommunityPost(
 }
 
 /**
+ * Mengambil daftar postingan komunitas, terbaru di atas
+ * (GET /proxy/communities/:id/posts).
+ */
+export async function listCommunityPosts(
+  communityId: string
+): Promise<ApiEnvelope<CommunityPostDto[]>> {
+  return apiFetch<CommunityPostDto[]>(
+    `/proxy/communities/${encodeURIComponent(communityId)}/posts`,
+    {
+      method: "GET",
+      source: "mock",
+    }
+  );
+}
+
+/**
  * Mengambil detail postingan komunitas (GET /proxy/communities/:id/posts/:postId).
  */
 export async function getCommunityPost(
@@ -63,8 +79,29 @@ export async function updateCommunityPost(
   );
 }
 
+/**
+ * Menghapus postingan milik sendiri (DELETE /proxy/communities/:id/posts/:postId).
+ * Seluruh data turunan (vote, simpan, repost, komentar) ikut dihapus oleh server.
+ */
+export async function deleteCommunityPost(
+  communityId: string,
+  postId: string
+): Promise<ApiEnvelope<null>> {
+  return apiFetch<null>(
+    `/proxy/communities/${encodeURIComponent(communityId)}/posts/${encodeURIComponent(
+      postId
+    )}`,
+    {
+      method: "DELETE",
+      source: "mock",
+    }
+  );
+}
+
 export const communityPostsApi = {
   createCommunityPost,
+  listCommunityPosts,
   getCommunityPost,
   updateCommunityPost,
+  deleteCommunityPost,
 };

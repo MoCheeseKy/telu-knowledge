@@ -26,6 +26,7 @@ export default function ForumPostCard({
     className = "",
     onClick,
     editHref,
+    deleteAction,
 }: ForumPostCardProps) {
     const router = useRouter();
 
@@ -90,7 +91,12 @@ export default function ForumPostCard({
             )}
 
             {/* Aksi: suka, komentar, repost, bagikan, sunting (post milik sendiri) */}
-            <div className="mt-5 flex items-center gap-1 sm:gap-2">
+            {/* stopPropagation di level baris: klik aksi apa pun (termasuk isi dialog
+                yang dirender via portal) tidak boleh memicu navigasi klik kartu. */}
+            <div
+                className="mt-5 flex items-center gap-1 sm:gap-2"
+                onClick={(e) => e.stopPropagation()}
+            >
                 {editHref && (
                     <Button
                         type="button"
@@ -171,6 +177,8 @@ export default function ForumPostCard({
                 >
                     <Share2 />
                 </Button>
+
+                {deleteAction}
             </div>
         </article>
     );

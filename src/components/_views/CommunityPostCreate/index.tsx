@@ -12,8 +12,8 @@ import { useToast } from "@/components/ui/toast";
 import FormAlert from "@/components/_shared/FormAlert";
 import { cn } from "@/lib/utils";
 import PostGuidelinesSidebar from "./PostGuidelinesSidebar";
-import { upsertCommunityPost } from "./storage";
-import type { CommunityDetail, CommunityPost } from "../CommunityDetail/types";
+import CommunityPostDeleteButton from "../CommunityDetail/CommunityPostDeleteButton";
+import type { CommunityDetail } from "../CommunityDetail/types";
 
 interface CommunityPostCreateViewProps {
   community: CommunityDetail;
@@ -117,41 +117,6 @@ export default function CommunityPostCreateView({
     setCoverImage(null);
   };
 
-  /**
-   * Jembatan tampilan sementara: sinkronkan ringkasan postingan ke localStorage
-   * agar langsung tampil di feed komunitas (create menambah, edit mengganti).
-   * TODO(langkah integrasi GET): hapus setelah feed komunitas membaca postingan
-   * langsung dari mock server (GET /proxy/communities/:id/posts).
-   */
-  const syncPostToFeed = (dto: CommunityPostDto) => {
-    const trimmedDescription = dto.content.trim();
-    const post: CommunityPost = {
-      id: Date.now(),
-      mockPostId: dto.id,
-      topic: community.name,
-      publisher: dto.author.displayName,
-      postDate: new Intl.DateTimeFormat("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }).format(new Date(dto.createdAt)),
-      title: dto.title,
-      description:
-        trimmedDescription.length > 280
-          ? `${trimmedDescription.slice(0, 280)}…`
-          : trimmedDescription,
-      ...(dto.coverImageUrl
-        ? { imageUrl: dto.coverImageUrl, imageAlt: dto.imageCaption ?? dto.title }
-        : {}),
-      likesCount: dto.likesCount,
-      commentsCount: dto.commentsCount,
-      repostsCount: dto.repostsCount,
-      isLiked: dto.isLiked,
-    };
-
-    upsertCommunityPost(community.id, post);
-  };
-
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!canSubmit || isSubmitting) return;
@@ -181,8 +146,7 @@ export default function CommunityPostCreateView({
           payload: validation.data,
         },
         {
-          onSuccess: (res) => {
-            syncPostToFeed(res.data);
+          onSuccess: () => {
             toast.success("Postingan berhasil diperbarui.");
             router.push(`/communities/${community.id}`);
           },
@@ -197,8 +161,7 @@ export default function CommunityPostCreateView({
     createPostMutation.mutate(
       { communityId: community.id, payload: validation.data },
       {
-        onSuccess: (res) => {
-          syncPostToFeed(res.data);
+        onSuccess: () => {
           toast.success("Postingan berhasil dibuat.");
           router.push(`/communities/${community.id}`);
         },
@@ -418,7 +381,19 @@ export default function CommunityPostCreateView({
             <div className="flex flex-col gap-3 border-t border-[var(--dust)]/50 px-4 py-3">
               {submitError && <FormAlert messages={submitError} />}
 
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-between gap-3">
+                {isEditMode && initialPost ? (
+                  <CommunityPostDeleteButton
+                    communityId={community.id}
+                    postId={initialPost.id}
+                    postTitle={initialPost.title}
+                    variant="form"
+                    redirectHref={`/communities/${community.id}`}
+                  />
+                ) : (
+                  <span />
+                )}
+
                 <button
                   type="submit"
                   disabled={!canSubmit || isSubmitting}

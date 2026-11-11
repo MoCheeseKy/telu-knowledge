@@ -807,6 +807,35 @@ const handleCreateCommunityPost = (req, res) => {
 server.post('/api/communities/:id/posts', handleCreateCommunityPost);
 server.post('/communities/:id/posts', handleCreateCommunityPost);
 
+// 10e. Endpoint Daftar Postingan Komunitas (GET /communities/:communityId/posts)
+// Terbaru di atas. Komunitas yang tidak dikenal (mis. komunitas contoh) tetap
+// dikembalikan daftarnya (kosong atau berisi post yang pernah dibuat) — konsisten
+// dengan perilaku create.
+const handleListCommunityPosts = (req, res) => {
+  const db = router.db.getState();
+  const community = (db.communities || []).find(
+    (c) => c.id === req.params.communityId || c.slug === req.params.communityId
+  );
+  const resolvedCommunityId = community ? community.id : req.params.communityId;
+
+  const posts = (db.forum_posts || [])
+    .filter((p) => p.community_id === resolvedCommunityId)
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar postingan berhasil diambil'],
+    data: posts.map((p) => enrichForumPost(p, db)),
+    isError: false,
+  });
+};
+
+server.get('/api/communities/:communityId/posts', handleListCommunityPosts);
+server.get('/communities/:communityId/posts', handleListCommunityPosts);
+
 // 10b. Endpoint Detail Postingan (GET /communities/:communityId/posts/:postId)
 const findCommunityPost = (communityId, postId, db) => {
   const community = (db.communities || []).find(
@@ -964,6 +993,74 @@ const handleUpdateCommunityPost = (req, res) => {
 
 server.patch('/api/communities/:communityId/posts/:postId', handleUpdateCommunityPost);
 server.patch('/communities/:communityId/posts/:postId', handleUpdateCommunityPost);
+
+// 10d. Endpoint Hapus Postingan (DELETE /communities/:communityId/posts/:postId)
+const handleDeleteCommunityPost = (req, res) => {
+  const db = router.db.getState();
+  const { community, post } = findCommunityPost(
+    req.params.communityId,
+    req.params.postId,
+    db
+  );
+
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  // Otorisasi: hanya penulis (di backend asli, bandingkan dengan user dari token)
+  if (post.author_id !== MOCK_ME_ID) {
+    return res.status(403).json({
+      statusCode: 403,
+      message: ['Hanya penulis yang dapat menghapus postingan ini.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  // Cascade delete relasi turunan: vote/simpan/repost post + komentar beserta vote komentar
+  const commentIds = new Set(
+    (db.forum_comments || [])
+      .filter((c) => c.post_id === post.id)
+      .map((c) => c.id)
+  );
+
+  const removeAll = (table, predicate) => {
+    if (!db[table]) return;
+    db[table] = db[table].filter((row) => !predicate(row));
+  };
+
+  removeAll('forum_post_votes', (v) => v.post_id === post.id);
+  removeAll('forum_post_saves', (s) => s.post_id === post.id);
+  removeAll('forum_post_reposts', (r) => r.post_id === post.id);
+  removeAll('forum_comment_votes', (v) => commentIds.has(v.comment_id));
+  removeAll('forum_comments', (c) => c.post_id === post.id);
+
+  const postIndex = (db.forum_posts || []).findIndex((p) => p.id === post.id);
+  if (postIndex >= 0) {
+    db.forum_posts.splice(postIndex, 1);
+  }
+
+  if (community) {
+    community.post_count = Math.max(0, (community.post_count || 1) - 1);
+  }
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Postingan berhasil dihapus'],
+    data: null,
+    isError: false,
+  });
+};
+
+server.delete('/api/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
+server.delete('/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 
 // Mount router pada /api dan /
 server.use('/api', router);

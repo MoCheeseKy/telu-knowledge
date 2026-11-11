@@ -3,6 +3,7 @@ import { communityPostsApi } from "./community-posts.api";
 import type {
   CommunityPostDto,
   CreateCommunityPostVariables,
+  DeleteCommunityPostVariables,
   UpdateCommunityPostVariables,
 } from "./community-posts.types";
 
@@ -14,6 +15,27 @@ export const communityPostKeys = {
   details: () => [...communityPostKeys.all, "detail"] as const,
   detail: (id: string) => [...communityPostKeys.details(), id] as const,
 };
+
+/**
+ * Hook query daftar postingan komunitas, terbaru di atas
+ * (GET /proxy/communities/:id/posts).
+ * Query key memakai `communityPostKeys.list(communityId)` yang sama dengan
+ * target invalidasi mutasi create/update/delete — sehingga feed otomatis
+ * me-refresh setelah aksi apa pun tanpa penanganan khusus di komponen.
+ */
+export function useCommunityPosts(communityId?: string | null) {
+  return useQuery<CommunityPostDto[]>({
+    queryKey: communityPostKeys.list(communityId ?? ""),
+    queryFn: async (): Promise<CommunityPostDto[]> => {
+      if (!communityId) {
+        throw new Error("ID komunitas wajib diisi");
+      }
+      const res = await communityPostsApi.listCommunityPosts(communityId);
+      return res.data;
+    },
+    enabled: Boolean(communityId),
+  });
+}
 
 /**
  * Hook query detail postingan komunitas (GET /proxy/communities/:id/posts/:postId).
@@ -56,6 +78,26 @@ export function useUpdateCommunityPost() {
       void queryClient.invalidateQueries({
         queryKey: communityPostKeys.list(communityId),
       });
+    },
+  });
+}
+
+/**
+ * Hook mutasi penghapusan postingan milik sendiri
+ * (DELETE /proxy/communities/:id/posts/:postId).
+ */
+export function useDeleteCommunityPost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ communityId, postId }: DeleteCommunityPostVariables) =>
+      communityPostsApi.deleteCommunityPost(communityId, postId),
+    retry: false,
+    onSuccess: (_res, { communityId }) => {
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.list(communityId),
+      });
+      void queryClient.invalidateQueries({ queryKey: communityPostKeys.all });
     },
   });
 }

@@ -1,5 +1,7 @@
 import { Fragment } from "react";
 import ForumPostCard from "@/components/_shared/ForumPostCard";
+import CommunityPostDeleteButton from "./CommunityPostDeleteButton";
+import { MOCK_VIEWER_ID } from "@/services/community-posts/community-posts.types";
 import type { CommunityPost } from "./types";
 
 interface CommunityFeedProps {
@@ -27,33 +29,48 @@ export default function CommunityFeed({
 
   return (
     <div className="mt-5 flex flex-col gap-6">
-      {posts.map((post, index) => (
-        <Fragment key={post.id}>
-          {index > 0 && (
-            <div className="w-full border-t border-[var(--dust)]/40" />
-          )}
-          <ForumPostCard
-            id={post.id}
-            topic={post.topic}
-            publisher={post.publisher}
-            postDate={post.postDate}
-            title={post.title}
-            description={post.description}
-            imageUrl={post.imageUrl}
-            imageAlt={post.imageAlt}
-            likesCount={post.likesCount}
-            commentsCount={post.commentsCount}
-            repostsCount={post.repostsCount}
-            isLiked={post.isLiked}
-            editHref={
-              post.mockPostId
-                ? `/communities/${communityId}/post/${post.mockPostId}/edit`
-                : undefined
-            }
-            className="max-w-none"
-          />
-        </Fragment>
-      ))}
+      {posts.map((post, index) => {
+        // Tombol sunting/hapus hanya untuk postingan milik viewer mock
+        // (lihat docs/integrasi-community-posts/README.md bagian "Identitas Penulis di Mock").
+        const isMine = post.authorId === MOCK_VIEWER_ID;
+
+        return (
+          <Fragment key={post.id}>
+            {index > 0 && (
+              <div className="w-full border-t border-[var(--dust)]/40" />
+            )}
+            <ForumPostCard
+              id={post.id}
+              topic={post.topic}
+              publisher={post.publisher}
+              postDate={post.postDate}
+              title={post.title}
+              description={post.description}
+              imageUrl={post.imageUrl}
+              imageAlt={post.imageAlt}
+              likesCount={post.likesCount}
+              commentsCount={post.commentsCount}
+              repostsCount={post.repostsCount}
+              isLiked={post.isLiked}
+              editHref={
+                isMine
+                  ? `/communities/${communityId}/post/${post.id}/edit`
+                  : undefined
+              }
+              deleteAction={
+                isMine ? (
+                  <CommunityPostDeleteButton
+                    communityId={communityId}
+                    postId={String(post.id)}
+                    postTitle={post.title}
+                  />
+                ) : undefined
+              }
+              className="max-w-none"
+            />
+          </Fragment>
+        );
+      })}
     </div>
   );
 }

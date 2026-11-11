@@ -61,6 +61,11 @@ export interface UpdateCommunityPostVariables {
   payload: UpdateCommunityPostPayload;
 }
 
+export interface DeleteCommunityPostVariables {
+  communityId: string;
+  postId: string;
+}
+
 /**
  * Identitas penulis/viewer tetap mock (lihat docs/integrasi-community-posts/README.md
  * bagian "Identitas Penulis di Mock"). Dipakai untuk cek kepemilikan postingan di UI.
