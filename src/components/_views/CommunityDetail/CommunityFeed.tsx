@@ -4,9 +4,14 @@ import type { CommunityPost } from "./types";
 
 interface CommunityFeedProps {
   posts: CommunityPost[];
+  /** Dibutuhkan untuk menyusun tautan "Sunting" pada post milik sendiri. */
+  communityId: string;
 }
 
-export default function CommunityFeed({ posts }: CommunityFeedProps) {
+export default function CommunityFeed({
+  posts,
+  communityId,
+}: CommunityFeedProps) {
   if (posts.length === 0) {
     return (
       <div className="mt-8 flex min-h-[200px] flex-col items-center justify-center rounded-xl border border-dashed border-[var(--dust)]/70 text-center">
@@ -40,6 +45,11 @@ export default function CommunityFeed({ posts }: CommunityFeedProps) {
             commentsCount={post.commentsCount}
             repostsCount={post.repostsCount}
             isLiked={post.isLiked}
+            editHref={
+              post.mockPostId
+                ? `/communities/${communityId}/post/${post.mockPostId}/edit`
+                : undefined
+            }
             className="max-w-none"
           />
         </Fragment>

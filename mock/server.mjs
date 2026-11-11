@@ -807,6 +807,164 @@ const handleCreateCommunityPost = (req, res) => {
 server.post('/api/communities/:id/posts', handleCreateCommunityPost);
 server.post('/communities/:id/posts', handleCreateCommunityPost);
 
+// 10b. Endpoint Detail Postingan (GET /communities/:communityId/posts/:postId)
+const findCommunityPost = (communityId, postId, db) => {
+  const community = (db.communities || []).find(
+    (c) => c.id === communityId || c.slug === communityId
+  );
+  // Konsisten dengan create: komunitas yang tidak dikenal (mis. komunitas contoh)
+  // dicocokkan langsung dengan community_id pada post.
+  const resolvedCommunityId = community ? community.id : communityId;
+  const post = (db.forum_posts || []).find(
+    (p) => p.id === postId && p.community_id === resolvedCommunityId
+  );
+  return { community, post };
+};
+
+const handleGetCommunityPost = (req, res) => {
+  const db = router.db.getState();
+  const { post } = findCommunityPost(
+    req.params.communityId,
+    req.params.postId,
+    db
+  );
+
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  return res.json({
+    statusCode: 200,
+    message: ['Detail postingan berhasil diambil'],
+    data: enrichForumPost(post, db),
+    isError: false,
+  });
+};
+
+server.get('/api/communities/:communityId/posts/:postId', handleGetCommunityPost);
+server.get('/communities/:communityId/posts/:postId', handleGetCommunityPost);
+
+// 10c. Endpoint Sunting Postingan (PATCH /communities/:communityId/posts/:postId)
+const handleUpdateCommunityPost = (req, res) => {
+  const db = router.db.getState();
+  const { post } = findCommunityPost(
+    req.params.communityId,
+    req.params.postId,
+    db
+  );
+
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  // Otorisasi: hanya penulis (di backend asli, bandingkan dengan user dari token)
+  if (post.author_id !== MOCK_ME_ID) {
+    return res.status(403).json({
+      statusCode: 403,
+      message: ['Hanya penulis yang dapat menyunting postingan ini.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (post.status === 'terkunci') {
+    return res.status(400).json({
+      statusCode: 400,
+      message: ['Postingan terkunci tidak dapat disunting.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const body = req.body || {};
+  const has = (key) => Object.prototype.hasOwnProperty.call(body, key);
+  const messages = [];
+
+  if (has('title')) {
+    const value = typeof body.title === 'string' ? body.title.trim() : '';
+    if (!value) messages.push('Judul postingan wajib diisi.');
+    else if (value.length > 300)
+      messages.push('Judul postingan maksimal 300 karakter.');
+  }
+  if (has('content')) {
+    const value = typeof body.content === 'string' ? body.content.trim() : '';
+    if (!value) messages.push('Isi postingan wajib diisi.');
+  }
+  if (has('tags')) {
+    if (!Array.isArray(body.tags)) {
+      messages.push('Flair atau tag harus berupa daftar.');
+    } else {
+      const clean = body.tags.filter((t) => typeof t === 'string' && t.trim());
+      if (clean.length > 6) messages.push('Maksimal 6 flair atau tag.');
+    }
+  }
+  if (has('imageCaption')) {
+    const value =
+      typeof body.imageCaption === 'string' ? body.imageCaption.trim() : '';
+    if (value.length > 200)
+      messages.push('Keterangan gambar maksimal 200 karakter.');
+  }
+  if (messages.length > 0) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: messages,
+      isError: true,
+      data: null,
+    });
+  }
+
+  // Merge patch parsial: hanya field yang dikirim yang diubah
+  if (has('title')) post.title = body.title.trim();
+  if (has('content')) post.content = body.content.trim();
+  if (has('flair')) {
+    const value = typeof body.flair === 'string' ? body.flair.trim() : '';
+    post.flair = value || null;
+  }
+  if (has('tags')) {
+    post.tags = body.tags
+      .filter((t) => typeof t === 'string' && t.trim())
+      .map((t) => t.trim())
+      .slice(0, 6);
+  }
+  if (has('coverImageUrl')) {
+    post.cover_image_url =
+      typeof body.coverImageUrl === 'string' && body.coverImageUrl
+        ? body.coverImageUrl
+        : null;
+  }
+  if (has('imageCaption')) {
+    const value = typeof body.imageCaption === 'string' ? body.imageCaption.trim() : '';
+    post.image_caption = value || null;
+  }
+  // Gambar dihapus -> keterangan gambar ikut dikosongkan
+  if (post.cover_image_url === null) {
+    post.image_caption = null;
+  }
+
+  post.updated_at = new Date().toISOString();
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Postingan berhasil diperbarui'],
+    data: enrichForumPost(post, db),
+    isError: false,
+  });
+};
+
+server.patch('/api/communities/:communityId/posts/:postId', handleUpdateCommunityPost);
+server.patch('/communities/:communityId/posts/:postId', handleUpdateCommunityPost);
+
 // Mount router pada /api dan /
 server.use('/api', router);
 server.use(router);

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import ForumPostCardProps from "./_types";
-import { ThumbsUp, MessageSquareMore, Repeat2, Share2 } from "lucide-react";
+import { ThumbsUp, MessageSquareMore, Repeat2, Share2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +25,7 @@ export default function ForumPostCard({
     isLiked = false,
     className = "",
     onClick,
+    editHref,
 }: ForumPostCardProps) {
     const router = useRouter();
 
@@ -88,8 +89,25 @@ export default function ForumPostCard({
                 />
             )}
 
-            {/* Aksi: suka, komentar, repost, bagikan */}
+            {/* Aksi: suka, komentar, repost, bagikan, sunting (post milik sendiri) */}
             <div className="mt-5 flex items-center gap-1 sm:gap-2">
+                {editHref && (
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className={actionButtonClass}
+                        aria-label="Sunting postingan"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(editHref);
+                        }}
+                    >
+                        <Pencil />
+                        <span className="font-sans text-xs font-bold">Sunting</span>
+                    </Button>
+                )}
+
                 <Button
                     type="button"
                     variant="ghost"

@@ -48,3 +48,21 @@ export interface CreateCommunityPostVariables {
   communityId: string;
   payload: CreateCommunityPostPayload;
 }
+
+/**
+ * Patch parsial: field yang tidak dikirim tidak diubah;
+ * null eksplisit untuk menghapus coverImageUrl / imageCaption / flair.
+ */
+export type UpdateCommunityPostPayload = Partial<CreateCommunityPostPayload>;
+
+export interface UpdateCommunityPostVariables {
+  communityId: string;
+  postId: string;
+  payload: UpdateCommunityPostPayload;
+}
+
+/**
+ * Identitas penulis/viewer tetap mock (lihat docs/integrasi-community-posts/README.md
+ * bagian "Identitas Penulis di Mock"). Dipakai untuk cek kepemilikan postingan di UI.
+ */
+export const MOCK_VIEWER_ID = "10000000-0000-4000-8000-000000000001";

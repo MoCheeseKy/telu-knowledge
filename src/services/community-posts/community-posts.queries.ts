@@ -1,6 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { communityPostsApi } from "./community-posts.api";
-import type { CreateCommunityPostVariables } from "./community-posts.types";
+import type {
+  CommunityPostDto,
+  CreateCommunityPostVariables,
+  UpdateCommunityPostVariables,
+} from "./community-posts.types";
 
 export const communityPostKeys = {
   all: ["community-posts"] as const,
@@ -10,6 +14,51 @@ export const communityPostKeys = {
   details: () => [...communityPostKeys.all, "detail"] as const,
   detail: (id: string) => [...communityPostKeys.details(), id] as const,
 };
+
+/**
+ * Hook query detail postingan komunitas (GET /proxy/communities/:id/posts/:postId).
+ */
+export function useCommunityPost(
+  communityId?: string | null,
+  postId?: string | null
+) {
+  return useQuery<CommunityPostDto>({
+    queryKey: communityPostKeys.detail(postId ?? ""),
+    queryFn: async (): Promise<CommunityPostDto> => {
+      if (!communityId || !postId) {
+        throw new Error("ID komunitas dan postingan wajib diisi");
+      }
+      const res = await communityPostsApi.getCommunityPost(communityId, postId);
+      return res.data;
+    },
+    enabled: Boolean(communityId && postId),
+  });
+}
+
+/**
+ * Hook mutasi penyuntingan postingan milik sendiri
+ * (PATCH /proxy/communities/:id/posts/:postId).
+ */
+export function useUpdateCommunityPost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ communityId, postId, payload }: UpdateCommunityPostVariables) =>
+      communityPostsApi.updateCommunityPost(communityId, postId, payload),
+    retry: false,
+    onSuccess: (res, { communityId }) => {
+      if (res?.data?.id) {
+        queryClient.setQueryData(
+          communityPostKeys.detail(res.data.id),
+          res.data
+        );
+      }
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.list(communityId),
+      });
+    },
+  });
+}
 
 /**
  * Hook mutasi pembuatan postingan baru pada komunitas

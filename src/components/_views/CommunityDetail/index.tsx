@@ -112,7 +112,7 @@ export default function CommunityDetailView({
         )}
       >
         <CommunityHighlights highlights={community.highlights} />
-        <CommunityFeed posts={posts} />
+        <CommunityFeed posts={posts} communityId={community.id} />
       </div>
 
       <div

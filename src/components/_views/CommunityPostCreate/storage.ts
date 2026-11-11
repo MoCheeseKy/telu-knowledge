@@ -215,11 +215,27 @@ export function subscribeCommunityPosts(onStoreChange: () => void): () => void {
   return () => window.removeEventListener("storage", handleChange);
 }
 
-export function saveCommunityPost(
+/**
+ * Menyinkronkan ringkasan postingan ke feed lokal: bila post dengan `mockPostId`
+ * yang sama sudah ada (hasil sunting), datanya diganti di tempat; selain itu
+ * post baru disisipkan di awal daftar.
+ */
+export function upsertCommunityPost(
   communityId: string,
   post: CommunityPost
 ): void {
   const existing = loadCommunityPosts(communityId);
-  writeJson(`${POSTS_PREFIX}${communityId}`, [post, ...existing].slice(0, 20));
+
+  const index = post.mockPostId
+    ? existing.findIndex((item) => item.mockPostId === post.mockPostId)
+    : -1;
+
+  if (index >= 0) {
+    existing[index] = { ...existing[index], ...post, id: existing[index].id };
+  } else {
+    existing.unshift(post);
+  }
+
+  writeJson(`${POSTS_PREFIX}${communityId}`, existing.slice(0, 20));
   postsSnapshotCache.delete(communityId);
 }

@@ -14,4 +14,6 @@ export default interface ForumPostCardProps {
   isLiked?: boolean;
   className?: string;
   onClick?: () => void;
+  /** Jika diisi, tombol "Sunting" tampil dan mengarah ke URL ini (hanya untuk post milik sendiri). */
+  editHref?: string;
 }

@@ -14,6 +14,8 @@ export interface CommunityRule {
 
 export interface CommunityPost {
   id: number;
+  /** ID postingan di mock server (forum_posts.id) — penanda untuk aksi sunting. */
+  mockPostId?: string;
   topic: string;
   publisher: string;
   postDate: string;
