@@ -1,3 +1,5 @@
+import type { CommunityPostDto } from "@/services/community-posts/community-posts.types";
+
 export interface ForumComment {
   id: string | number;
   author: {
@@ -43,6 +45,60 @@ export interface ForumPostDetail {
   repostsCount: number;
   isSaved: boolean;
   comments: ForumComment[];
+}
+
+const detailDateFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+/**
+ * Mengubah CommunityPostDto (mock server) menjadi ForumPostDetail.
+ * Cakupan integrasi: konten post saja (judul, penulis, tanggal, paragraf,
+ * cover, callout, tags). Field komunitas sidebar (slug, anggota, deskripsi,
+ * aturan) serta userVote/isSaved memakai nilai contoh — di luar cakupan.
+ */
+export function mapForumPostDtoToDetail(dto: CommunityPostDto): ForumPostDetail {
+  const { author } = dto;
+  const initial = (author.displayName?.trim()?.[0] ?? "T").toUpperCase();
+  const generationLabel = author.generation
+    ? `'${author.generation.slice(-2)}`
+    : null;
+
+  return {
+    ...sampleForumPost,
+    id: dto.id,
+    title: dto.title,
+    topic: dto.communityName ?? sampleForumPost.topic,
+    publisher: {
+      name: author.displayName,
+      avatarUrl: author.avatarUrl ?? undefined,
+      initial,
+      role: author.faculty ?? "Mahasiswa Telkom University",
+      department:
+        [author.major, generationLabel].filter(Boolean).join(" ") ||
+        "Telkom University",
+    },
+    postDate: detailDateFormatter.format(new Date(dto.createdAt)),
+    content: dto.content.trim().split(/\n{2,}/),
+    callout: dto.callout ?? undefined,
+    ...(dto.coverImageUrl
+      ? {
+          imageUrl: dto.coverImageUrl,
+          imageAlt: dto.imageCaption ?? dto.title,
+          imageCaption: dto.imageCaption ?? undefined,
+        }
+      : {}),
+    tags: dto.tags,
+    score: dto.score || dto.likesCount,
+    userVote: 0,
+    commentsCount: dto.commentsCount,
+    repostsCount: dto.repostsCount,
+    isSaved: false,
+    // Komentar di luar cakupan integrasi ini (lihat docs 05-detail-post.md)
+    comments: [],
+  };
 }
 
 export const sampleForumPost: ForumPostDetail = {

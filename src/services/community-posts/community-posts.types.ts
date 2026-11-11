@@ -9,6 +9,9 @@ export interface CommunityPostAuthor {
   avatarUrl: string | null;
   avatarColor: string;
   username: string | null;
+  faculty?: string | null;
+  major?: string | null;
+  generation?: string | null;
 }
 
 export interface CommunityPostDto {

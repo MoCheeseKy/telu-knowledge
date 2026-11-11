@@ -41,6 +41,23 @@ export async function listCommunityPosts(
 }
 
 /**
+ * Mengambil detail postingan by ID saja, tanpa communityId
+ * (GET /proxy/forum-posts/:postId) — dipakai halaman /discussion-forums/[id].
+ * Konten post saja; komentar/like/save tidak termasuk cakupan endpoint ini.
+ */
+export async function getForumPostDetail(
+  postId: string
+): Promise<ApiEnvelope<CommunityPostDto>> {
+  return apiFetch<CommunityPostDto>(
+    `/proxy/forum-posts/${encodeURIComponent(postId)}`,
+    {
+      method: "GET",
+      source: "mock",
+    }
+  );
+}
+
+/**
  * Mengambil detail postingan komunitas (GET /proxy/communities/:id/posts/:postId).
  */
 export async function getCommunityPost(
@@ -102,6 +119,7 @@ export const communityPostsApi = {
   createCommunityPost,
   listCommunityPosts,
   getCommunityPost,
+  getForumPostDetail,
   updateCommunityPost,
   deleteCommunityPost,
 };

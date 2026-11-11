@@ -17,6 +17,26 @@ export const communityPostKeys = {
 };
 
 /**
+ * Hook query detail postingan by ID (GET /proxy/forum-posts/:postId) — tanpa
+ * communityId, dipakai halaman /discussion-forums/[id]. Konten post saja.
+ * Memakai query key `communityPostKeys.detail(id)` yang sama dengan detail
+ * per komunitas (bentuk datanya identik), sehingga cache dapat dipakai bersama.
+ */
+export function useForumPostDetail(postId?: string | null) {
+  return useQuery<CommunityPostDto>({
+    queryKey: communityPostKeys.detail(postId ?? ""),
+    queryFn: async (): Promise<CommunityPostDto> => {
+      if (!postId) {
+        throw new Error("ID postingan wajib diisi");
+      }
+      const res = await communityPostsApi.getForumPostDetail(postId);
+      return res.data;
+    },
+    enabled: Boolean(postId),
+  });
+}
+
+/**
  * Hook query daftar postingan komunitas, terbaru di atas
  * (GET /proxy/communities/:id/posts).
  * Query key memakai `communityPostKeys.list(communityId)` yang sama dengan

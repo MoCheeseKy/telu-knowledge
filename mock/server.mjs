@@ -722,6 +722,9 @@ const enrichForumPost = (post, db) => {
       avatarUrl: author ? author.avatar_url : null,
       avatarColor: author ? author.avatar_color : '#E53E3E',
       username: author ? author.username : null,
+      faculty: author ? author.faculty || null : null,
+      major: author ? author.major || null : null,
+      generation: author ? author.generation || null : null,
     },
   };
 };
@@ -835,6 +838,33 @@ const handleListCommunityPosts = (req, res) => {
 
 server.get('/api/communities/:communityId/posts', handleListCommunityPosts);
 server.get('/communities/:communityId/posts', handleListCommunityPosts);
+
+// 10f. Endpoint Detail Postingan by ID (GET /forum-posts/:postId)
+// Dipakai halaman /discussion-forums/[id] yang hanya punya postId (tanpa
+// communityId). Konten post saja — komentar/like/save tidak termasuk cakupan.
+const handleGetForumPostById = (req, res) => {
+  const db = router.db.getState();
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  return res.json({
+    statusCode: 200,
+    message: ['Detail postingan berhasil diambil'],
+    data: enrichForumPost(post, db),
+    isError: false,
+  });
+};
+
+server.get('/api/forum-posts/:postId', handleGetForumPostById);
+server.get('/forum-posts/:postId', handleGetForumPostById);
 
 // 10b. Endpoint Detail Postingan (GET /communities/:communityId/posts/:postId)
 const findCommunityPost = (communityId, postId, db) => {
