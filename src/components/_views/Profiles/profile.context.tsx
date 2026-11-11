@@ -1,57 +1,57 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
-import { UserProfile, defaultProfile } from "./profile.types";
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
+import { useMyProfile } from "@/services/profiles/profiles.queries";
+import {
+  UserProfile,
+  defaultProfile,
+  mapProfileDtoToUserProfile,
+} from "./profile.types";
 
 interface ProfileContextType {
   profile: UserProfile;
+  /**
+   * Pembaruan profil sementara (di memori selama halaman terbuka).
+   * Persistensi ke mock menyusul pada task Update Profil
+   * (lihat docs/integrasi-profil/).
+   */
   updateProfile: (updated: Partial<UserProfile>) => void;
-  resetProfile: () => void;
+  isLoading: boolean;
+  isError: boolean;
+  refetchProfile: () => void;
   isEditDialogOpen: boolean;
   setIsEditDialogOpen: (open: boolean) => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
-const STORAGE_KEY = "telu_user_profile";
-
-function getInitialProfile(): UserProfile {
-  if (typeof window !== "undefined") {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch {
-      // Ignore storage errors
-    }
-  }
-  return defaultProfile;
-}
-
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
-  const [profile, setProfile] = useState<UserProfile>(getInitialProfile);
+  // Detail profil langsung dari mock server (GET /proxy/profiles/me).
+  // Tidak ada localStorage — perubahan data cukup lewat invalidasi query.
+  const { data, isLoading, isError, refetch } = useMyProfile();
+  const [overrides, setOverrides] = useState<Partial<UserProfile>>({});
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
+  const profile = useMemo<UserProfile>(() => {
+    const base = data ? mapProfileDtoToUserProfile(data) : defaultProfile;
+    return { ...base, ...overrides };
+  }, [data, overrides]);
+
   const updateProfile = (updated: Partial<UserProfile>) => {
-    setProfile((prev) => {
-      const next = { ...prev, ...updated };
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch {
-        // Ignore storage errors
-      }
-      return next;
-    });
+    // TODO(task Update Profil): kirim PATCH ke mock lalu invalidate
+    // profileKeys.me agar seluruh tampilan sinkron. Sementara perubahan hanya
+    // bertahan selama halaman terbuka.
+    setOverrides((prev) => ({ ...prev, ...updated }));
   };
 
-  const resetProfile = () => {
-    setProfile(defaultProfile);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // Ignore storage errors
-    }
+  const refetchProfile = () => {
+    setOverrides({});
+    void refetch();
   };
 
   return (
@@ -59,7 +59,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       value={{
         profile,
         updateProfile,
-        resetProfile,
+        isLoading,
+        isError,
+        refetchProfile,
         isEditDialogOpen,
         setIsEditDialogOpen,
       }}

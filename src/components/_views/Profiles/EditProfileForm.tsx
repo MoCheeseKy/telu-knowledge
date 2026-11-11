@@ -68,9 +68,8 @@ export default function EditProfileForm({
           />
         ) : (
           <div
-            className={`w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white shrink-0 ${
-              formData.avatarColor || "bg-[#0A3AB5]"
-            }`}
+            className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white shrink-0"
+            style={{ backgroundColor: formData.avatarColor || "#0A3AB5" }}
           >
             {formData.avatarInitial}
           </div>

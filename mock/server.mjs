@@ -1092,6 +1092,57 @@ const handleDeleteCommunityPost = (req, res) => {
 server.delete('/api/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 server.delete('/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 
+// 11. Profil Pengguna
+// Mapper bersama: profiles (snake_case seed) -> ProfileDto (camelCase kontrak frontend).
+const enrichProfile = (profile) => ({
+  id: profile.id,
+  username: profile.username || null,
+  displayName: profile.display_name || 'Anggota Tel-U',
+  avatarUrl: profile.avatar_url || null,
+  avatarColor: profile.avatar_color || '#E53E3E',
+  bannerUrl: profile.banner_url || null,
+  bio: profile.bio || '',
+  faculty: profile.faculty || null,
+  major: profile.major || null,
+  generation: profile.generation || null,
+  website: profile.website || null,
+  github: profile.github || null,
+  linkedin: profile.linkedin || null,
+  showEmail: Boolean(profile.show_email),
+  showCommunities: profile.show_communities !== false,
+  followersCount: profile.followers_count || 0,
+  followingCount: profile.following_count || 0,
+  createdAt: profile.created_at,
+});
+
+// 11a. Endpoint Detail Profil Milik Sendiri (GET /profiles/me)
+// Identitas viewer = MOCK_ME_ID (akun demo mock), konsisten dengan postingan —
+// lihat docs/integrasi-community-posts/README.md bagian "Identitas Penulis di Mock".
+// Cakupan: detail profil saja — post, pengikut, dan diikuti tidak termasuk.
+const handleGetMyProfile = (req, res) => {
+  const db = router.db.getState();
+  const profile = (db.profiles || []).find((p) => p.id === MOCK_ME_ID);
+
+  if (!profile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  return res.json({
+    statusCode: 200,
+    message: ['Profil berhasil diambil'],
+    data: { profile: enrichProfile(profile) },
+    isError: false,
+  });
+};
+
+server.get('/api/profiles/me', handleGetMyProfile);
+server.get('/profiles/me', handleGetMyProfile);
+
 // Mount router pada /api dan /
 server.use('/api', router);
 server.use(router);
