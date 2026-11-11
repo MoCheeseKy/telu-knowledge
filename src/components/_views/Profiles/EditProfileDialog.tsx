@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import EditProfileForm from "./EditProfileForm";
 import { useProfile } from "./profile.context";
-import { UserProfile } from "./profile.types";
+import type { UpdateProfilePayload } from "@/services/profiles/profiles.types";
 import { useToast } from "@/components/ui/toast";
 
 interface EditProfileDialogProps {
@@ -25,8 +25,10 @@ export default function EditProfileDialog({
   const { profile, updateProfile } = useProfile();
   const { toast } = useToast();
 
-  const handleSave = (updated: Partial<UserProfile>) => {
-    updateProfile(updated);
+  const handleSave = async (updated: UpdateProfilePayload) => {
+    // Error diteruskan ke form (ditampilkan lewat FormAlert) — toast sukses
+    // hanya muncul bila penyimpanan benar-benar berhasil.
+    await updateProfile(updated);
     toast.success("Profil berhasil diperbarui!");
   };
 
