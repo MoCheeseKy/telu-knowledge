@@ -55,9 +55,8 @@ export default function ProfileSidebar() {
             />
           ) : (
             <div
-              className={`size-20 flex items-center justify-center rounded-full text-3xl font-bold text-white shadow-sm ${
-                profile.avatarColor || "bg-[#0A3AB5]"
-              }`}
+              className="size-20 flex items-center justify-center rounded-full text-3xl font-bold text-white shadow-sm"
+              style={{ backgroundColor: profile.avatarColor || "#0A3AB5" }}
             >
               {profile.avatarInitial || "S"}
             </div>
