@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import ForumPostCardProps from "./_types";
-import { ThumbsUp, MessageSquareMore, Repeat2, Share2 } from "lucide-react";
+import { ThumbsUp, MessageSquareMore, Repeat2, Share2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +25,8 @@ export default function ForumPostCard({
     isLiked = false,
     className = "",
     onClick,
+    editHref,
+    deleteAction,
 }: ForumPostCardProps) {
     const router = useRouter();
 
@@ -88,8 +90,30 @@ export default function ForumPostCard({
                 />
             )}
 
-            {/* Aksi: suka, komentar, repost, bagikan */}
-            <div className="mt-5 flex items-center gap-1 sm:gap-2">
+            {/* Aksi: suka, komentar, repost, bagikan, sunting (post milik sendiri) */}
+            {/* stopPropagation di level baris: klik aksi apa pun (termasuk isi dialog
+                yang dirender via portal) tidak boleh memicu navigasi klik kartu. */}
+            <div
+                className="mt-5 flex items-center gap-1 sm:gap-2"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {editHref && (
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className={actionButtonClass}
+                        aria-label="Sunting postingan"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(editHref);
+                        }}
+                    >
+                        <Pencil />
+                        <span className="font-sans text-xs font-bold">Sunting</span>
+                    </Button>
+                )}
+
                 <Button
                     type="button"
                     variant="ghost"
@@ -153,6 +177,8 @@ export default function ForumPostCard({
                 >
                     <Share2 />
                 </Button>
+
+                {deleteAction}
             </div>
         </article>
     );
