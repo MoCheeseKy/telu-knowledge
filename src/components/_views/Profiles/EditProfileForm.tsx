@@ -2,14 +2,20 @@
 
 import React, { useState } from "react";
 import { Check } from "lucide-react";
-import { UserProfile } from "./profile.types";
+import { UserProfile, mapUserProfileToUpdatePayload } from "./profile.types";
+import { validateUpdateProfile } from "@/services/profiles/profiles.schemas";
+import type { UpdateProfilePayload } from "@/services/profiles/profiles.types";
+import { getErrorMessages } from "@/lib/api/error-messages";
+import FormAlert from "@/components/_shared/FormAlert";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
+const MAX_AVATAR_SIZE_BYTES = 4 * 1024 * 1024;
+
 interface EditProfileFormProps {
   initialData: UserProfile;
-  onSave: (data: Partial<UserProfile>) => void;
+  onSave: (payload: UpdateProfilePayload) => void | Promise<void>;
   onCancel?: () => void;
 }
 
@@ -22,6 +28,9 @@ export default function EditProfileForm({
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>(
     initialData.avatarUrl
   );
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string[] | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   const handleInputChange = (
@@ -39,21 +48,56 @@ export default function EditProfileForm({
 
   const handleAvatarFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setAvatarPreview(url);
-      setFormData((prev) => ({ ...prev, avatarUrl: url }));
+    e.target.value = "";
+    if (!file) return;
+
+    setAvatarError(null);
+
+    if (file.size > MAX_AVATAR_SIZE_BYTES) {
+      setAvatarError("Ukuran file terlalu besar. Maksimal ukuran file adalah 4MB.");
+      return;
     }
+
+    // Data URL (base64) — pola yang sama dengan cover postingan; unggah sungguhan
+    // ke penyimpanan file menyusul (lihat docs/integrasi-profil/README.md).
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setAvatarPreview(reader.result);
+        setFormData((prev) => ({ ...prev, avatarUrl: reader.result as string }));
+      }
+    };
+    reader.onerror = () => {
+      setAvatarError("Gagal memuat foto profil. Silakan coba lagi.");
+    };
+    reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
-    setSavedSuccess(true);
-    setTimeout(() => {
-      setSavedSuccess(false);
-      if (onCancel) onCancel();
-    }, 700);
+    if (isSubmitting) return;
+    setSubmitError(null);
+
+    const payload = mapUserProfileToUpdatePayload(formData);
+    const validation = validateUpdateProfile(payload);
+    if (!validation.success) {
+      setSubmitError(validation.errors);
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await onSave(validation.data);
+      setSavedSuccess(true);
+      setTimeout(() => {
+        setSavedSuccess(false);
+        if (onCancel) onCancel();
+      }, 700);
+    } catch (error) {
+      setSubmitError(getErrorMessages(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -100,8 +144,11 @@ export default function EditProfileForm({
             )}
           </div>
           <span className="text-[11px] text-[var(--muted)]">
-            Foto persegi berformat JPG atau PNG.
+            Foto persegi berformat JPG atau PNG (maks. 4MB).
           </span>
+          {avatarError && (
+            <p className="text-[11px] text-[var(--failed)]">{avatarError}</p>
+          )}
         </div>
       </div>
 
@@ -252,25 +299,31 @@ export default function EditProfileForm({
       )}
 
       {/* 7. Tombol Aksi */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--dust)]/40">
-        {onCancel && (
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={onCancel}
-            className="text-xs font-semibold text-[var(--muted)] hover:text-[var(--foreground)] cursor-pointer"
-          >
-            Batal
-          </Button>
-        )}
+      <div className="flex flex-col gap-3 pt-4 border-t border-[var(--dust)]/40">
+        {submitError && <FormAlert messages={submitError} />}
 
-        <Button
-          type="submit"
-          className="cursor-pointer gap-1.5"
-        >
-          <Check className="w-4 h-4" />
-          <span>Simpan Perubahan</span>
-        </Button>
+        <div className="flex items-center justify-end gap-3">
+          {onCancel && (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onCancel}
+              disabled={isSubmitting}
+              className="text-xs font-semibold text-[var(--muted)] hover:text-[var(--foreground)] cursor-pointer"
+            >
+              Batal
+            </Button>
+          )}
+
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="cursor-pointer gap-1.5"
+          >
+            <Check className="w-4 h-4" />
+            <span>{isSubmitting ? "Menyimpan..." : "Simpan Perubahan"}</span>
+          </Button>
+        </div>
       </div>
     </form>
   );

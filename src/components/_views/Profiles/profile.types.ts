@@ -1,4 +1,7 @@
-import type { ProfileDto } from "@/services/profiles/profiles.types";
+import type {
+  ProfileDto,
+  UpdateProfilePayload,
+} from "@/services/profiles/profiles.types";
 
 export interface UserProfile {
   username: string;
@@ -63,6 +66,37 @@ export function mapProfileDtoToUserProfile(dto: ProfileDto): UserProfile {
     showEmail: dto.showEmail ?? false,
     showCommunities: dto.showCommunities ?? true,
   };
+}
+
+/**
+ * Mengubah UserProfile tampilan menjadi UpdateProfilePayload (DTO PATCH).
+ * Hanya field yang ada pada `input` yang disertakan; string kosong pada field
+ * nullable dikirim `null` (berarti dikosongkan).
+ */
+export function mapUserProfileToUpdatePayload(
+  input: Partial<UserProfile>
+): UpdateProfilePayload {
+  const payload: UpdateProfilePayload = {};
+
+  if ("username" in input) payload.username = (input.username ?? "").trim();
+  if ("fullName" in input) payload.displayName = (input.fullName ?? "").trim();
+  if ("bio" in input) payload.bio = input.bio ?? "";
+  if ("faculty" in input) payload.faculty = (input.faculty ?? "").trim() || null;
+  if ("major" in input) payload.major = (input.major ?? "").trim() || null;
+  if ("generation" in input) {
+    payload.generation = (input.generation ?? "").trim() || null;
+  }
+  if ("website" in input) payload.website = input.website?.trim() || null;
+  if ("github" in input) payload.github = input.github?.trim() || null;
+  if ("linkedin" in input) payload.linkedin = input.linkedin?.trim() || null;
+  if ("avatarUrl" in input) payload.avatarUrl = input.avatarUrl || null;
+  if ("bannerUrl" in input) payload.bannerUrl = input.bannerUrl || null;
+  if ("showEmail" in input) payload.showEmail = Boolean(input.showEmail);
+  if ("showCommunities" in input) {
+    payload.showCommunities = Boolean(input.showCommunities);
+  }
+
+  return payload;
 }
 
 export const defaultProfile: UserProfile = {

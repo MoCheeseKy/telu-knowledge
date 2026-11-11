@@ -1,12 +1,8 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
-import { useMyProfile } from "@/services/profiles/profiles.queries";
+import React, { createContext, useContext, useMemo } from "react";
+import { useMyProfile, useUpdateMyProfile } from "@/services/profiles/profiles.queries";
+import type { UpdateProfilePayload } from "@/services/profiles/profiles.types";
 import {
   UserProfile,
   defaultProfile,
@@ -16,11 +12,11 @@ import {
 interface ProfileContextType {
   profile: UserProfile;
   /**
-   * Pembaruan profil sementara (di memori selama halaman terbuka).
-   * Persistensi ke mock menyusul pada task Update Profil
-   * (lihat docs/integrasi-profil/).
+   * Menyimpan pembaruan profil secara persisten ke mock server
+   * (PATCH /proxy/profiles/me). Melempar error bila gagal — pemanggil
+   * (form) menampilkannya lewat FormAlert.
    */
-  updateProfile: (updated: Partial<UserProfile>) => void;
+  updateProfile: (payload: UpdateProfilePayload) => Promise<void>;
   isLoading: boolean;
   isError: boolean;
   refetchProfile: () => void;
@@ -32,25 +28,23 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
   // Detail profil langsung dari mock server (GET /proxy/profiles/me).
-  // Tidak ada localStorage — perubahan data cukup lewat invalidasi query.
+  // Tidak ada localStorage — perubahan data lewat mutasi + invalidasi query.
   const { data, isLoading, isError, refetch } = useMyProfile();
-  const [overrides, setOverrides] = useState<Partial<UserProfile>>({});
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const updateMutation = useUpdateMyProfile();
+  const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
 
-  const profile = useMemo<UserProfile>(() => {
-    const base = data ? mapProfileDtoToUserProfile(data) : defaultProfile;
-    return { ...base, ...overrides };
-  }, [data, overrides]);
+  const profile = useMemo<UserProfile>(
+    () => (data ? mapProfileDtoToUserProfile(data) : defaultProfile),
+    [data]
+  );
 
-  const updateProfile = (updated: Partial<UserProfile>) => {
-    // TODO(task Update Profil): kirim PATCH ke mock lalu invalidate
-    // profileKeys.me agar seluruh tampilan sinkron. Sementara perubahan hanya
-    // bertahan selama halaman terbuka.
-    setOverrides((prev) => ({ ...prev, ...updated }));
+  const updateProfile = async (payload: UpdateProfilePayload): Promise<void> => {
+    // useUpdateMyProfile meng-update cache profileKeys.me dari respons server,
+    // sehingga seluruh tampilan profil sinkron seketika.
+    await updateMutation.mutateAsync(payload);
   };
 
   const refetchProfile = () => {
-    setOverrides({});
     void refetch();
   };
 

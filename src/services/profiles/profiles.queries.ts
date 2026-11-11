@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { profilesApi } from "./profiles.api";
-import type { ProfileDto } from "./profiles.types";
+import type { ProfileDto, UpdateProfilePayload } from "./profiles.types";
 
 export const profileKeys = {
   all: ["profiles"] as const,
@@ -18,6 +18,27 @@ export function useMyProfile() {
     queryFn: async (): Promise<ProfileDto> => {
       const res = await profilesApi.getMyProfile();
       return res.data.profile;
+    },
+  });
+}
+
+/**
+ * Hook mutasi pembaruan profil milik sendiri (PATCH /proxy/profiles/me).
+ * Cache `profileKeys.me` langsung diperbarui dengan respons terbaru sehingga
+ * seluruh tampilan profil sinkron seketika.
+ */
+export function useUpdateMyProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateProfilePayload) =>
+      profilesApi.updateMyProfile(payload),
+    retry: false,
+    onSuccess: (res) => {
+      if (res?.data?.profile) {
+        queryClient.setQueryData(profileKeys.me, res.data.profile);
+      }
+      void queryClient.invalidateQueries({ queryKey: profileKeys.all });
     },
   });
 }

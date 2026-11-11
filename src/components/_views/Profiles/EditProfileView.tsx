@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import EditProfileForm from "./EditProfileForm";
 import { ProfileProvider, useProfile } from "./profile.context";
-import { UserProfile } from "./profile.types";
 
 function EditProfileContent() {
   const router = useRouter();
@@ -17,10 +16,6 @@ function EditProfileContent() {
     isError,
     refetchProfile,
   } = useProfile();
-
-  const handleSave = (updated: Partial<UserProfile>) => {
-    updateProfile(updated);
-  };
 
   if (isLoading) {
     return (
@@ -92,7 +87,7 @@ function EditProfileContent() {
 
       <EditProfileForm
         initialData={profile}
-        onSave={handleSave}
+        onSave={updateProfile}
         onCancel={() => router.push("/profile")}
       />
     </div>

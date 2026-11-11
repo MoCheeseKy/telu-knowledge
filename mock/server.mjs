@@ -1143,6 +1143,91 @@ const handleGetMyProfile = (req, res) => {
 server.get('/api/profiles/me', handleGetMyProfile);
 server.get('/profiles/me', handleGetMyProfile);
 
+// 11b. Endpoint Perbarui Profil Milik Sendiri (PATCH /profiles/me)
+// Patch parsial: hanya field yang dikirim yang diubah; string kosong pada field
+// nullable (website/github/linkedin/avatarUrl/...) berarti dikosongkan (null).
+const handleUpdateMyProfile = (req, res) => {
+  const db = router.db.getState();
+  const profile = (db.profiles || []).find((p) => p.id === MOCK_ME_ID);
+
+  if (!profile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const body = req.body || {};
+  const has = (key) => Object.prototype.hasOwnProperty.call(body, key);
+  const trimStr = (value) => (typeof value === 'string' ? value.trim() : '');
+  const messages = [];
+
+  // Validasi (cermin dari profiles.schemas.ts di frontend)
+  if (has('displayName') && !trimStr(body.displayName)) {
+    messages.push('Nama lengkap wajib diisi.');
+  }
+  if (has('username')) {
+    const username = trimStr(body.username);
+    if (!username) {
+      messages.push('Username wajib diisi.');
+    } else if (username.length > 30) {
+      messages.push('Username maksimal 30 karakter.');
+    } else {
+      const taken = (db.profiles || []).some(
+        (p) =>
+          p.id !== MOCK_ME_ID &&
+          (p.username || '').toLowerCase() === username.toLowerCase()
+      );
+      if (taken) messages.push('Username sudah digunakan.');
+    }
+  }
+  if (has('bio') && typeof body.bio === 'string' && body.bio.length > 160) {
+    messages.push('Bio maksimal 160 karakter.');
+  }
+  for (const key of ['website', 'github', 'linkedin']) {
+    if (has(key) && typeof body[key] === 'string' && body[key].trim().length > 300) {
+      messages.push('Tautan maksimal 300 karakter.');
+    }
+  }
+  if (messages.length > 0) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: messages,
+      isError: true,
+      data: null,
+    });
+  }
+
+  // Merge patch parsial
+  if (has('displayName')) profile.display_name = trimStr(body.displayName);
+  if (has('username')) profile.username = trimStr(body.username);
+  if (has('bio')) profile.bio = typeof body.bio === 'string' ? body.bio : '';
+  if (has('faculty')) profile.faculty = trimStr(body.faculty) || null;
+  if (has('major')) profile.major = trimStr(body.major) || null;
+  if (has('generation')) profile.generation = trimStr(body.generation) || null;
+  for (const key of ['website', 'github', 'linkedin']) {
+    if (has(key)) profile[key] = trimStr(body[key]) || null;
+  }
+  if (has('avatarUrl')) profile.avatar_url = trimStr(body.avatarUrl) || null;
+  if (has('bannerUrl')) profile.banner_url = trimStr(body.bannerUrl) || null;
+  if (has('showEmail')) profile.show_email = Boolean(body.showEmail);
+  if (has('showCommunities')) profile.show_communities = Boolean(body.showCommunities);
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Profil berhasil diperbarui'],
+    data: { profile: enrichProfile(profile) },
+    isError: false,
+  });
+};
+
+server.patch('/api/profiles/me', handleUpdateMyProfile);
+server.patch('/profiles/me', handleUpdateMyProfile);
+
 // Mount router pada /api dan /
 server.use('/api', router);
 server.use(router);
