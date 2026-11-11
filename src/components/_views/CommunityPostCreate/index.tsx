@@ -4,7 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { ImagePlus, RefreshCw, Tag, Trash2, X } from "lucide-react";
-import { useMe } from "@/services/auth/auth.queries";
+import { useCreateCommunityPost } from "@/services/community-posts/community-posts.queries";
+import { validateCreateCommunityPost } from "@/services/community-posts/community-posts.schemas";
+import type { CommunityPostDto } from "@/services/community-posts/community-posts.types";
+import { getErrorMessages } from "@/lib/api/error-messages";
+import { useToast } from "@/components/ui/toast";
+import FormAlert from "@/components/_shared/FormAlert";
 import { cn } from "@/lib/utils";
 import PostGuidelinesSidebar from "./PostGuidelinesSidebar";
 import { saveCommunityPost } from "./storage";
@@ -31,8 +36,9 @@ export default function CommunityPostCreateView({
   community,
 }: CommunityPostCreateViewProps) {
   const router = useRouter();
-  const { data: user } = useMe();
+  const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const createPostMutation = useCreateCommunityPost();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -40,6 +46,7 @@ export default function CommunityPostCreateView({
   const [coverError, setCoverError] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [showFlairs, setShowFlairs] = useState(false);
+  const [submitError, setSubmitError] = useState<string[] | null>(null);
 
   const canSubmit =
     title.trim().length > 0 &&
@@ -89,35 +96,73 @@ export default function CommunityPostCreateView({
     setCoverImage(null);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!canSubmit) return;
-
-    const publisher = user?.email?.split("@")[0] ?? "Anggota Tel-U";
-    const trimmedDescription = description.trim();
+  /**
+   * Jembatan tampilan sementara: simpan ringkasan postingan baru ke localStorage
+   * agar langsung tampil di feed komunitas.
+   * TODO(langkah integrasi GET): hapus setelah feed komunitas membaca postingan
+   * langsung dari mock server (GET /proxy/communities/:id/posts).
+   */
+  const bridgePostToFeed = (dto: CommunityPostDto) => {
+    const trimmedDescription = dto.content.trim();
     const post: CommunityPost = {
       id: Date.now(),
       topic: community.name,
-      publisher,
+      publisher: dto.author.displayName,
       postDate: new Intl.DateTimeFormat("id-ID", {
         day: "numeric",
         month: "long",
         year: "numeric",
-      }).format(new Date()),
-      title: title.trim(),
+      }).format(new Date(dto.createdAt)),
+      title: dto.title,
       description:
         trimmedDescription.length > 280
           ? `${trimmedDescription.slice(0, 280)}…`
           : trimmedDescription,
-      ...(coverImage ? { imageUrl: coverImage, imageAlt: title.trim() } : {}),
-      likesCount: 0,
-      commentsCount: 0,
-      repostsCount: 0,
-      isLiked: false,
+      ...(dto.coverImageUrl
+        ? { imageUrl: dto.coverImageUrl, imageAlt: dto.imageCaption ?? dto.title }
+        : {}),
+      likesCount: dto.likesCount,
+      commentsCount: dto.commentsCount,
+      repostsCount: dto.repostsCount,
+      isLiked: dto.isLiked,
     };
 
     saveCommunityPost(community.id, post);
-    router.push(`/communities/${community.id}`);
+  };
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!canSubmit || createPostMutation.isPending) return;
+
+    setSubmitError(null);
+
+    const validation = validateCreateCommunityPost({
+      title,
+      content: description,
+      flair: tags[0] ?? null,
+      tags,
+      coverImageUrl: coverImage,
+      imageCaption: coverImage ? title.trim() : null,
+    });
+
+    if (!validation.success) {
+      setSubmitError(validation.errors);
+      return;
+    }
+
+    createPostMutation.mutate(
+      { communityId: community.id, payload: validation.data },
+      {
+        onSuccess: (res) => {
+          bridgePostToFeed(res.data);
+          toast.success("Postingan berhasil dibuat.");
+          router.push(`/communities/${community.id}`);
+        },
+        onError: (error) => {
+          setSubmitError(getErrorMessages(error));
+        },
+      }
+    );
   };
 
   return (
@@ -326,14 +371,18 @@ export default function CommunityPostCreateView({
               className="w-full resize-y rounded-t-xl bg-transparent px-4 py-3 font-sans text-[15px] leading-relaxed text-[var(--foreground)] outline-none placeholder:text-[var(--muted)]/70"
             />
 
-            <div className="flex items-center justify-end border-t border-[var(--dust)]/50 px-4 py-3">
-              <button
-                type="submit"
-                disabled={!canSubmit}
-                className="inline-flex h-9 items-center justify-center rounded-lg bg-[var(--primary)] px-5 font-sans text-[13px] font-semibold text-white transition-colors hover:bg-[var(--primary-hover)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Posting
-              </button>
+            <div className="flex flex-col gap-3 border-t border-[var(--dust)]/50 px-4 py-3">
+              {submitError && <FormAlert messages={submitError} />}
+
+              <div className="flex items-center justify-end">
+                <button
+                  type="submit"
+                  disabled={!canSubmit || createPostMutation.isPending}
+                  className="inline-flex h-9 items-center justify-center rounded-lg bg-[var(--primary)] px-5 font-sans text-[13px] font-semibold text-white transition-colors hover:bg-[var(--primary-hover)] cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {createPostMutation.isPending ? "Membuat..." : "Posting"}
+                </button>
+              </div>
             </div>
           </div>
         </div>

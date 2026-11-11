@@ -683,6 +683,130 @@ const handleCommunityRecommendations = (req, res) => {
 server.get('/api/communities/recommendations', handleCommunityRecommendations);
 server.get('/communities/recommendations', handleCommunityRecommendations);
 
+// 10. Postingan Forum/Komunitas (CRUD)
+// Mapper bersama: forum_posts (snake_case seed) -> CommunityPostDto (camelCase kontrak frontend).
+// Dipakai ulang oleh endpoint create, update, dan delete pada langkah berikutnya.
+const enrichForumPost = (post, db) => {
+  const author = (db.profiles || []).find((p) => p.id === post.author_id);
+  const community = (db.communities || []).find(
+    (c) => c.id === post.community_id
+  );
+  const isLiked = (db.forum_post_votes || []).some(
+    (v) => v.post_id === post.id && v.user_id === MOCK_ME_ID && v.vote_value > 0
+  );
+
+  return {
+    id: post.id,
+    communityId: post.community_id,
+    communityName: community ? community.name : null,
+    authorId: post.author_id,
+    title: post.title,
+    content: post.content,
+    callout: post.callout || null,
+    coverImageUrl: post.cover_image_url || null,
+    imageCaption: post.image_caption || null,
+    flair: post.flair || null,
+    tags: post.tags || [],
+    status: post.status,
+    isHighlighted: Boolean(post.is_highlighted),
+    score: post.score || 0,
+    likesCount: post.likes_count || 0,
+    commentsCount: post.comments_count || 0,
+    repostsCount: post.reposts_count || 0,
+    isLiked,
+    createdAt: post.created_at,
+    updatedAt: post.updated_at,
+    author: {
+      id: author ? author.id : post.author_id,
+      displayName: author ? author.display_name : 'Anggota Tel-U',
+      avatarUrl: author ? author.avatar_url : null,
+      avatarColor: author ? author.avatar_color : '#E53E3E',
+      username: author ? author.username : null,
+    },
+  };
+};
+
+// 10a. Endpoint Buat Postingan Baru pada Komunitas (POST /communities/:id/posts)
+const handleCreateCommunityPost = (req, res) => {
+  const communityId = req.params.id;
+  const { title, content, coverImageUrl, imageCaption, flair, tags } =
+    req.body || {};
+
+  const trimmedTitle = typeof title === 'string' ? title.trim() : '';
+  const trimmedContent = typeof content === 'string' ? content.trim() : '';
+
+  const messages = [];
+  if (!trimmedTitle) messages.push('Judul postingan wajib diisi.');
+  if (!trimmedContent) messages.push('Isi postingan wajib diisi.');
+  if (messages.length > 0) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: messages,
+      isError: true,
+      data: null,
+    });
+  }
+
+  const db = router.db.getState();
+  const community = (db.communities || []).find(
+    (c) => c.id === communityId || c.slug === communityId
+  );
+
+  // Catatan mock: komunitas tidak wajib terdaftar di seed agar alur pengembangan
+  // dengan komunitas contoh (sample) tetap berjalan. Backend NestJS asli nantinya
+  // mengembalikan 404 untuk komunitas yang tidak dikenal.
+
+  const now = new Date().toISOString();
+  const newPost = {
+    id: crypto.randomUUID(),
+    community_id: community ? community.id : communityId,
+    author_id: MOCK_ME_ID,
+    title: trimmedTitle,
+    content: trimmedContent,
+    callout: null,
+    cover_image_url:
+      typeof coverImageUrl === 'string' && coverImageUrl ? coverImageUrl : null,
+    image_caption:
+      typeof imageCaption === 'string' && imageCaption.trim()
+        ? imageCaption.trim()
+        : null,
+    flair: typeof flair === 'string' && flair.trim() ? flair.trim() : null,
+    tags: Array.isArray(tags)
+      ? tags
+          .filter((t) => typeof t === 'string' && t.trim())
+          .map((t) => t.trim())
+          .slice(0, 6)
+      : [],
+    status: 'aktif',
+    is_highlighted: false,
+    score: 0,
+    likes_count: 0,
+    comments_count: 0,
+    reposts_count: 0,
+    created_at: now,
+    updated_at: now,
+  };
+
+  if (!db.forum_posts) db.forum_posts = [];
+  db.forum_posts.push(newPost);
+
+  if (community) {
+    community.post_count = (community.post_count || 0) + 1;
+  }
+
+  router.db.write();
+
+  return res.status(201).json({
+    statusCode: 201,
+    message: ['Postingan berhasil dibuat'],
+    data: enrichForumPost(newPost, db),
+    isError: false,
+  });
+};
+
+server.post('/api/communities/:id/posts', handleCreateCommunityPost);
+server.post('/communities/:id/posts', handleCreateCommunityPost);
+
 // Mount router pada /api dan /
 server.use('/api', router);
 server.use(router);
