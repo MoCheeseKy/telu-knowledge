@@ -53,9 +53,7 @@ export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 
 /**
- * ============================================================================
  * SKEMA FORM (Khusus validasi sisi client pada react-hook-form)
- * ============================================================================
  */
 
 export const registerFormSchema = z
