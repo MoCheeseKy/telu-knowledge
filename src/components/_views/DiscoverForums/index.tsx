@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useCommunities } from "@/services/community-posts/community-posts.queries";
+import CreateCommunityDialog from "@/components/_views/MyForums/CreateCommunityDialog";
 
 type Community = {
     id: string | number;
@@ -286,6 +287,7 @@ export default function DiscoverForumsView() {
     const { data: apiCommunities } = useCommunities();
     const [search, setSearch] = useState("");
     const [followedCommunities, setFollowedCommunities] = useState<(string | number)[]>([]);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const communities: Community[] = useMemo(() => {
         if (apiCommunities && apiCommunities.length > 0) {
@@ -331,7 +333,7 @@ export default function DiscoverForumsView() {
                             type="text"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Cari Nama Komunitas Yang Cocok..."
+                            placeholder="Cari Nama Forum Yang Cocok..."
                             className="h-full min-w-0 flex-1 bg-transparent text-[13px] text-[#333333] outline-none placeholder:text-[#A0A4AB]"
                         />
 
@@ -340,14 +342,15 @@ export default function DiscoverForumsView() {
                         </div>
                     </div>
 
-                    {/* Create Community */}
-                    <Link
-                        href="/create-forum"
-                        className="flex h-[44px] w-full items-center justify-center gap-3 rounded-[5px] bg-[var(--primary)] px-5 text-[15px] font-semibold text-white transition hover:bg-[var(--primary-hover)] sm:w-auto"
+                    {/* Create Forum */}
+                    <button
+                        type="button"
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="flex h-[44px] w-full items-center justify-center gap-3 rounded-[5px] bg-[var(--primary)] px-5 text-[15px] font-semibold text-white transition hover:bg-[var(--primary-hover)] sm:w-auto cursor-pointer"
                     >
                         <PlusIcon />
-                        Buat Komunitas Baru
-                    </Link>
+                        Buat Forum
+                    </button>
                 </div>
 
                 {/* COMMUNITY LIST */}
@@ -369,7 +372,7 @@ export default function DiscoverForumsView() {
                         </div>
 
                         <h3 className="text-lg font-bold">
-                            Komunitas Tidak Ditemukan
+                            Forum Tidak Ditemukan
                         </h3>
 
                         <p className="mt-2 text-sm text-gray-500">
@@ -386,6 +389,12 @@ export default function DiscoverForumsView() {
                     </div>
                 )}
             </section>
+
+            <CreateCommunityDialog
+                open={isCreateModalOpen}
+                onOpenChange={setIsCreateModalOpen}
+                onCreate={() => {}}
+            />
         </div>
     );
 }

@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -29,12 +30,15 @@ const dateFormatter = new Intl.DateTimeFormat("id-ID", {
 
 export default function MyForumsView() {
   const { toast } = useToast();
+  const searchParams = useSearchParams();
+  const shouldAutoOpen = searchParams?.get("create") === "true";
+
   const { data: apiCommunities, isLoading: isLoadingCommunities } = useCommunities();
   const { data: apiPosts, isLoading: isLoadingPosts } = useAllForumPosts();
   const deletePostMutation = useDeleteForumPost();
 
   const [localCreatedCommunities, setLocalCreatedCommunities] = useState<MyCommunityItem[]>([]);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(shouldAutoOpen);
 
   // Gabungkan komunitas dari API dengan fallback initialCommunities
   const communities: MyCommunityItem[] = useMemo(() => {
@@ -126,7 +130,7 @@ export default function MyForumsView() {
           className="cursor-pointer gap-1.5"
         >
           <Plus className="w-4 h-4" />
-          <span>Buat Komunitas</span>
+          <span>Buat Forum</span>
         </Button>
       </div>
 
@@ -152,7 +156,7 @@ export default function MyForumsView() {
             </div>
           ) : communities.length === 0 ? (
             <p className="py-12 text-center text-[var(--muted)]">
-              Tidak ada komunitas. Buat komunitas baru untuk memulai.
+              Tidak ada forum. Buat forum baru untuk memulai.
             </p>
           ) : (
             <div className="flex flex-col">
