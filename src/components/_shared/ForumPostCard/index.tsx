@@ -5,6 +5,10 @@ import ForumPostCardProps from "./_types";
 import { ThumbsUp, MessageSquareMore, Repeat2, Share2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+    useForumPostRepostStatus,
+    useToggleForumPostRepost,
+} from "@/services/community-posts/community-posts.queries";
 
 const actionButtonClass =
     "h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4";
@@ -148,17 +152,10 @@ export default function ForumPostCard({
                     <span className="font-sans text-xs font-bold">{commentsCount}</span>
                 </Button>
 
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className={actionButtonClass}
-                    aria-label="Repost"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <Repeat2 className="text-[var(--primary-text)]" />
-                    <span className="font-sans text-xs font-bold">{repostsCount}</span>
-                </Button>
+                <RepostButton
+                    postId={String(id)}
+                    initialCount={repostsCount}
+                />
 
                 <Button
                     type="button"
@@ -181,5 +178,58 @@ export default function ForumPostCard({
                 {deleteAction}
             </div>
         </article>
+    );
+}
+
+/**
+ * Tombol repost dengan status per-viewer.
+ *
+ * - Saat belum repost: icon Repeat2 outline, angka = repostsCount.
+ * - Saat sudah repost: icon Repeat2 solid (fill), angka + icon berwarna
+ *   --primary-text, tombol disabled selama mutasi berjalan.
+ * - Perubahan state & count instan lewat optimistic update di hook
+ *   useToggleForumPostRepost; status dari server diambil via
+ *   useForumPostRepostStatus sebagai sumber kebenaran.
+ */
+function RepostButton({
+    postId,
+    initialCount,
+}: {
+    postId: string;
+    initialCount: number;
+}) {
+    const { data: status } = useForumPostRepostStatus(postId);
+    const { mutate, isPending } = useToggleForumPostRepost(postId);
+
+    const isReposted = status?.isReposted ?? false;
+    const count = status?.repostsCount ?? initialCount;
+
+    return (
+        <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={cn(
+                actionButtonClass,
+                isReposted && "text-[var(--primary-text)]"
+            )}
+            aria-label={isReposted ? "Batalkan repost" : "Repost"}
+            aria-pressed={isReposted}
+            disabled={isPending}
+            onClick={(e) => {
+                e.stopPropagation();
+                mutate();
+            }}
+        >
+            <Repeat2
+                className={cn(
+                    "transition-colors",
+                    isReposted
+                        ? "fill-[var(--primary-text)] text-[var(--primary-text)]"
+                        : "text-[var(--primary-text)]"
+                )}
+            />
+            <span className="font-sans text-xs font-bold">{count}</span>
+        </Button>
     );
 }

@@ -2518,10 +2518,10 @@
       "is_highlighted": false,
       "score": 0,
       "likes_count": 0,
-      "comments_count": 0,
+      "comments_count": 1,
       "reposts_count": 0,
       "created_at": "2026-11-11T02:36:03.151Z",
-      "updated_at": "2026-11-11T02:36:24.702Z"
+      "updated_at": "2026-11-12T05:49:53.354Z"
     }
   ],
   "forum_post_votes": [
@@ -2808,6 +2808,16 @@
       "score": 16,
       "created_at": "2024-09-22T09:30:00Z",
       "updated_at": "2024-09-22T09:30:00Z"
+    },
+    {
+      "id": "cfcd3dfd-77cc-45cf-97d5-9387d839f2ee",
+      "post_id": "4b17cb4f-554c-4c6b-93ea-47d16510deaf",
+      "author_id": "10000000-0000-4000-8000-000000000001",
+      "parent_id": null,
+      "content": "tes",
+      "score": 0,
+      "created_at": "2026-11-12T05:50:01.624Z",
+      "updated_at": "2026-11-12T05:50:01.624Z"
     }
   ],
   "forum_comment_votes": [

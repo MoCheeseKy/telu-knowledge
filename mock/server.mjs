@@ -695,6 +695,13 @@ const enrichForumPost = (post, db) => {
     (v) => v.post_id === post.id && v.user_id === MOCK_ME_ID && v.vote_value > 0
   );
 
+  // Hitung repost dari tabel relasi (source of truth), fallback ke counter seed
+  const repostsRows = (db.forum_post_reposts || []).filter(
+    (r) => r.post_id === post.id
+  );
+  const repostsCount = repostsRows.length || post.reposts_count || 0;
+  const isReposted = repostsRows.some((r) => r.user_id === MOCK_ME_ID);
+
   return {
     id: post.id,
     communityId: post.community_id,
@@ -712,7 +719,8 @@ const enrichForumPost = (post, db) => {
     score: post.score || 0,
     likesCount: post.likes_count || 0,
     commentsCount: post.comments_count || 0,
-    repostsCount: post.reposts_count || 0,
+    repostsCount,
+    isReposted,
     isLiked,
     createdAt: post.created_at,
     updatedAt: post.updated_at,
@@ -1091,6 +1099,145 @@ const handleDeleteCommunityPost = (req, res) => {
 
 server.delete('/api/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 server.delete('/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
+
+// 10g. Endpoint Toggle Repost Postingan Forum
+// POST /forum-posts/:postId/repost
+// Response: { isReposted, repostsCount }
+const handleToggleForumPostRepost = (req, res) => {
+  const db = router.db.getState();
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (!db.forum_post_reposts) db.forum_post_reposts = [];
+
+  const existingIndex = db.forum_post_reposts.findIndex(
+    (r) => r.post_id === post.id && r.user_id === MOCK_ME_ID
+  );
+
+  let isReposted;
+  if (existingIndex >= 0) {
+    // Batal repost
+    db.forum_post_reposts.splice(existingIndex, 1);
+    isReposted = false;
+  } else {
+    // Repost baru
+    db.forum_post_reposts.push({
+      id: crypto.randomUUID(),
+      post_id: post.id,
+      user_id: MOCK_ME_ID,
+      created_at: new Date().toISOString(),
+    });
+    isReposted = true;
+  }
+
+  // Sync counter denormalized di post
+  const count = db.forum_post_reposts.filter(
+    (r) => r.post_id === post.id
+  ).length;
+  post.reposts_count = count;
+  post.updated_at = new Date().toISOString();
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: [isReposted ? 'Postingan di-repost' : 'Repost dibatalkan'],
+    data: { isReposted, repostsCount: count },
+    isError: false,
+  });
+};
+
+server.post('/api/forum-posts/:postId/repost', handleToggleForumPostRepost);
+server.post('/forum-posts/:postId/repost', handleToggleForumPostRepost);
+
+// 10h. Endpoint Status Repost Postingan (GET /forum-posts/:postId/repost/status)
+const handleGetForumPostRepostStatus = (req, res) => {
+  const db = router.db.getState();
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const rows = (db.forum_post_reposts || []).filter(
+    (r) => r.post_id === post.id
+  );
+
+  return res.json({
+    statusCode: 200,
+    message: ['Status repost berhasil diambil'],
+    data: {
+      isReposted: rows.some((r) => r.user_id === MOCK_ME_ID),
+      repostsCount: rows.length || post.reposts_count || 0,
+    },
+    isError: false,
+  });
+};
+
+server.get('/api/forum-posts/:postId/repost/status', handleGetForumPostRepostStatus);
+server.get('/forum-posts/:postId/repost/status', handleGetForumPostRepostStatus);
+
+// 10i. Endpoint Daftar Repost oleh User (GET /profiles/:userId/reposts)
+// Response: array post forum yang di-repost user tsb, urut dari repost terbaru.
+const handleListUserReposts = (req, res) => {
+  const db = router.db.getState();
+  const { userId } = req.params;
+
+  // Dukung alias "me"
+  const resolvedUserId = userId === 'me' ? MOCK_ME_ID : userId;
+
+  const profile = (db.profiles || []).find((p) => p.id === resolvedUserId);
+  if (!profile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const repostRows = (db.forum_post_reposts || [])
+    .filter((r) => r.user_id === resolvedUserId)
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+  const items = repostRows
+    .map((r) => {
+      const post = (db.forum_posts || []).find((p) => p.id === r.post_id);
+      if (!post) return null;
+      return {
+        repostId: r.id,
+        repostedAt: r.created_at,
+        post: enrichForumPost(post, db),
+      };
+    })
+    .filter(Boolean);
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar repost berhasil diambil'],
+    data: items,
+    isError: false,
+  });
+};
+
+server.get('/api/profiles/:userId/reposts', handleListUserReposts);
+server.get('/profiles/:userId/reposts', handleListUserReposts);
 
 const enrichForumComment = (comment, db) => {
   const author = (db.profiles || []).find((p) => p.id === comment.author_id);

@@ -4,6 +4,8 @@ import type {
   CommunityPostDto,
   CreateCommunityPostPayload,
   UpdateCommunityPostPayload,
+  RepostStatusDto,      
+  UserRepostItemDto,
 } from "./community-posts.types";
 
 /**
@@ -115,6 +117,43 @@ export async function deleteCommunityPost(
   );
 }
 
+/**
+ * Toggle repost postingan forum (POST /proxy/forum-posts/:postId/repost).
+ */
+export async function toggleForumPostRepost(
+  postId: string
+): Promise<ApiEnvelope<RepostStatusDto>> {
+  return apiFetch<RepostStatusDto>(
+    `/proxy/forum-posts/${encodeURIComponent(postId)}/repost`,
+    { method: "POST", source: "mock" }
+  );
+}
+
+/**
+ * Ambil status repost postingan (GET /proxy/forum-posts/:postId/repost/status).
+ */
+export async function getForumPostRepostStatus(
+  postId: string
+): Promise<ApiEnvelope<RepostStatusDto>> {
+  return apiFetch<RepostStatusDto>(
+    `/proxy/forum-posts/${encodeURIComponent(postId)}/repost/status`,
+    { method: "GET", source: "mock" }
+  );
+}
+
+/**
+ * Ambil daftar repost milik user (GET /proxy/profiles/:userId/reposts).
+ * Gunakan userId="me" untuk user yang sedang login.
+ */
+export async function listUserReposts(
+  userId: string
+): Promise<ApiEnvelope<UserRepostItemDto[]>> {
+  return apiFetch<UserRepostItemDto[]>(
+    `/proxy/profiles/${encodeURIComponent(userId)}/reposts`,
+    { method: "GET", source: "mock" }
+  );
+}
+
 export const communityPostsApi = {
   createCommunityPost,
   listCommunityPosts,
@@ -122,4 +161,7 @@ export const communityPostsApi = {
   getForumPostDetail,
   updateCommunityPost,
   deleteCommunityPost,
+  toggleForumPostRepost,       
+  getForumPostRepostStatus,   
+  listUserReposts,
 };
