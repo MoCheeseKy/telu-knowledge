@@ -7,6 +7,8 @@ import ActiveForumRecommendationCard from "@/components/_shared/ActiveForumRecom
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+type Visibility = "publik" | "terbatas" | "privat";
+
 const NAME_MAX = 30;
 const DESC_MAX = 500;
 
@@ -22,7 +24,12 @@ const topicOptions = [
     "Hobi",
 ];
 
-const visibilityOptions = [
+const visibilityOptions: {
+    value: Visibility;
+    label: string;
+    description: string;
+    icon: React.ComponentType<{ className?: string }>;
+}[] = [
     { value: "publik", label: "Publik", description: "Siapa saja bisa melihat dan bergabung.", icon: Globe },
     { value: "terbatas", label: "Terbatas", description: "Siapa saja bisa melihat, tapi gabung perlu persetujuan.", icon: EyeOff },
     { value: "privat", label: "Privat", description: "Hanya anggota yang bisa melihat dan memposting.", icon: Lock },
@@ -31,7 +38,15 @@ const visibilityOptions = [
 const inputClass =
     "w-full rounded-lg border border-[var(--dust)] bg-[var(--background)] px-3.5 py-2.5 font-sans text-[15px] text-[var(--foreground)] placeholder:text-[var(--muted)] outline-none transition-colors focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20";
 
-function FieldLabel({ htmlFor, title, hint }) {
+function FieldLabel({
+    htmlFor,
+    title,
+    hint,
+}: {
+    htmlFor?: string;
+    title: string;
+    hint?: string;
+}) {
     return (
         <div className="flex flex-col gap-0.5">
             <label htmlFor={htmlFor} className="font-sans text-[15px] font-semibold text-[var(--foreground)]">
@@ -47,13 +62,13 @@ export default function CreateForumView() {
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [topics, setTopics] = useState([]);
-    const [visibility, setVisibility] = useState("publik");
-    const [bannerPreview, setBannerPreview] = useState(null);
+    const [topics, setTopics] = useState<string[]>([]);
+    const [visibility, setVisibility] = useState<Visibility>("publik");
+    const [bannerPreview, setBannerPreview] = useState<string | null>(null);
 
     const isValid = name.trim().length >= 3 && description.trim().length > 0;
 
-    const toggleTopic = (topic) =>
+    const toggleTopic = (topic: string) =>
         setTopics((prev) =>
             prev.includes(topic)
                 ? prev.filter((t) => t !== topic)
@@ -62,7 +77,7 @@ export default function CreateForumView() {
                     : prev
         );
 
-    const handleBannerChange = (e) => {
+    const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
         if (bannerPreview) URL.revokeObjectURL(bannerPreview);
@@ -74,7 +89,7 @@ export default function CreateForumView() {
         setBannerPreview(null);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!isValid) return;
         // TODO: kirim { name, description, topics, visibility, banner } ke API
@@ -119,6 +134,7 @@ export default function CreateForumView() {
                         </span>
                     </div>
 
+                    {/* 3. DESKRIPSI */}
                     <div className="flex flex-col gap-2">
                         <FieldLabel
                             htmlFor="forum-desc"
@@ -139,13 +155,14 @@ export default function CreateForumView() {
                         </span>
                     </div>
 
+                    {/* 4. TOPIK */}
                     <div className="flex flex-col gap-3">
                         <FieldLabel
                             title="Topik"
                             hint="Pilih maksimal 3 topik agar forum mudah ditemukan."
                         />
                         <div className="flex flex-wrap gap-2">
-                            {topicOptions.map((topic) => {
+                            {topicOptions.map((topic: string) => {
                                 const active = topics.includes(topic);
                                 return (
                                     <button
@@ -167,6 +184,7 @@ export default function CreateForumView() {
                         </div>
                     </div>
 
+                    {/* 5. BANNER */}
                     <div className="flex flex-col gap-3">
                         <FieldLabel
                             title="Banner forum"
@@ -202,6 +220,7 @@ export default function CreateForumView() {
                         )}
                     </div>
 
+                    {/* 6. VISIBILITAS */}
                     <div className="flex flex-col gap-3">
                         <FieldLabel title="Tipe forum" />
                         <div role="radiogroup" className="flex flex-col gap-2">
@@ -253,6 +272,7 @@ export default function CreateForumView() {
                         </div>
                     </div>
 
+                    {/* 7. AKSI */}
                     <div className="flex items-center justify-end gap-3 pt-6 border-t border-[var(--dust)]/40">
                         <Button
                             type="button"
@@ -274,6 +294,7 @@ export default function CreateForumView() {
                 </div>
             </form>
 
+            {/* PRATINJAU (sidebar kanan, sama seperti halaman lain) */}
             <aside className="w-full lg:w-[320px] xl:w-[340px] shrink-0 lg:sticky lg:top-24 flex flex-col pt-2">
                 <h3 className="font-sans text-[16px] font-bold uppercase text-[var(--primary-text)] tracking-wider mb-3">
                     PRATINJAU

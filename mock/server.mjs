@@ -543,6 +543,188 @@ const handleCreateComment = (req, res) => {
 server.post('/api/articles/:id/comments', handleCreateComment);
 server.post('/articles/:id/comments', handleCreateComment);
 
+// 5b. Endpoint Daftar Komentar Artikel (GET /articles/:id/comments)
+const handleListComments = (req, res) => {
+  const { id } = req.params;
+  const db = router.db.getState();
+  const article = (db.articles || []).find((a) => a.id === id || a.slug === id);
+  if (!article) {
+    return res.status(404).json({ statusCode: 404, message: ['Artikel tidak ditemukan'], isError: true, data: null });
+  }
+
+  const rows = (db.article_comments || [])
+    .filter((c) => c.article_id === article.id)
+    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+  const comments = rows.map((c) => {
+    const author = (db.profiles || []).find((p) => p.id === c.author_id);
+    return {
+      id: c.id,
+      articleId: c.article_id,
+      authorId: c.author_id,
+      parentId: c.parent_id || null,
+      content: c.content,
+      createdAt: c.created_at,
+      updatedAt: c.updated_at,
+      author: {
+        id: author ? author.id : c.author_id,
+        displayName: author ? author.display_name : 'Pengguna Tel-U',
+        avatarUrl: author ? author.avatar_url : null,
+        avatarColor: author ? author.avatar_color : '#E53E3E',
+        username: author ? author.username : null,
+        faculty: author ? author.faculty : null,
+        major: author ? author.major : null,
+      },
+    };
+  });
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar komentar berhasil diambil'],
+    data: { comments },
+    isError: false,
+  });
+};
+server.get('/api/articles/:id/comments', handleListComments);
+server.get('/articles/:id/comments', handleListComments);
+
+// 5c. Endpoint Sunting Komentar (PATCH /articles/:id/comments/:commentId)
+const handleUpdateComment = (req, res) => {
+  const { id, commentId } = req.params;
+  const { content } = req.body || {};
+  const trimmed = typeof content === 'string' ? content.trim() : '';
+  if (!trimmed) {
+    return res.status(400).json({ statusCode: 400, message: ['Isi komentar wajib diisi'], isError: true, data: null });
+  }
+  if (trimmed.length > 2000) {
+    return res.status(400).json({ statusCode: 400, message: ['Komentar maksimal 2000 karakter'], isError: true, data: null });
+  }
+
+  const db = router.db.getState();
+  const article = (db.articles || []).find((a) => a.id === id || a.slug === id);
+  if (!article) {
+    return res.status(404).json({ statusCode: 404, message: ['Artikel tidak ditemukan'], isError: true, data: null });
+  }
+  const comment = (db.article_comments || []).find((c) => c.id === commentId && c.article_id === article.id);
+  if (!comment) {
+    return res.status(404).json({ statusCode: 404, message: ['Komentar tidak ditemukan'], isError: true, data: null });
+  }
+  if (comment.author_id !== MOCK_ME_ID) {
+    return res.status(403).json({ statusCode: 403, message: ['Hanya penulis komentar yang dapat menyunting'], isError: true, data: null });
+  }
+
+  comment.content = trimmed;
+  comment.updated_at = new Date().toISOString();
+  router.db.write();
+
+  const author = (db.profiles || []).find((p) => p.id === comment.author_id);
+  return res.json({
+    statusCode: 200,
+    message: ['Komentar berhasil diperbarui'],
+    data: {
+      id: comment.id,
+      articleId: comment.article_id,
+      authorId: comment.author_id,
+      parentId: comment.parent_id || null,
+      content: comment.content,
+      createdAt: comment.created_at,
+      updatedAt: comment.updated_at,
+      author: {
+        id: author ? author.id : comment.author_id,
+        displayName: author ? author.display_name : 'Pengguna Tel-U',
+        avatarUrl: author ? author.avatar_url : null,
+        avatarColor: author ? author.avatar_color : '#E53E3E',
+        username: author ? author.username : null,
+        faculty: author ? author.faculty : null,
+        major: author ? author.major : null,
+      },
+    },
+    isError: false,
+  });
+};
+server.patch('/api/articles/:id/comments/:commentId', handleUpdateComment);
+server.patch('/articles/:id/comments/:commentId', handleUpdateComment);
+
+// 5d. Endpoint Hapus Komentar (DELETE /articles/:id/comments/:commentId)
+const handleDeleteComment = (req, res) => {
+  const { id, commentId } = req.params;
+  const db = router.db.getState();
+  const article = (db.articles || []).find((a) => a.id === id || a.slug === id);
+  if (!article) {
+    return res.status(404).json({ statusCode: 404, message: ['Artikel tidak ditemukan'], isError: true, data: null });
+  }
+  const comment = (db.article_comments || []).find((c) => c.id === commentId && c.article_id === article.id);
+  if (!comment) {
+    return res.status(404).json({ statusCode: 404, message: ['Komentar tidak ditemukan'], isError: true, data: null });
+  }
+  if (comment.author_id !== MOCK_ME_ID) {
+    return res.status(403).json({ statusCode: 403, message: ['Hanya penulis komentar yang dapat menghapus'], isError: true, data: null });
+  }
+
+  // Cascade: hapus semua descendants (BFS)
+  const toDelete = new Set([commentId]);
+  let cursor = [commentId];
+  while (cursor.length > 0) {
+    const next = [];
+    for (const c of db.article_comments || []) {
+      if (c.parent_id && cursor.includes(c.parent_id) && !toDelete.has(c.id)) {
+        toDelete.add(c.id);
+        next.push(c.id);
+      }
+    }
+    cursor = next;
+  }
+  db.article_comments = (db.article_comments || []).filter((c) => !toDelete.has(c.id));
+
+  const stats = (db.article_stats || []).find((s) => s.article_id === article.id);
+  if (stats) stats.comments_count = Math.max(0, (stats.comments_count || toDelete.size) - toDelete.size);
+
+  router.db.write();
+  return res.json({ statusCode: 200, message: ['Komentar berhasil dihapus'], data: null, isError: false });
+};
+server.delete('/api/articles/:id/comments/:commentId', handleDeleteComment);
+server.delete('/articles/:id/comments/:commentId', handleDeleteComment);
+
+// 5.1. Endpoint Toggle Repost Artikel (POST /articles/:id/repost)
+const handleToggleRepost = (req, res) => {
+  const { id } = req.params;
+  const db = router.db.getState();
+  const article = (db.articles || []).find((a) => a.id === id || a.slug === id);
+  if (!article) {
+    return res.status(404).json({ statusCode: 404, message: ['Artikel tidak ditemukan'], isError: true, data: null });
+  }
+
+  if (!db.article_reposts) db.article_reposts = [];
+  const existingIndex = db.article_reposts.findIndex((r) => r.article_id === article.id && r.user_id === MOCK_ME_ID);
+
+  let stats = (db.article_stats || []).find((s) => s.article_id === article.id);
+  if (!stats) {
+    stats = { article_id: article.id, likes_count: 0, comments_count: 0, reposts_count: 0, bookmarks_count: 0 };
+    if (!db.article_stats) db.article_stats = [];
+    db.article_stats.push(stats);
+  }
+
+  let isReposted;
+  if (existingIndex >= 0) {
+    db.article_reposts.splice(existingIndex, 1);
+    stats.reposts_count = Math.max(0, (stats.reposts_count || 1) - 1);
+    isReposted = false;
+  } else {
+    db.article_reposts.push({ id: crypto.randomUUID(), article_id: article.id, user_id: MOCK_ME_ID, created_at: new Date().toISOString() });
+    stats.reposts_count = (stats.reposts_count || 0) + 1;
+    isReposted = true;
+  }
+  router.db.write();
+  return res.json({
+    statusCode: 200,
+    message: [isReposted ? 'Artikel berhasil dibagikan ulang' : 'Repost artikel dibatalkan'],
+    data: { isReposted, repostsCount: stats.reposts_count },
+    isError: false,
+  });
+};
+server.post('/api/articles/:id/repost', handleToggleRepost);
+server.post('/articles/:id/repost', handleToggleRepost);
+
 // 6. Endpoint Toggle Follow Penulis
 const handleToggleFollow = (req, res) => {
   const { id } = req.params;

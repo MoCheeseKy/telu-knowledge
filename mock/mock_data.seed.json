@@ -1359,20 +1359,20 @@
       "article_id": "20000000-0000-4000-8000-000000000011",
       "likes_count": 570,
       "comments_count": 75,
-      "reposts_count": 38,
-      "bookmarks_count": 104
+      "reposts_count": 39,
+      "bookmarks_count": 105
     },
     {
       "article_id": "20000000-0000-4000-8000-000000000012",
       "likes_count": 615,
-      "comments_count": 81,
+      "comments_count": 82,
       "reposts_count": 41,
       "bookmarks_count": 112
     },
     {
       "article_id": "20000000-0000-4000-8000-000000000013",
       "likes_count": 660,
-      "comments_count": 89,
+      "comments_count": 90,
       "reposts_count": 44,
       "bookmarks_count": 120
     },
@@ -1672,6 +1672,12 @@
       "article_id": "20000000-0000-4000-8000-000000000011",
       "user_id": "10000000-0000-4000-8000-000000000006",
       "created_at": "2024-10-02T16:00:00Z"
+    },
+    {
+      "id": "952e6862-a359-4e5d-afa2-2986a5173ae9",
+      "article_id": "20000000-0000-4000-8000-000000000011",
+      "user_id": "10000000-0000-4000-8000-000000000001",
+      "created_at": "2026-11-12T07:12:50.492Z"
     }
   ],
   "article_reposts": [
@@ -1710,6 +1716,12 @@
       "article_id": "20000000-0000-4000-8000-000000000012",
       "user_id": "10000000-0000-4000-8000-000000000004",
       "created_at": "2024-10-06T10:00:00Z"
+    },
+    {
+      "id": "e39baa0c-aae2-4b9c-a27e-ce128fe0dda3",
+      "article_id": "20000000-0000-4000-8000-000000000011",
+      "user_id": "10000000-0000-4000-8000-000000000001",
+      "created_at": "2026-11-12T07:19:46.452Z"
     }
   ],
   "article_comments": [
@@ -1820,6 +1832,24 @@
       "content": "Halo",
       "created_at": "2026-11-10T15:28:46.782Z",
       "updated_at": "2026-11-10T15:28:46.782Z"
+    },
+    {
+      "id": "7360142a-c0ec-4fad-b1b9-8905cb95efb7",
+      "article_id": "20000000-0000-4000-8000-000000000013",
+      "author_id": "10000000-0000-4000-8000-000000000001",
+      "parent_id": "25b7ee43-dfe6-490f-a22e-59a9c13a3383",
+      "content": "ajg",
+      "created_at": "2026-11-12T07:11:48.210Z",
+      "updated_at": "2026-11-12T07:11:48.210Z"
+    },
+    {
+      "id": "76ac5d04-1d98-4993-9fe9-317d26960743",
+      "article_id": "20000000-0000-4000-8000-000000000012",
+      "author_id": "10000000-0000-4000-8000-000000000001",
+      "parent_id": null,
+      "content": "e",
+      "created_at": "2026-11-12T07:12:15.587Z",
+      "updated_at": "2026-11-12T07:12:15.587Z"
     }
   ],
   "collections": [
