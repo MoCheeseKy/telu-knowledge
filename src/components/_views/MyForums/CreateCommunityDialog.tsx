@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Check, ImagePlus, Plus, Trash2 } from "lucide-react";
+import { useCreateCommunity } from "@/services/community-posts/community-posts.queries";
 import { CommunityRuleInput, MyCommunityItem } from "./my-forums.types";
 
 interface CreateCommunityDialogProps {
@@ -48,6 +49,7 @@ export default function CreateCommunityDialog({
   onCreate,
 }: CreateCommunityDialogProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const createCommunityMutation = useCreateCommunity();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -133,6 +135,13 @@ export default function CreateCommunityDialog({
     };
 
     onCreate(newCommunity);
+    createCommunityMutation.mutate({
+      name: newCommunity.name,
+      description: newCommunity.description,
+      category: newCommunity.category,
+      avatarColor: selectedColor,
+      bannerUrl: avatarUrl,
+    });
     setSuccess(true);
     setTimeout(() => {
       setSuccess(false);

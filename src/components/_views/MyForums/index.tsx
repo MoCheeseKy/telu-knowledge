@@ -2,11 +2,18 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Pencil } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import MyForumCard from "./MyForumCard";
 import CreateCommunityDialog from "./CreateCommunityDialog";
+import {
+  useCommunities,
+  useAllForumPosts,
+  useDeleteForumPost,
+} from "@/services/community-posts/community-posts.queries";
+import { MOCK_VIEWER_ID } from "@/services/community-posts/community-posts.types";
 import {
   initialCommunities,
   initialMyPosts,
@@ -14,21 +21,86 @@ import {
   MyForumPostItem,
 } from "./my-forums.types";
 
+const dateFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
 export default function MyForumsView() {
-  const [communities, setCommunities] = useState<MyCommunityItem[]>(initialCommunities);
-  const [myPosts, setMyPosts] = useState<MyForumPostItem[]>(initialMyPosts);
+  const { toast } = useToast();
+  const { data: apiCommunities, isLoading: isLoadingCommunities } = useCommunities();
+  const { data: apiPosts, isLoading: isLoadingPosts } = useAllForumPosts();
+  const deletePostMutation = useDeleteForumPost();
+
+  const [localCreatedCommunities, setLocalCreatedCommunities] = useState<MyCommunityItem[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
+  // Gabungkan komunitas dari API dengan fallback initialCommunities
+  const communities: MyCommunityItem[] = useMemo(() => {
+    if (apiCommunities && apiCommunities.length > 0) {
+      const fromApi: MyCommunityItem[] = apiCommunities.map((c) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug || c.name.toLowerCase().replace(/\s+/g, "-"),
+        description: c.description || "",
+        category: (c.category as MyCommunityItem["category"]) || "Umum",
+        membersCount: `${(c.member_count ?? 1).toLocaleString("id-ID")} Anggota`,
+        discussionsCount: `${(c.post_count ?? 0).toLocaleString("id-ID")} Postingan`,
+        role: c.creator_id === MOCK_VIEWER_ID ? "Pembuat" : "Anggota",
+        isPrivate: c.visibility === "privat",
+        avatarUrl: c.avatar_url || undefined,
+        avatarColor: c.avatar_color || "bg-[#0A3AB5]",
+        avatarInitial: (c.name?.charAt(0) || "K").toUpperCase(),
+        lastActive: "Baru saja",
+        isFollowing: true,
+      }));
+      return [...localCreatedCommunities, ...fromApi];
+    }
+    return [...localCreatedCommunities, ...initialCommunities];
+  }, [apiCommunities, localCreatedCommunities]);
+
+  // Ambil postingan milik user aktif (MOCK_VIEWER_ID) dari API
+  const myPosts: (MyForumPostItem & { communityId?: string })[] = useMemo(() => {
+    if (apiPosts && apiPosts.length > 0) {
+      const authored = apiPosts.filter((p) => p.authorId === MOCK_VIEWER_ID);
+      if (authored.length > 0) {
+        return authored.map((p) => ({
+          id: p.id,
+          title: p.title,
+          forumName: p.communityName || "Komunitas",
+          forumSlug: p.communityId || "1",
+          communityId: p.communityId || "1",
+          createdAt: p.createdAt ? dateFormatter.format(new Date(p.createdAt)) : "Baru saja",
+          likesCount: p.likesCount ?? 0,
+          commentsCount: p.commentsCount ?? 0,
+          status: "Aktif",
+        }));
+      }
+    }
+    return initialMyPosts;
+  }, [apiPosts]);
+
   const handleToggleFollow = (id: string | number) => {
-    setCommunities((prev) => prev.filter((item) => item.id !== id));
+    // Sembunyikan secara visual dari list
+    setLocalCreatedCommunities((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleCreateCommunity = (newCommunity: MyCommunityItem) => {
-    setCommunities((prev) => [newCommunity, ...prev]);
+    setLocalCreatedCommunities((prev) => [newCommunity, ...prev]);
   };
 
   const handleDeletePost = (id: string | number) => {
-    setMyPosts((prev) => prev.filter((p) => p.id !== id));
+    if (!confirm("Apakah Anda yakin ingin menghapus postingan forum ini?")) return;
+
+    deletePostMutation.mutate(String(id), {
+      onSuccess: () => {
+        toast.success("Postingan forum berhasil dihapus.");
+      },
+      onError: () => {
+        toast.error("Gagal menghapus postingan.");
+      },
+    });
   };
 
   const moderatedList = useMemo(
@@ -64,23 +136,21 @@ export default function MyForumsView() {
           variant="line"
           className="bg-transparent border-b border-[var(--dust)]/60 rounded-none w-full justify-start h-auto p-0 gap-4 sm:gap-6"
         >
-          <TabsTrigger value="all">
-            Semua
-          </TabsTrigger>
-          <TabsTrigger value="moderated">
-            Dikelola
-          </TabsTrigger>
-          <TabsTrigger value="joined">
-            Diikuti
-          </TabsTrigger>
-          <TabsTrigger value="my-posts">
-            Postingan Saya
-          </TabsTrigger>
+          <TabsTrigger value="all">Semua</TabsTrigger>
+          <TabsTrigger value="moderated">Dikelola</TabsTrigger>
+          <TabsTrigger value="joined">Diikuti</TabsTrigger>
+          <TabsTrigger value="my-posts">Postingan Saya</TabsTrigger>
         </TabsList>
 
         {/* TAB: Semua */}
         <TabsContent value="all" className="flex flex-col m-0 pt-6">
-          {communities.length === 0 ? (
+          {isLoadingCommunities ? (
+            <div className="flex flex-col gap-4 animate-pulse">
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="h-20 w-full bg-[var(--dust)]/20 rounded-xl" />
+              ))}
+            </div>
+          ) : communities.length === 0 ? (
             <p className="py-12 text-center text-[var(--muted)]">
               Tidak ada komunitas. Buat komunitas baru untuk memulai.
             </p>
@@ -137,7 +207,13 @@ export default function MyForumsView() {
 
         {/* TAB: Postingan Saya */}
         <TabsContent value="my-posts" className="flex flex-col m-0 pt-6">
-          {myPosts.length === 0 ? (
+          {isLoadingPosts ? (
+            <div className="flex flex-col gap-4 animate-pulse">
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="h-16 w-full bg-[var(--dust)]/20 rounded-xl" />
+              ))}
+            </div>
+          ) : myPosts.length === 0 ? (
             <p className="py-12 text-center text-[var(--muted)]">
               Belum ada postingan diskusi.
             </p>
@@ -167,14 +243,25 @@ export default function MyForumsView() {
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handleDeletePost(post.id)}
-                    className="p-1.5 text-[var(--muted)] hover:text-[var(--failed)] transition-colors cursor-pointer shrink-0 mt-1"
-                    title="Hapus postingan"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-1 shrink-0 mt-1">
+                    <Link
+                      href={`/communities/${post.communityId || "1"}/post/${post.id}/edit`}
+                      className="p-1.5 text-[var(--muted)] hover:text-[var(--primary-text)] transition-colors cursor-pointer"
+                      title="Sunting postingan"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Link>
+
+                    <button
+                      type="button"
+                      disabled={deletePostMutation.isPending}
+                      onClick={() => handleDeletePost(post.id)}
+                      className="p-1.5 text-[var(--muted)] hover:text-[var(--failed)] transition-colors cursor-pointer"
+                      title="Hapus postingan"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
