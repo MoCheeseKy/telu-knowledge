@@ -6,10 +6,6 @@ import type {
   UpdateCommunityPostPayload,
 } from "./community-posts.types";
 
-/**
- * Membuat postingan baru pada komunitas (POST /proxy/communities/:id/posts).
- * Default source 'mock' karena backend NestJS belum menyediakan endpoint ini.
- */
 export async function createCommunityPost(
   communityId: string,
   payload: CreateCommunityPostPayload
@@ -24,10 +20,6 @@ export async function createCommunityPost(
   );
 }
 
-/**
- * Mengambil daftar postingan komunitas, terbaru di atas
- * (GET /proxy/communities/:id/posts).
- */
 export async function listCommunityPosts(
   communityId: string
 ): Promise<ApiEnvelope<CommunityPostDto[]>> {
@@ -40,11 +32,6 @@ export async function listCommunityPosts(
   );
 }
 
-/**
- * Mengambil detail postingan by ID saja, tanpa communityId
- * (GET /proxy/forum-posts/:postId) — dipakai halaman /discussion-forums/[id].
- * Konten post saja; komentar/like/save tidak termasuk cakupan endpoint ini.
- */
 export async function getForumPostDetail(
   postId: string
 ): Promise<ApiEnvelope<CommunityPostDto>> {
@@ -57,9 +44,6 @@ export async function getForumPostDetail(
   );
 }
 
-/**
- * Mengambil detail postingan komunitas (GET /proxy/communities/:id/posts/:postId).
- */
 export async function getCommunityPost(
   communityId: string,
   postId: string
@@ -75,10 +59,6 @@ export async function getCommunityPost(
   );
 }
 
-/**
- * Menyunting postingan milik sendiri (PATCH /proxy/communities/:id/posts/:postId).
- * Patch parsial: hanya field yang dikirim yang diubah.
- */
 export async function updateCommunityPost(
   communityId: string,
   postId: string,
@@ -96,10 +76,6 @@ export async function updateCommunityPost(
   );
 }
 
-/**
- * Menghapus postingan milik sendiri (DELETE /proxy/communities/:id/posts/:postId).
- * Seluruh data turunan (vote, simpan, repost, komentar) ikut dihapus oleh server.
- */
 export async function deleteCommunityPost(
   communityId: string,
   postId: string
@@ -115,10 +91,6 @@ export async function deleteCommunityPost(
   );
 }
 
-/**
- * Mengambil daftar seluruh postingan forum dari seluruh komunitas
- * (GET /proxy/forum-posts) — dipakai untuk feed /discussion-forums.
- */
 export async function listAllForumPosts(): Promise<
   ApiEnvelope<CommunityPostDto[]>
 > {
@@ -128,9 +100,6 @@ export async function listAllForumPosts(): Promise<
   });
 }
 
-/**
- * Menghapus postingan forum by ID saja (DELETE /proxy/forum-posts/:postId).
- */
 export async function deleteForumPost(
   postId: string
 ): Promise<ApiEnvelope<null>> {
@@ -143,9 +112,6 @@ export async function deleteForumPost(
   );
 }
 
-/**
- * Menyunting postingan forum by ID (PATCH /proxy/forum-posts/:postId).
- */
 export async function updateForumPost(
   postId: string,
   payload: UpdateCommunityPostPayload
@@ -186,9 +152,6 @@ export interface CommunityItemDto {
   updated_at?: string;
 }
 
-/**
- * Membuat komunitas / forum baru (POST /proxy/communities).
- */
 export async function createCommunity(
   payload: CreateCommunityPayload
 ): Promise<ApiEnvelope<CommunityItemDto>> {
@@ -199,9 +162,6 @@ export async function createCommunity(
   });
 }
 
-/**
- * Mengambil daftar seluruh komunitas (GET /proxy/communities).
- */
 export async function listCommunities(): Promise<
   ApiEnvelope<CommunityItemDto[]>
 > {

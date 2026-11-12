@@ -197,7 +197,6 @@ function MessageIcon() {
     );
 }
 
-// COMMUNITY CARD
 function CommunityCard({
     community,
     followed,
@@ -209,7 +208,6 @@ function CommunityCard({
 }) {
     return (
         <article className="min-w-0">
-            {/* Author and Follow */}
             <div className="mb-3 flex items-center justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-2">
                     <div className="h-[15px] w-[15px] shrink-0 rounded-[3px] bg-[#E9231A]" />
@@ -239,7 +237,6 @@ function CommunityCard({
                 </button>
             </div>
 
-            {/* Community Content */}
             <Link
                 href={`/communities/${community.id}`}
                 className="group flex min-h-[112px] sm:min-h-[144px] overflow-hidden rounded-[8px] bg-white"
@@ -261,7 +258,6 @@ function CommunityCard({
                         {community.description}
                     </p>
 
-                    {/* Statistics */}
                     <div className="mt-2.5 sm:mt-4 flex items-center gap-4">
                         <div className="flex items-center gap-1 text-[var(--primary-text)]">
                             <UsersIcon />
@@ -306,14 +302,12 @@ export default function DiscoverForumsView() {
         return defaultCommunities;
     }, [apiCommunities]);
 
-    // Search community
     const filteredCommunities = useMemo(() => {
         return communities.filter((community) =>
             community.name.toLowerCase().includes(search.toLowerCase())
         );
     }, [communities, search]);
 
-    // Follow / Unfollow community
     const handleFollow = (id: string | number) => {
         setFollowedCommunities((previous) =>
             previous.includes(id)
@@ -325,9 +319,7 @@ export default function DiscoverForumsView() {
     return (
         <div className="w-full py-2 text-[#202020]">
             <section className="mx-auto w-full pb-12">
-                {/* Search and Create Community */}
                 <div className="mb-6 sm:mb-8 flex flex-col items-stretch sm:items-center justify-between gap-3 sm:gap-5 sm:flex-row">
-                    {/* Search Input */}
                     <div className="flex h-[44px] w-full sm:max-w-[395px] items-center rounded-full border border-[#D3D3D3] bg-white px-4 transition focus-within:border-[var(--primary)]">
                         <input
                             type="text"
@@ -342,7 +334,6 @@ export default function DiscoverForumsView() {
                         </div>
                     </div>
 
-                    {/* Create Forum */}
                     <button
                         type="button"
                         onClick={() => setIsCreateModalOpen(true)}
@@ -353,7 +344,6 @@ export default function DiscoverForumsView() {
                     </button>
                 </div>
 
-                {/* COMMUNITY LIST */}
                 {filteredCommunities.length > 0 ? (
                     <div className="grid grid-cols-1 gap-x-7 gap-y-8 md:grid-cols-2 lg:gap-x-8 lg:gap-y-8">
                         {filteredCommunities.map((community) => (

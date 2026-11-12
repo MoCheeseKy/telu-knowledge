@@ -20,8 +20,6 @@ export default function DiscussionForumDetailView({
   postId,
   initialPost = sampleForumPost,
 }: DiscussionForumDetailViewProps) {
-  // Konten post dari mock server (GET /proxy/forum-posts/:postId).
-  // Cakupan: konten post saja — komentar/like/save di luar cakupan integrasi ini.
   const {
     data: postDto,
     isLoading,
@@ -80,7 +78,6 @@ export default function DiscussionForumDetailView({
 
   return (
     <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-12 xl:gap-16 py-6">
-      {/* Kolom utama diskusi (lebar maksimal 679px, konsisten dengan DiscussionForumsView dan HomeView) */}
       <div className="flex-1 flex flex-col w-full max-w-[679px]">
         <ForumDetailHeader
           post={post}
@@ -98,7 +95,6 @@ export default function DiscussionForumDetailView({
         <ForumCommentsThread initialComments={post.comments} />
       </div>
 
-      {/* Sidebar kanan (konsisten dengan sidebar DiscussionForumsView dan HomeView) */}
       <ForumCommunitySidebar post={post} />
     </div>
   );

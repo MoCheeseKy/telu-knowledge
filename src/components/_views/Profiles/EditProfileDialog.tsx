@@ -26,8 +26,6 @@ export default function EditProfileDialog({
   const { toast } = useToast();
 
   const handleSave = async (updated: UpdateProfilePayload) => {
-    // Error diteruskan ke form (ditampilkan lewat FormAlert) — toast sukses
-    // hanya muncul bila penyimpanan benar-benar berhasil.
     await updateProfile(updated);
     toast.success("Profil berhasil diperbarui!");
   };

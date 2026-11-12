@@ -146,7 +146,6 @@ export default function CreateCommunityDialog({
     setTimeout(() => {
       setSuccess(false);
       onOpenChange(false);
-      // Reset form
       setName("");
       setDescription("");
       setAvatarUrl(undefined);
@@ -169,7 +168,6 @@ export default function CreateCommunityDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
-          {/* Warna Ikon Forum */}
           <div className="flex items-center gap-4 p-3 rounded-xl bg-[var(--background-accent)]/50 border border-[var(--dust)]/40">
             <div
               className={`w-14 h-14 rounded-xl ${selectedColor} text-white font-bold text-2xl flex items-center justify-center shadow-xs shrink-0`}
@@ -197,7 +195,6 @@ export default function CreateCommunityDialog({
             </div>
           </div>
 
-          {/* Foto Profil Forum */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-[var(--foreground)]">
               Foto Profil Forum <span className="text-[var(--failed)]">*</span>
@@ -258,7 +255,6 @@ export default function CreateCommunityDialog({
             )}
           </div>
 
-          {/* Nama Forum */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-[var(--foreground)]">
               Nama Forum <span className="text-[var(--failed)]">*</span>
@@ -272,7 +268,6 @@ export default function CreateCommunityDialog({
             />
           </div>
 
-          {/* Kategori */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-[var(--foreground)]">
               Kategori Forum
@@ -295,7 +290,6 @@ export default function CreateCommunityDialog({
             </div>
           </div>
 
-          {/* Deskripsi */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-[var(--foreground)]">
               Deskripsi
@@ -309,7 +303,6 @@ export default function CreateCommunityDialog({
             />
           </div>
 
-          {/* Aturan Forum */}
           <div className="flex flex-col gap-2.5">
             <div className="flex items-center justify-between">
               <label className="text-xs font-semibold text-[var(--foreground)]">
@@ -371,7 +364,6 @@ export default function CreateCommunityDialog({
             </div>
           </div>
 
-          {/* Success notice */}
           {success && (
             <div className="p-3 bg-[var(--success-soft)] border border-[var(--success)]/30 rounded-lg flex items-center gap-2 text-xs font-semibold text-[var(--success-text)]">
               <Check className="w-4 h-4 text-[var(--success)]" />
@@ -379,7 +371,6 @@ export default function CreateCommunityDialog({
             </div>
           )}
 
-          {/* Actions */}
           <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--dust)]">
             <Button
               type="button"

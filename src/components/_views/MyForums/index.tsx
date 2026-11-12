@@ -40,7 +40,6 @@ export default function MyForumsView() {
   const [localCreatedCommunities, setLocalCreatedCommunities] = useState<MyCommunityItem[]>([]);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(shouldAutoOpen);
 
-  // Gabungkan komunitas dari API dengan fallback initialCommunities
   const communities: MyCommunityItem[] = useMemo(() => {
     if (apiCommunities && apiCommunities.length > 0) {
       const fromApi: MyCommunityItem[] = apiCommunities.map((c) => ({
@@ -64,7 +63,6 @@ export default function MyForumsView() {
     return [...localCreatedCommunities, ...initialCommunities];
   }, [apiCommunities, localCreatedCommunities]);
 
-  // Ambil postingan milik user aktif (MOCK_VIEWER_ID) dari API
   const myPosts: (MyForumPostItem & { communityId?: string })[] = useMemo(() => {
     if (apiPosts && apiPosts.length > 0) {
       const authored = apiPosts.filter((p) => p.authorId === MOCK_VIEWER_ID);
@@ -86,7 +84,6 @@ export default function MyForumsView() {
   }, [apiPosts]);
 
   const handleToggleFollow = (id: string | number) => {
-    // Sembunyikan secara visual dari list
     setLocalCreatedCommunities((prev) => prev.filter((item) => item.id !== id));
   };
 
@@ -119,7 +116,6 @@ export default function MyForumsView() {
 
   return (
     <div className="w-full flex flex-col py-2 mb-auto">
-      {/* Header - konsisten dengan MyArticles */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4 sm:mb-6">
         <h1 className="font-sans text-[24px] sm:text-[32px] font-bold text-[var(--foreground)]">
           Forum Saya
@@ -134,7 +130,6 @@ export default function MyForumsView() {
         </Button>
       </div>
 
-      {/* Tabs - menggunakan variant="line" konsisten dengan MyArticles */}
       <Tabs defaultValue="all" className="w-full">
         <TabsList
           variant="line"
@@ -146,7 +141,6 @@ export default function MyForumsView() {
           <TabsTrigger value="my-posts">Postingan Saya</TabsTrigger>
         </TabsList>
 
-        {/* TAB: Semua */}
         <TabsContent value="all" className="flex flex-col m-0 pt-6">
           {isLoadingCommunities ? (
             <div className="flex flex-col gap-4 animate-pulse">
@@ -171,7 +165,6 @@ export default function MyForumsView() {
           )}
         </TabsContent>
 
-        {/* TAB: Dikelola */}
         <TabsContent value="moderated" className="flex flex-col m-0 pt-6">
           {moderatedList.length === 0 ? (
             <p className="py-12 text-center text-[var(--muted)]">
@@ -190,7 +183,6 @@ export default function MyForumsView() {
           )}
         </TabsContent>
 
-        {/* TAB: Diikuti */}
         <TabsContent value="joined" className="flex flex-col m-0 pt-6">
           {joinedList.length === 0 ? (
             <p className="py-12 text-center text-[var(--muted)]">
@@ -209,7 +201,6 @@ export default function MyForumsView() {
           )}
         </TabsContent>
 
-        {/* TAB: Postingan Saya */}
         <TabsContent value="my-posts" className="flex flex-col m-0 pt-6">
           {isLoadingPosts ? (
             <div className="flex flex-col gap-4 animate-pulse">
@@ -273,7 +264,6 @@ export default function MyForumsView() {
         </TabsContent>
       </Tabs>
 
-      {/* Create Community Dialog Modal */}
       <CreateCommunityDialog
         open={isCreateModalOpen}
         onOpenChange={setIsCreateModalOpen}

@@ -3,11 +3,9 @@ import type { ApiEnvelope } from "@/lib/api/types";
 import { aiAssist } from "@/services/ai/ai.api";
 import type {
   Article,
-  ArticleComment,
   ArticleDetailData,
   ArticleFeedItem,
   CreateArticlePayload,
-  CreateCommentPayload,
   ListArticleFeedParams,
   ListMyArticlesParams,
   MyArticlesListData,
@@ -17,9 +15,6 @@ import type {
   UploadedArticleImageData,
 } from "./articles.types";
 
-/**
- * Membuat draft artikel baru (POST /proxy/articles).
- */
 export async function createArticle(
   payload: CreateArticlePayload = {}
 ): Promise<ApiEnvelope<Article>> {
@@ -29,18 +24,12 @@ export async function createArticle(
   });
 }
 
-/**
- * Mengambil detail artikel berdasarkan ID (GET /proxy/articles/:id).
- */
 export async function getArticle(id: string): Promise<ApiEnvelope<Article>> {
   return apiFetch<Article>(`/proxy/articles/${encodeURIComponent(id)}`, {
     method: "GET",
   });
 }
 
-/**
- * Memperbarui sebagian data artikel milik sendiri (PATCH /proxy/articles/:id).
- */
 export async function updateArticle(
   id: string,
   payload: UpdateArticlePayload
@@ -51,9 +40,6 @@ export async function updateArticle(
   });
 }
 
-/**
- * Mempublikasikan artikel milik sendiri (POST /proxy/articles/:id/publish).
- */
 export async function publishArticle(
   id: string
 ): Promise<ApiEnvelope<Article>> {
@@ -65,9 +51,6 @@ export async function publishArticle(
   );
 }
 
-/**
- * Membatalkan publikasi artikel milik sendiri (POST /proxy/articles/:id/unpublish).
- */
 export async function unpublishArticle(
   id: string
 ): Promise<ApiEnvelope<Article>> {
@@ -79,9 +62,6 @@ export async function unpublishArticle(
   );
 }
 
-/**
- * Menghapus artikel milik sendiri (DELETE /proxy/articles/:id).
- */
 export async function deleteArticle(
   id: string
 ): Promise<ApiEnvelope<null>> {
@@ -90,9 +70,6 @@ export async function deleteArticle(
   });
 }
 
-/**
- * Mengambil daftar artikel milik pengguna yang sedang login (GET /proxy/articles/me).
- */
 export async function listMyArticles(
   params?: ListMyArticlesParams
 ): Promise<ApiEnvelope<MyArticlesListData>> {
@@ -117,9 +94,6 @@ export async function listMyArticles(
   });
 }
 
-/**
- * Mengunggah file gambar artikel via multipart/form-data (POST /proxy/uploads/article-image).
- */
 export async function uploadArticleImage(
   file: File
 ): Promise<ApiEnvelope<UploadedArticleImageData>> {
@@ -151,9 +125,6 @@ export const articlesApi = {
   aiAssist,
 };
 
-/**
- * Mengambil detail artikel publik lengkap (GET /proxy/articles/:id).
- */
 export async function getArticleDetail(
   id: string,
   options?: { source?: "backend" | "mock" }
@@ -164,9 +135,6 @@ export async function getArticleDetail(
   });
 }
 
-/**
- * Toggle suka artikel (POST /proxy/articles/:id/like).
- */
 export async function toggleArticleLike(
   id: string
 ): Promise<ApiEnvelope<ToggleLikeResult>> {
@@ -179,9 +147,6 @@ export async function toggleArticleLike(
   );
 }
 
-/**
- * Toggle bookmark artikel (POST /proxy/articles/:id/bookmark).
- */
 export async function toggleArticleBookmark(
   id: string
 ): Promise<ApiEnvelope<ToggleBookmarkResult>> {
@@ -194,9 +159,6 @@ export async function toggleArticleBookmark(
   );
 }
 
-/**
- * Toggle follow profil penulis (POST /proxy/profiles/:id/follow).
- */
 export async function toggleProfileFollow(
   profileId: string
 ): Promise<ApiEnvelope<{ isFollowing: boolean }>> {
@@ -209,10 +171,6 @@ export async function toggleProfileFollow(
   );
 }
 
-/**
- * Mengambil daftar feed artikel publik untuk halaman Home dan Discover (GET /proxy/articles/feed).
- * Default source menggunakan 'mock' jika backend belum menyediakan feed publik.
- */
 export async function getArticleFeed(
   params?: ListArticleFeedParams
 ): Promise<ApiEnvelope<ArticleFeedItem[]>> {

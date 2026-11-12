@@ -22,7 +22,6 @@ export default function ForumDetailHeader({
 }: ForumDetailHeaderProps) {
   return (
     <div className="flex flex-col w-full">
-      {/* Baris navigasi kembali & aksi penulis */}
       <div className="flex items-center justify-between gap-4 mb-5">
         <Link
           href="/discussion-forums"
@@ -59,7 +58,6 @@ export default function ForumDetailHeader({
         )}
       </div>
 
-      {/* Meta persis seperti ForumPostCard: From {topic} by {publisher}, {postDate} */}
       <div className="flex items-center gap-2">
         {post.publisher.avatarUrl ? (
           <img

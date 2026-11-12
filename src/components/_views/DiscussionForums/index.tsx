@@ -30,7 +30,6 @@ export default function DiscussionForumsView() {
           </p>
         </div>
 
-        {/* FEED FORUM POSTS */}
         {isLoadingPosts ? (
           <div className="flex flex-col gap-8 animate-pulse">
             {[1, 2, 3].map((n) => (
@@ -105,7 +104,6 @@ export default function DiscussionForumsView() {
         )}
       </div>
 
-      {/* SIDEBAR REKOMENDASI KOMUNITAS */}
       <aside className="w-full lg:w-[320px] xl:w-[340px] shrink-0 lg:sticky lg:top-24 flex flex-col gap-[32px] pt-2">
         {isLoadingRecs ? (
           <div className="flex flex-col gap-4 animate-pulse">
