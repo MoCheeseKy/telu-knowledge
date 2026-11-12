@@ -3,7 +3,12 @@
 import React, { useState } from "react";
 import { MessageSquare, Send, Reply } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import type { ArticleComment } from "@/services/articles/articles.types";
+import { 
+  useArticleComments, 
+  useCreateArticleComment 
+} from "@/services/article-comments/article-comments.queries";
 
 interface ArticleCommentsSectionProps {
   articleId?: string;
@@ -26,42 +31,6 @@ function formatCommentDate(dateString?: string): string {
     return dateString;
   }
 }
-
-const DUMMY_COMMENTS: ArticleComment[] = [
-  {
-    id: "c-1",
-    articleId: "",
-    authorId: "1",
-    parentId: null,
-    content:
-      "Penjelasan yang sangat terstruktur dan mudah dipahami untuk persiapan sidang komprehensif. Terima kasih sudah berbagi!",
-    createdAt: "2024-10-09T08:30:00Z",
-    updatedAt: "2024-10-09T08:30:00Z",
-    author: {
-      id: "1",
-      displayName: "Aditya Pratama",
-      avatarUrl: null,
-      avatarColor: "#10B981",
-      major: "S1 Informatika",
-    },
-  },
-  {
-    id: "c-2",
-    articleId: "",
-    authorId: "2",
-    parentId: "c-1",
-    content: "Setuju, bagian tips demo visualisasi metrik sangat membantu!",
-    createdAt: "2024-10-09T09:15:00Z",
-    updatedAt: "2024-10-09T09:15:00Z",
-    author: {
-      id: "2",
-      displayName: "Farhan Danendra",
-      avatarUrl: null,
-      avatarColor: "#EA5753",
-      major: "S1 Informatika",
-    },
-  },
-];
 
 function CommentItem({
   comment,
@@ -223,64 +192,53 @@ function CommentItem({
   );
 }
 
-/**
- * Komponen Slicing UI Komentar Artikel.
- * Catatan: Integrasi API komentar tidak dilakukan di sini karena dikerjakan oleh rekan tim.
- */
 export default function ArticleCommentsSection({
+  articleId,
   initialComments,
 }: ArticleCommentsSectionProps) {
-  const [comments, setComments] = useState<ArticleComment[]>(
-    initialComments && initialComments.length > 0
-      ? initialComments
-      : DUMMY_COMMENTS
-  );
+  const { toast } = useToast();
   const [commentText, setCommentText] = useState("");
+
+  // 1. Ambil data komentar dari API / Mock Server
+  const { data: apiComments, isLoading } = useArticleComments(articleId);
+  
+  // 2. Siapkan mutasi untuk mengirim komentar
+  const createCommentMutation = useCreateArticleComment(articleId || "");
+
+  // Gunakan data API. Jika API belum mengembalikan data (loading), fallback ke initialComments
+  const comments = apiComments || initialComments || [];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!commentText.trim()) return;
+    if (!commentText.trim() || !articleId) return;
 
-    // Simulasi penambahan komentar lokal (dummy UI slicing)
-    const newComment: ArticleComment = {
-      id: `local-${Date.now()}`,
-      articleId: "",
-      authorId: "me",
-      parentId: null,
-      content: commentText.trim(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      author: {
-        id: "me",
-        displayName: "Pengguna",
-        avatarUrl: null,
-        avatarColor: "#EA5753",
-      },
-    };
-
-    setComments((prev) => [newComment, ...prev]);
-    setCommentText("");
+    createCommentMutation.mutate(
+      { content: commentText.trim() },
+      {
+        onSuccess: () => {
+          setCommentText(""); // Kosongkan input setelah sukses
+          toast.success("Komentar berhasil dikirim!");
+        },
+        onError: () => {
+          toast.error("Gagal mengirim komentar. Silakan coba lagi.");
+        }
+      }
+    );
   };
 
   const handleReplySubmit = (parentId: string, content: string) => {
-    // Simulasi penambahan balasan lokal (dummy UI slicing)
-    const newReply: ArticleComment = {
-      id: `local-reply-${Date.now()}`,
-      articleId: "",
-      authorId: "me",
-      parentId,
-      content,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      author: {
-        id: "me",
-        displayName: "Pengguna",
-        avatarUrl: null,
-        avatarColor: "#EA5753",
-      },
-    };
-
-    setComments((prev) => [...prev, newReply]);
+    if (!articleId) return;
+    createCommentMutation.mutate(
+      { content, parent_id: parentId },
+      {
+        onSuccess: () => {
+          toast.success("Balasan berhasil dikirim!");
+        },
+        onError: () => {
+          toast.error("Gagal mengirim balasan.");
+        }
+      }
+    );
   };
 
   // Pisahkan root comments (tanpa parent_id) dan replies (berdasarkan parent_id)
@@ -322,18 +280,24 @@ export default function ArticleCommentsSection({
           <Button
             type="submit"
             size="sm"
-            disabled={!commentText.trim()}
+            disabled={!commentText.trim() || createCommentMutation.isPending}
             className="gap-1.5 text-xs font-semibold px-4 py-2 bg-[var(--primary-text)] hover:opacity-90 text-white rounded-lg cursor-pointer disabled:opacity-50"
           >
             <Send className="w-3.5 h-3.5" />
-            <span>Kirim Komentar</span>
+            <span>
+              {createCommentMutation.isPending ? "Mengirim..." : "Kirim Komentar"}
+            </span>
           </Button>
         </div>
       </form>
 
       {/* Daftar komentar */}
       <div className="mt-6 flex flex-col">
-        {rootComments.length === 0 ? (
+        {isLoading ? (
+          <p className="py-8 text-center text-xs text-[var(--muted)] font-sans">
+            Memuat komentar...
+          </p>
+        ) : rootComments.length === 0 ? (
           <p className="py-8 text-center text-xs text-[var(--muted)] font-sans">
             Belum ada komentar pada artikel ini. Jadilah yang pertama memberikan
             tanggapan!
