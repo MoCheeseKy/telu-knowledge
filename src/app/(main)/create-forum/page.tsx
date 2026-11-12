@@ -1,5 +1,5 @@
-import CreateForumView from "@/components/_views/CreateForum";
+import { redirect } from "next/navigation";
 
 export default function CreateForumPage() {
-  return <CreateForumView />;
+  redirect("/my-forums?create=true");
 }

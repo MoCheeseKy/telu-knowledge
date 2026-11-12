@@ -61,9 +61,6 @@ export default function CommunityPostEditView({
     );
   }
 
-  // Kepemilikan postingan di sisi UI — konsisten dengan otorisasi mock
-  // (lihat docs/integrasi-community-posts/README.md bagian "Identitas Penulis di Mock").
-  // Backend asli nantinya memverifikasi lewat user token, bukan flag ini.
   if (post.authorId !== MOCK_VIEWER_ID) {
     return (
       <div className="mt-8 flex min-h-[200px] w-full max-w-[679px] flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-[var(--dust)]/70 text-center">

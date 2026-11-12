@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Check, ImagePlus, Plus, Trash2 } from "lucide-react";
+import { useCreateCommunity } from "@/services/community-posts/community-posts.queries";
 import { CommunityRuleInput, MyCommunityItem } from "./my-forums.types";
 
 interface CreateCommunityDialogProps {
@@ -48,6 +49,7 @@ export default function CreateCommunityDialog({
   onCreate,
 }: CreateCommunityDialogProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const createCommunityMutation = useCreateCommunity();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -102,7 +104,7 @@ export default function CreateCommunityDialog({
         .toLowerCase()
         .replace(/[^a-z0-9]/g, "-")
         .replace(/-+/g, "-")
-        .slice(0, 24) || "komunitas-baru";
+        .slice(0, 24) || "forum-baru";
 
     const normalizedRules: CommunityRuleInput[] = rules
       .filter((r) => r.title.trim().length > 0)
@@ -118,7 +120,7 @@ export default function CreateCommunityDialog({
       slug: generatedSlug,
       description:
         description.trim() ||
-        "Komunitas ruang diskusi dan kolaborasi mahasiswa Telkom University.",
+        "Forum ruang diskusi dan kolaborasi mahasiswa Telkom University.",
       category,
       membersCount: "1 Anggota",
       discussionsCount: "0 Postingan",
@@ -133,11 +135,17 @@ export default function CreateCommunityDialog({
     };
 
     onCreate(newCommunity);
+    createCommunityMutation.mutate({
+      name: newCommunity.name,
+      description: newCommunity.description,
+      category: newCommunity.category,
+      avatarColor: selectedColor,
+      bannerUrl: avatarUrl,
+    });
     setSuccess(true);
     setTimeout(() => {
       setSuccess(false);
       onOpenChange(false);
-      // Reset form
       setName("");
       setDescription("");
       setAvatarUrl(undefined);
@@ -151,7 +159,7 @@ export default function CreateCommunityDialog({
         <DialogHeader className="mb-2">
           <DialogTitle className="text-xl font-bold font-sans flex items-center gap-2">
             <Plus className="w-5 h-5 text-[var(--primary)]" />
-            <span>Buat Komunitas Baru</span>
+            <span>Buat Forum Baru</span>
           </DialogTitle>
           <DialogDescription className="text-xs text-[var(--muted)]">
             Bangun ruang diskusi dan wadah kolaborasi pengetahuan baru bagi
@@ -160,7 +168,6 @@ export default function CreateCommunityDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-2">
-          {/* Warna Ikon Komunitas */}
           <div className="flex items-center gap-4 p-3 rounded-xl bg-[var(--background-accent)]/50 border border-[var(--dust)]/40">
             <div
               className={`w-14 h-14 rounded-xl ${selectedColor} text-white font-bold text-2xl flex items-center justify-center shadow-xs shrink-0`}
@@ -169,7 +176,7 @@ export default function CreateCommunityDialog({
             </div>
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-semibold text-[var(--foreground)]">
-                Pilih Warna Ikon Komunitas:
+                Pilih Warna Ikon Forum:
               </span>
               <div className="flex items-center gap-2">
                 {AVATAR_COLORS.map((c) => (
@@ -188,10 +195,9 @@ export default function CreateCommunityDialog({
             </div>
           </div>
 
-          {/* Foto Profil Komunitas */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-[var(--foreground)]">
-              Foto Profil Komunitas <span className="text-[var(--failed)]">*</span>
+              Foto Profil Forum <span className="text-[var(--failed)]">*</span>
             </label>
             <input
               ref={fileInputRef}
@@ -199,14 +205,14 @@ export default function CreateCommunityDialog({
               accept="image/png,image/jpeg,image/webp,image/gif"
               onChange={handleAvatarChange}
               className="hidden"
-              aria-label="Unggah foto profil komunitas"
+              aria-label="Unggah foto profil forum"
             />
             {avatarUrl ? (
               <div className="flex items-center justify-between gap-3 p-3 rounded-xl border border-[var(--dust)] bg-[var(--background-accent)]/30">
                 <div className="flex items-center gap-3 min-w-0">
                   <img
                     src={avatarUrl}
-                    alt="Pratinjau foto profil komunitas"
+                    alt="Pratinjau foto profil forum"
                     className="w-12 h-12 rounded-full object-cover border border-[var(--dust)] shrink-0"
                   />
                   <span className="text-xs font-medium text-[var(--foreground)] truncate">
@@ -240,7 +246,7 @@ export default function CreateCommunityDialog({
                   <ImagePlus className="w-4 h-4" />
                 </div>
                 <span className="text-xs font-semibold text-[var(--foreground)]">
-                  Unggah Foto Profil Komunitas
+                  Unggah Foto Profil Forum
                 </span>
                 <span className="text-[11px] text-[var(--muted)]">
                   Format PNG, JPEG, WEBP, atau GIF
@@ -249,10 +255,9 @@ export default function CreateCommunityDialog({
             )}
           </div>
 
-          {/* Nama Komunitas */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-[var(--foreground)]">
-              Nama Komunitas <span className="text-[var(--failed)]">*</span>
+              Nama Forum <span className="text-[var(--failed)]">*</span>
             </label>
             <Input
               value={name}
@@ -263,10 +268,9 @@ export default function CreateCommunityDialog({
             />
           </div>
 
-          {/* Kategori */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-[var(--foreground)]">
-              Kategori Komunitas
+              Kategori Forum
             </label>
             <div className="flex flex-wrap gap-1.5">
               {CATEGORIES.map((cat) => (
@@ -286,7 +290,6 @@ export default function CreateCommunityDialog({
             </div>
           </div>
 
-          {/* Deskripsi */}
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-semibold text-[var(--foreground)]">
               Deskripsi
@@ -295,16 +298,15 @@ export default function CreateCommunityDialog({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              placeholder="Jelaskan topik yang dibahas dan tujuan komunitas ini..."
+              placeholder="Jelaskan topik yang dibahas dan tujuan forum ini..."
               className="w-full text-xs p-3 rounded-lg border border-[var(--dust)] bg-[var(--background)] text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] resize-none"
             />
           </div>
 
-          {/* Aturan Komunitas */}
           <div className="flex flex-col gap-2.5">
             <div className="flex items-center justify-between">
               <label className="text-xs font-semibold text-[var(--foreground)]">
-                Aturan Komunitas
+                Aturan Forum
               </label>
               <button
                 type="button"
@@ -362,15 +364,13 @@ export default function CreateCommunityDialog({
             </div>
           </div>
 
-          {/* Success notice */}
           {success && (
             <div className="p-3 bg-[var(--success-soft)] border border-[var(--success)]/30 rounded-lg flex items-center gap-2 text-xs font-semibold text-[var(--success-text)]">
               <Check className="w-4 h-4 text-[var(--success)]" />
-              <span>Komunitas berhasil dibuat!</span>
+              <span>Forum berhasil dibuat!</span>
             </div>
           )}
 
-          {/* Actions */}
           <div className="flex items-center justify-end gap-2 pt-3 border-t border-[var(--dust)]">
             <Button
               type="button"
@@ -386,7 +386,7 @@ export default function CreateCommunityDialog({
               className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white text-xs font-semibold px-4 h-9 rounded-lg shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
               <Check className="w-4 h-4" />
-              <span>Buat Komunitas</span>
+              <span>Buat Forum</span>
             </Button>
           </div>
         </form>

@@ -36,7 +36,6 @@ export default function MyArticlesView() {
   const [publishingId, setPublishingId] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // 1. Fetch data dari backend endpoint (/api/articles/me)
   const {
     data: draftData,
     isLoading: isLoadingDraft,
@@ -53,7 +52,6 @@ export default function MyArticlesView() {
     refetch: refetchPublished,
   } = useMyArticles({ status: "published" });
 
-  // 2. Mutations untuk publish dan delete
   const publishMutation = usePublishArticle();
   const deleteMutation = useDeleteArticle();
 
@@ -94,7 +92,6 @@ export default function MyArticlesView() {
 
   return (
     <div className="w-full flex flex-col py-2 mb-auto">
-      {/* 1. JUDUL HALAMAN & AKSI */}
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <h1 className="font-sans text-[24px] sm:text-[32px] font-bold text-[var(--foreground)]">
           Artikel Saya
@@ -108,13 +105,11 @@ export default function MyArticlesView() {
         </Link>
       </div>
 
-      {/* 2. TABS SHADCN */}
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
         className="w-full"
       >
-        {/* Barisan Tab */}
         <TabsList
           variant="line"
           className="bg-transparent border-b border-[var(--dust)]/60 rounded-none w-full justify-start h-auto p-0 gap-6"
@@ -128,12 +123,10 @@ export default function MyArticlesView() {
           </TabsTrigger>
         </TabsList>
 
-        {/* Subheader Kolom (Terbaru) */}
         <div className="flex items-center justify-between text-[12px] sm:text-[13px] text-[var(--muted)] pt-5 sm:pt-6 pb-2">
           <span>Terbaru</span>
         </div>
 
-        {/* 3. LIST ARTIKEL SAAT TAB DRAFT AKTIF */}
         <TabsContent value="draft" className="flex flex-col m-0">
           {isLoadingDraft ? (
             <div className="flex flex-col">
@@ -195,7 +188,6 @@ export default function MyArticlesView() {
           )}
         </TabsContent>
 
-        {/* 4. LIST ARTIKEL SAAT TAB DITERBITKAN AKTIF */}
         <TabsContent value="diterbitkan" className="flex flex-col m-0">
           {isLoadingPublished ? (
             <div className="flex flex-col">

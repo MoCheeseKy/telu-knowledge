@@ -327,13 +327,13 @@ export default function DiscoverForumsView() {
                     </div>
 
                     {/* Create Community */}
-                    <a
+                    <Link
                         href="/communities/create"
                         className="flex h-[44px] w-full items-center justify-center gap-3 rounded-[5px] bg-[var(--primary)] px-5 text-[15px] font-semibold text-white transition hover:bg-[var(--primary-hover)] sm:w-auto"
                     >
                         <PlusIcon />
                         Buat Komunitas Baru
-                    </a>
+                    </Link>
                 </div>
 
                 {/* COMMUNITY LIST */}

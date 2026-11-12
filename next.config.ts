@@ -24,6 +24,26 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async rewrites() {
+    return [
+      {
+        source: "/discover-forums",
+        destination: "/discovers-forums",
+      },
+      {
+        source: "/discover-articles",
+        destination: "/discovers-articles",
+      },
+      {
+        source: "/discover-articles/:path*",
+        destination: "/discovers-articles/:path*",
+      },
+      {
+        source: "/library",
+        destination: "/librarys",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

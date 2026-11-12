@@ -25,12 +25,6 @@ const CONSEQUENCES = [
   "Tindakan ini tidak dapat dibatalkan.",
 ];
 
-/**
- * Zona berbahaya "Hapus Akun" — bagian terbawah dari form update akun
- * (EditProfileForm), tampil di dialog Edit profile maupun halaman /profile/edit.
- * Soft delete: konten yang dibuat TETAP tersimpan (lihat
- * docs/integrasi-profil/03-delete-account.md).
- */
 export default function DeleteAccountSection() {
   const router = useRouter();
   const { toast } = useToast();
@@ -59,9 +53,6 @@ export default function DeleteAccountSection() {
     deleteAccountMutation.mutate(undefined, {
       onSuccess: () => {
         toast.success("Akun berhasil dihapus.");
-        // Akhiri sesi (cookie auth dibersihkan oleh BFF /api/auth/logout —
-        // gagal diabaikan) lalu kembali ke halaman login. Mengikuti pola
-        // logout di MainLayout/sidebar.
         logoutMutation.mutate(undefined, {
           onSettled: () => {
             setOpen(false);
@@ -78,7 +69,6 @@ export default function DeleteAccountSection() {
 
   return (
     <>
-      {/* Zona Berbahaya */}
       <section className="rounded-xl border border-[var(--failed)]/40 bg-[var(--failed-soft)]/30 p-5">
         <h2 className="flex items-center gap-2 font-sans text-[13px] font-bold uppercase tracking-wider text-[var(--failed)]">
           <AlertTriangle className="h-4 w-4" />
@@ -108,7 +98,6 @@ export default function DeleteAccountSection() {
         </Button>
       </section>
 
-      {/* Dialog konfirmasi */}
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent
           className="max-w-md"

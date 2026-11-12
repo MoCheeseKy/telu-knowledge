@@ -125,7 +125,6 @@ export default function MyArticleCard({
                 </div>
             </div>
 
-            {/* Dialog Konfirmasi Hapus */}
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

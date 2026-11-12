@@ -8,6 +8,7 @@ import ForumDetailActions from "./ForumDetailActions";
 import ForumCommentsThread from "./ForumCommentsThread";
 import ForumCommunitySidebar from "./ForumCommunitySidebar";
 import { useForumPostDetail } from "@/services/community-posts/community-posts.queries";
+import { MOCK_VIEWER_ID } from "@/services/community-posts/community-posts.types";
 import { sampleForumPost, mapForumPostDtoToDetail, ForumPostDetail } from "./types";
 
 interface DiscussionForumDetailViewProps {
@@ -19,8 +20,6 @@ export default function DiscussionForumDetailView({
   postId,
   initialPost = sampleForumPost,
 }: DiscussionForumDetailViewProps) {
-  // Konten post dari mock server (GET /proxy/forum-posts/:postId).
-  // Cakupan: konten post saja — komentar/like/save di luar cakupan integrasi ini.
   const {
     data: postDto,
     isLoading,
@@ -75,11 +74,17 @@ export default function DiscussionForumDetailView({
         ...(postId ? { id: postId } : {}),
       };
 
+  const isMine = postDto?.authorId === MOCK_VIEWER_ID;
+
   return (
     <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-12 xl:gap-16 py-6">
-      {/* Kolom utama diskusi (lebar maksimal 679px, konsisten dengan DiscussionForumsView dan HomeView) */}
       <div className="flex-1 flex flex-col w-full max-w-[679px]">
-        <ForumDetailHeader post={post} />
+        <ForumDetailHeader
+          post={post}
+          isMine={isMine}
+          communityId={postDto?.communityId}
+          postId={postId || String(post.id)}
+        />
         <ForumDetailContent post={post} />
         <ForumDetailActions
           initialScore={post.score}
@@ -90,7 +95,6 @@ export default function DiscussionForumDetailView({
         <ForumCommentsThread initialComments={post.comments} />
       </div>
 
-      {/* Sidebar kanan (konsisten dengan sidebar DiscussionForumsView dan HomeView) */}
       <ForumCommunitySidebar post={post} />
     </div>
   );

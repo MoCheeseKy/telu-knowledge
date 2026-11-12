@@ -2,26 +2,62 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import { ForumPostDetail } from "./types";
+import { Button } from "@/components/ui/button";
+import CommunityPostDeleteButton from "@/components/_views/CommunityDetail/CommunityPostDeleteButton";
 
 interface ForumDetailHeaderProps {
   post: ForumPostDetail;
+  isMine?: boolean;
+  communityId?: string;
+  postId?: string;
 }
 
-export default function ForumDetailHeader({ post }: ForumDetailHeaderProps) {
+export default function ForumDetailHeader({
+  post,
+  isMine = false,
+  communityId,
+  postId,
+}: ForumDetailHeaderProps) {
   return (
     <div className="flex flex-col w-full">
-      {/* Tombol kembali ke feed forum diskusi */}
-      <Link
-        href="/discussion-forums"
-        className="inline-flex items-center gap-2 text-xs font-medium text-[var(--muted)] hover:text-[var(--primary-text)] transition-colors mb-5 w-fit cursor-pointer"
-      >
-        <ArrowLeft className="w-3.5 h-3.5" />
-        <span>Kembali ke Forum Diskusi</span>
-      </Link>
+      <div className="flex items-center justify-between gap-4 mb-5">
+        <Link
+          href="/discussion-forums"
+          className="inline-flex items-center gap-2 text-xs font-medium text-[var(--muted)] hover:text-[var(--primary-text)] transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Kembali ke Forum Diskusi</span>
+        </Link>
 
-      {/* Meta persis seperti ForumPostCard: From {topic} by {publisher}, {postDate} */}
+        {isMine && postId && (
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/communities/${communityId || "1"}/post/${postId}/edit`}
+            >
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2.5 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-3.5"
+                aria-label="Sunting postingan"
+              >
+                <Pencil />
+                <span className="font-sans text-xs font-bold">Sunting</span>
+              </Button>
+            </Link>
+
+            <CommunityPostDeleteButton
+              communityId={communityId || "1"}
+              postId={String(postId)}
+              postTitle={post.title}
+              redirectHref="/discussion-forums"
+            />
+          </div>
+        )}
+      </div>
+
       <div className="flex items-center gap-2">
         {post.publisher.avatarUrl ? (
           <img
