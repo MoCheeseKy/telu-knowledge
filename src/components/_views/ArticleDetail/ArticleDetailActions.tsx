@@ -1,5 +1,6 @@
 "use client";
 
+import { useToggleArticleRepost } from "@/services/article-reposts/article-reposts.queries";
 import React, { useState } from "react";
 import {
   ThumbsUp,
@@ -33,6 +34,8 @@ function formatCounter(count: number): string {
 export default function ArticleDetailActions({
   article,
 }: ArticleDetailActionsProps) {
+  // Panggil hook toggle repost
+  const toggleRepostMutation = useToggleArticleRepost();
   const [isLiked, setIsLiked] = useState(article.isLiked);
   const [likesCount, setLikesCount] = useState(article.stats.likesCount);
   const [isBookmarked, setIsBookmarked] = useState(article.isBookmarked);
@@ -40,6 +43,7 @@ export default function ArticleDetailActions({
     article.stats.bookmarksCount
   );
   const [isReposted, setIsReposted] = useState(false);
+  const [repostsCount, setRepostsCount] = useState(article.stats.repostsCount); 
   const [copied, setCopied] = useState(false);
 
   const toggleLikeMutation = useToggleArticleLike();
@@ -59,6 +63,17 @@ export default function ArticleDetailActions({
       nextState ? prev + 1 : Math.max(0, prev - 1)
     );
     toggleBookmarkMutation.mutate(article.id);
+  };
+
+   const handleToggleRepost = () => {
+    const nextState = !isReposted;
+    setIsReposted(nextState);
+    
+    // Ubah angka secara optimis (langsung di UI) tanpa nunggu API
+    setRepostsCount((prev) => (nextState ? prev + 1 : Math.max(0, prev - 1)));
+    
+    // Tembak API backend/mock
+    toggleRepostMutation.mutate(article.id);
   };
 
   const handleScrollToComments = () => {
@@ -125,7 +140,7 @@ export default function ArticleDetailActions({
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => setIsReposted(!isReposted)}
+          onClick={handleToggleRepost}
           aria-label="Repost artikel"
           className="h-8 px-2.5 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] cursor-pointer"
         >
@@ -138,7 +153,7 @@ export default function ArticleDetailActions({
             )}
           />
           <span className="font-sans text-xs sm:text-sm font-semibold">
-            {formatCounter(article.stats.repostsCount)}
+            {formatCounter(repostsCount)}
           </span>
         </Button>
 
