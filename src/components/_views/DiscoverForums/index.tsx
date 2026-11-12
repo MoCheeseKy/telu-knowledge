@@ -1,9 +1,10 @@
 "use client";
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useCommunities } from "@/services/community-posts/community-posts.queries";
 
 type Community = {
-    id: number;
+    id: string | number;
     name: string;
     description: string;
     author: string;
@@ -12,7 +13,7 @@ type Community = {
     image: string;
 };
 
-const communities: Community[] = [
+const defaultCommunities: Community[] = [
     {
         id: 1,
         name: "Komunitas Gamer Persona Telkom University Bandung",
@@ -282,18 +283,36 @@ function CommunityCard({
 }
 
 export default function DiscoverForumsView() {
+    const { data: apiCommunities } = useCommunities();
     const [search, setSearch] = useState("");
-    const [followedCommunities, setFollowedCommunities] = useState<number[]>([]);
+    const [followedCommunities, setFollowedCommunities] = useState<(string | number)[]>([]);
+
+    const communities: Community[] = useMemo(() => {
+        if (apiCommunities && apiCommunities.length > 0) {
+            return apiCommunities.map((c) => ({
+                id: c.id,
+                name: c.name,
+                description:
+                    c.description ||
+                    "Struktur kontainer berorientasi kurasi akademik dengan hierarki tipografi.",
+                author: "Mahasiswa Tel-U",
+                members: `${(c.member_count ?? 1).toLocaleString("id-ID")}`,
+                discussions: `${(c.post_count ?? 0).toLocaleString("id-ID")}`,
+                image: c.banner_url || "/images/persona-c4.jpg",
+            }));
+        }
+        return defaultCommunities;
+    }, [apiCommunities]);
 
     // Search community
     const filteredCommunities = useMemo(() => {
         return communities.filter((community) =>
             community.name.toLowerCase().includes(search.toLowerCase())
         );
-    }, [search]);
+    }, [communities, search]);
 
     // Follow / Unfollow community
-    const handleFollow = (id: number) => {
+    const handleFollow = (id: string | number) => {
         setFollowedCommunities((previous) =>
             previous.includes(id)
                 ? previous.filter((item) => item !== id)
@@ -323,7 +342,7 @@ export default function DiscoverForumsView() {
 
                     {/* Create Community */}
                     <Link
-                        href="/communities/create"
+                        href="/create-forum"
                         className="flex h-[44px] w-full items-center justify-center gap-3 rounded-[5px] bg-[var(--primary)] px-5 text-[15px] font-semibold text-white transition hover:bg-[var(--primary-hover)] sm:w-auto"
                     >
                         <PlusIcon />
