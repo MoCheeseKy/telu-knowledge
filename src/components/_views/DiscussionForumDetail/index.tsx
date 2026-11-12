@@ -87,7 +87,7 @@ export default function DiscussionForumDetailView({
           repostsCount={post.repostsCount}
           isSaved={post.isSaved}
         />
-        <ForumCommentsThread initialComments={post.comments} />
+        <ForumCommentsThread postId={postId} />
       </div>
 
       {/* Sidebar kanan (konsisten dengan sidebar DiscussionForumsView dan HomeView) */}

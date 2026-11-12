@@ -5,6 +5,8 @@ import type {
   CreateCommunityPostVariables,
   DeleteCommunityPostVariables,
   UpdateCommunityPostVariables,
+  RepostStatusDto,
+  UserRepostItemDto,
 } from "./community-posts.types";
 
 export const communityPostKeys = {
@@ -14,6 +16,11 @@ export const communityPostKeys = {
     [...communityPostKeys.lists(), communityId] as const,
   details: () => [...communityPostKeys.all, "detail"] as const,
   detail: (id: string) => [...communityPostKeys.details(), id] as const,
+  // === Repost ===
+  repostStatus: (postId: string) =>
+    [...communityPostKeys.all, "repost-status", postId] as const,
+  userReposts: (userId: string) =>
+    [...communityPostKeys.all, "user-reposts", userId] as const,
 };
 
 /**
@@ -105,6 +112,9 @@ export function useUpdateCommunityPost() {
 /**
  * Hook mutasi penghapusan postingan milik sendiri
  * (DELETE /proxy/communities/:id/posts/:postId).
+ * Server ikut menghapus baris repost (cascade), jadi cache user-reposts
+ * juga harus di-refresh supaya tab Reposts di profil tidak menampilkan
+ * post yang sudah dihapus.
  */
 export function useDeleteCommunityPost() {
   const queryClient = useQueryClient();
@@ -139,5 +149,110 @@ export function useCreateCommunityPost() {
         queryKey: communityPostKeys.list(communityId),
       });
     },
+  });
+}
+
+// ============================================================================
+// REPOST
+// ============================================================================
+
+/**
+ * Hook query status repost satu postingan
+ * (GET /proxy/forum-posts/:postId/repost/status).
+ */
+export function useForumPostRepostStatus(postId?: string | null) {
+  return useQuery<RepostStatusDto>({
+    queryKey: communityPostKeys.repostStatus(postId ?? ""),
+    queryFn: async (): Promise<RepostStatusDto> => {
+      if (!postId) {
+        throw new Error("ID postingan wajib diisi");
+      }
+      const res = await communityPostsApi.getForumPostRepostStatus(postId);
+      return res.data;
+    },
+    enabled: Boolean(postId),
+  });
+}
+
+/**
+ * Hook mutasi toggle repost
+ * (POST /proxy/forum-posts/:postId/repost).
+ * Optimistic update: count & isReposted berubah instan, lalu di-sync dengan
+ * respons server. Setelah sukses, daftar user-reposts di-invalidate agar tab
+ * Reposts di profil otomatis refetch.
+ */
+export function useToggleForumPostRepost(postId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => communityPostsApi.toggleForumPostRepost(postId),
+    retry: false,
+    onMutate: async () => {
+      await queryClient.cancelQueries({
+        queryKey: communityPostKeys.repostStatus(postId),
+      });
+
+      const previous = queryClient.getQueryData<RepostStatusDto>(
+        communityPostKeys.repostStatus(postId)
+      );
+
+      if (previous) {
+        queryClient.setQueryData<RepostStatusDto>(
+          communityPostKeys.repostStatus(postId),
+          {
+            isReposted: !previous.isReposted,
+            repostsCount: previous.repostsCount + (previous.isReposted ? -1 : 1),
+          }
+        );
+      }
+
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) {
+        queryClient.setQueryData(
+          communityPostKeys.repostStatus(postId),
+          ctx.previous
+        );
+      }
+    },
+    onSuccess: (res) => {
+      // Sinkronkan dengan angka final dari server
+      if (res?.data) {
+        queryClient.setQueryData(
+          communityPostKeys.repostStatus(postId),
+          res.data
+        );
+      }
+      // Refresh detail & list (biar count di kartu/list konsisten)
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.detail(postId),
+      });
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.lists(),
+      });
+      // Refresh tab Reposts di profil (semua user — ringan untuk mock)
+      void queryClient.invalidateQueries({
+        queryKey: [...communityPostKeys.all, "user-reposts"],
+      });
+    },
+  });
+}
+
+/**
+ * Hook query daftar repost milik user
+ * (GET /proxy/profiles/:userId/reposts). Pakai userId="me" untuk viewer.
+ */
+export function useUserReposts(userId?: string | null) {
+  return useQuery<UserRepostItemDto[]>({
+    queryKey: communityPostKeys.userReposts(userId ?? ""),
+    queryFn: async (): Promise<UserRepostItemDto[]> => {
+      if (!userId) {
+        throw new Error("ID pengguna wajib diisi");
+      }
+      const res = await communityPostsApi.listUserReposts(userId);
+      return res.data;
+    },
+    enabled: Boolean(userId),
   });
 }

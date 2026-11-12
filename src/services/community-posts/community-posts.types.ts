@@ -32,6 +32,7 @@ export interface CommunityPostDto {
   likesCount: number;
   commentsCount: number;
   repostsCount: number;
+  isReposted: boolean;
   isLiked: boolean;
   createdAt: string;
   updatedAt: string;
@@ -67,6 +68,17 @@ export interface UpdateCommunityPostVariables {
 export interface DeleteCommunityPostVariables {
   communityId: string;
   postId: string;
+}
+
+export interface RepostStatusDto {
+  isReposted: boolean;
+  repostsCount: number;
+}
+
+export interface UserRepostItemDto {
+  repostId: string;
+  repostedAt: string;
+  post: CommunityPostDto;
 }
 
 /**
