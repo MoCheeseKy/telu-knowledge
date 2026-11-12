@@ -1092,6 +1092,243 @@ const handleDeleteCommunityPost = (req, res) => {
 server.delete('/api/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 server.delete('/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 
+const enrichForumComment = (comment, db) => {
+  const author = (db.profiles || []).find((p) => p.id === comment.author_id);
+  const isLiked = (db.forum_comment_votes || []).some(
+    (v) =>
+      v.comment_id === comment.id &&
+      v.user_id === MOCK_ME_ID &&
+      v.vote_value > 0
+  );
+
+  return {
+    id: comment.id,
+    postId: comment.post_id,
+    authorId: comment.author_id,
+    parentId: comment.parent_id || null,
+    content: comment.content,
+    score: comment.score || 0,
+    isLiked,
+    createdAt: comment.created_at,
+    updatedAt: comment.updated_at,
+    author: {
+      id: author ? author.id : comment.author_id,
+      displayName: author ? author.display_name : 'Anggota Tel-U',
+      username: author ? author.username : null,
+      avatarUrl: author ? author.avatar_url : null,
+      avatarColor: author ? author.avatar_color : '#E53E3E',
+    },
+  };
+};
+
+const handleListForumComments = (req, res) => {
+  const db = router.db.getState();
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const comments = (db.forum_comments || [])
+    .filter((c) => c.post_id === post.id)
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    .map((c) => enrichForumComment(c, db));
+
+  return res.json({
+    statusCode: 200,
+    message: ['Berhasil mengambil komentar'],
+    data: comments,
+    isError: false,
+  });
+};
+
+server.get('/api/forum-posts/:postId/comments', handleListForumComments);
+server.get('/forum-posts/:postId/comments', handleListForumComments);
+
+const handleCreateForumComment = (req, res) => {
+  const body = req.body || {};
+  const content = typeof body.content === 'string' ? body.content.trim() : '';
+  const parentId = body.parentId || body.parent_id || null;
+
+  if (!content) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: ['Isi komentar wajib diisi'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const db = router.db.getState();
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (parentId) {
+    const parent = (db.forum_comments || []).find((c) => c.id === parentId);
+    if (!parent || parent.post_id !== post.id) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: ['Komentar induk tidak ditemukan'],
+        isError: true,
+        data: null,
+      });
+    }
+  }
+
+  const now = new Date().toISOString();
+  const newComment = {
+    id: crypto.randomUUID(),
+    post_id: post.id,
+    author_id: MOCK_ME_ID,
+    parent_id: parentId,
+    content,
+    score: 0,
+    created_at: now,
+    updated_at: now,
+  };
+
+  if (!db.forum_comments) db.forum_comments = [];
+  db.forum_comments.push(newComment);
+  post.comments_count = (post.comments_count || 0) + 1;
+
+  router.db.write();
+
+  return res.status(201).json({
+    statusCode: 201,
+    message: ['Komentar berhasil dikirim'],
+    data: enrichForumComment(newComment, db),
+    isError: false,
+  });
+};
+
+server.post('/api/forum-posts/:postId/comments', handleCreateForumComment);
+server.post('/forum-posts/:postId/comments', handleCreateForumComment);
+
+const handleUpdateForumComment = (req, res) => {
+  const body = req.body || {};
+  const content = typeof body.content === 'string' ? body.content.trim() : '';
+
+  if (!content) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: ['Isi komentar wajib diisi'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const db = router.db.getState();
+  const comment = (db.forum_comments || []).find(
+    (c) => c.id === req.params.commentId
+  );
+  if (!comment) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Komentar tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (comment.author_id !== MOCK_ME_ID) {
+    return res.status(403).json({
+      statusCode: 403,
+      message: ['Hanya penulis yang dapat mengubah komentar ini.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  comment.content = content;
+  comment.updated_at = new Date().toISOString();
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Komentar berhasil diperbarui'],
+    data: enrichForumComment(comment, db),
+    isError: false,
+  });
+};
+
+server.patch('/api/forum-comments/:commentId', handleUpdateForumComment);
+server.patch('/forum-comments/:commentId', handleUpdateForumComment);
+
+const handleDeleteForumComment = (req, res) => {
+  const db = router.db.getState();
+  const comment = (db.forum_comments || []).find(
+    (c) => c.id === req.params.commentId
+  );
+  if (!comment) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Komentar tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (comment.author_id !== MOCK_ME_ID) {
+    return res.status(403).json({
+      statusCode: 403,
+      message: ['Hanya penulis yang dapat menghapus komentar ini.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const deletedIds = new Set([comment.id]);
+  let found = true;
+  while (found) {
+    found = false;
+    for (const c of db.forum_comments) {
+      if (c.parent_id && deletedIds.has(c.parent_id) && !deletedIds.has(c.id)) {
+        deletedIds.add(c.id);
+        found = true;
+      }
+    }
+  }
+
+  db.forum_comments = db.forum_comments.filter((c) => !deletedIds.has(c.id));
+  if (db.forum_comment_votes) {
+    db.forum_comment_votes = db.forum_comment_votes.filter(
+      (v) => !deletedIds.has(v.comment_id)
+    );
+  }
+
+  const post = (db.forum_posts || []).find((p) => p.id === comment.post_id);
+  if (post) {
+    post.comments_count = Math.max(
+      0,
+      (post.comments_count || 0) - deletedIds.size
+    );
+  }
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Komentar berhasil dihapus'],
+    data: { deletedIds: Array.from(deletedIds) },
+    isError: false,
+  });
+};
+
+server.delete('/api/forum-comments/:commentId', handleDeleteForumComment);
+server.delete('/forum-comments/:commentId', handleDeleteForumComment);
+
 // 11. Profil Pengguna
 // Mapper bersama: profiles (snake_case seed) -> ProfileDto (camelCase kontrak frontend).
 const enrichProfile = (profile) => ({

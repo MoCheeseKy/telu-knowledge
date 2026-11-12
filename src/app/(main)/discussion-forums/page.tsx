@@ -1,5 +1,12 @@
-import DiscussionForumsView from "@/components/_views/DiscussionForums";
+import DiscussionForumDetailView from "@/components/_views/DiscussionForumDetail";
 
-export default function DiscussionForumsPage() {
-  return <DiscussionForumsView />;
+interface DiscussionForumDetailPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default async function DiscussionForumDetailPage({
+  params,
+}: DiscussionForumDetailPageProps) {
+  const { id } = await params;
+  return <DiscussionForumDetailView postId={id} />;
 }

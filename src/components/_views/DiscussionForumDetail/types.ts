@@ -2,6 +2,7 @@ import type { CommunityPostDto } from "@/services/community-posts/community-post
 
 export interface ForumComment {
   id: string | number;
+  authorId?: string;
   author: {
     name: string;
     avatarUrl?: string;
