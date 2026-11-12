@@ -45,7 +45,7 @@ export default function CallbackView() {
     const searchParams = new URLSearchParams(window.location.search);
     const hasPkceCode = searchParams.has("code");
 
-    // Langsung bersihkan hash dan query dari URL browser demi keamanan
+    // Clear hash dan query dari URL biar aman
     if (window.location.hash || window.location.search) {
       window.history.replaceState(null, "", window.location.pathname);
     }
@@ -165,8 +165,8 @@ export default function CallbackView() {
             {status === "no_info"
               ? "Tautan tidak valid. Buka tautan verifikasi dari email Anda."
               : status === "pkce_unsupported"
-              ? "Tautan verifikasi menggunakan format kode otorisasi (PKCE) yang belum didukung secara langsung. Silakan minta tautan baru."
-              : "Tautan verifikasi yang Anda buka sudah tidak berlaku atau telah kedaluwarsa. Masukkan email Anda di bawah ini untuk meminta tautan verifikasi baru."}
+                ? "Tautan verifikasi menggunakan format kode otorisasi (PKCE) yang belum didukung secara langsung. Silakan minta tautan baru."
+                : "Tautan verifikasi yang Anda buka sudah tidak berlaku atau telah kedaluwarsa. Masukkan email Anda di bawah ini untuk meminta tautan verifikasi baru."}
           </p>
         </div>
 
@@ -181,7 +181,7 @@ export default function CallbackView() {
           />
         )}
 
-        {/* Form kecil kirim ulang */}
+        {/* ReVerification */}
         <form onSubmit={handleResend} className="space-y-4 pt-1" noValidate>
           <div className="space-y-1.5">
             <label

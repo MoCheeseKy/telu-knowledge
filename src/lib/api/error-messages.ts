@@ -23,8 +23,6 @@ export function getErrorMessages(error: unknown): string[] {
 /**
  * Memeriksa apakah error merupakan kegagalan autentikasi akibat email belum diverifikasi.
  * Mengembalikan true jika statusCode 401 dan pesan mengandung kata "belum diverifikasi".
- *
- * TODO: ganti dengan error code dari backend bila tersedia
  */
 export function isEmailNotVerifiedError(error: unknown): boolean {
   if (!isApiError(error)) {

@@ -49,7 +49,49 @@ const reposts: RepostItem[] = [
 ];
 
 function ProfilesContent() {
-  const { profile } = useProfile();
+  const { profile, isLoading, isError, refetchProfile } = useProfile();
+
+  if (isLoading) {
+    return (
+      <div
+        className="flex flex-col gap-8 lg:flex-row py-4"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <div className="min-w-0 flex-1 animate-pulse">
+          <div className="h-10 w-64 bg-[var(--dust)]/40 rounded mb-6" />
+          <div className="h-9 w-full bg-[var(--dust)]/30 rounded mb-6" />
+          <div className="h-40 w-full bg-[var(--dust)]/30 rounded-xl" />
+        </div>
+        <div className="w-full lg:w-72 shrink-0 animate-pulse">
+          <div className="size-20 rounded-full bg-[var(--dust)]/40 mb-4" />
+          <div className="h-5 w-40 bg-[var(--dust)]/40 rounded mb-2" />
+          <div className="h-4 w-28 bg-[var(--dust)]/30 rounded mb-3" />
+          <div className="h-16 w-full bg-[var(--dust)]/30 rounded-lg" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex min-h-[320px] w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-[var(--dust)]/70 py-10 text-center">
+        <p className="font-sans text-sm font-semibold text-[var(--foreground)]">
+          Gagal memuat profil
+        </p>
+        <p className="font-sans text-[13px] text-[var(--muted)]">
+          Pastikan mock server berjalan, lalu coba lagi.
+        </p>
+        <button
+          type="button"
+          onClick={refetchProfile}
+          className="mt-2 inline-flex h-9 items-center rounded-lg border border-[var(--dust)] px-4 font-sans text-[13px] font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--background-accent)] cursor-pointer"
+        >
+          Coba lagi
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-8 lg:flex-row py-4">

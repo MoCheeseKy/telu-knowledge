@@ -1092,248 +1092,206 @@ const handleDeleteCommunityPost = (req, res) => {
 server.delete('/api/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 server.delete('/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 
-// 11. Endpoint Komentar Postingan Forum (CRUD Forum Post Comments)
-const enrichForumComment = (comment, db) => {
-  const author = (db.profiles || []).find((p) => p.id === comment.author_id);
-  const vote = (db.forum_comment_votes || []).find(
-    (v) => v.comment_id === comment.id && v.user_id === MOCK_ME_ID
-  );
-  const userVote = vote
-    ? vote.vote_value === 1
-      ? 1
-      : vote.vote_value === -1
-      ? -1
-      : 0
-    : 0;
+// 11. Profil Pengguna
+// Mapper bersama: profiles (snake_case seed) -> ProfileDto (camelCase kontrak frontend).
+const enrichProfile = (profile) => ({
+  id: profile.id,
+  username: profile.username || null,
+  displayName: profile.display_name || 'Anggota Tel-U',
+  avatarUrl: profile.avatar_url || null,
+  avatarColor: profile.avatar_color || '#E53E3E',
+  bannerUrl: profile.banner_url || null,
+  bio: profile.bio || '',
+  faculty: profile.faculty || null,
+  major: profile.major || null,
+  generation: profile.generation || null,
+  website: profile.website || null,
+  github: profile.github || null,
+  linkedin: profile.linkedin || null,
+  showEmail: Boolean(profile.show_email),
+  showCommunities: profile.show_communities !== false,
+  followersCount: profile.followers_count || 0,
+  followingCount: profile.following_count || 0,
+  createdAt: profile.created_at,
+});
 
-  return {
-    id: comment.id,
-    postId: comment.post_id,
-    authorId: comment.author_id,
-    parentId: comment.parent_id || null,
-    content: comment.content,
-    score: typeof comment.score === 'number' ? comment.score : 0,
-    userVote,
-    createdAt: comment.created_at,
-    updatedAt: comment.updated_at,
-    author: {
-      id: author ? author.id : comment.author_id,
-      displayName: author ? author.display_name : 'Pengguna Tel-U',
-      avatarUrl: author ? author.avatar_url : null,
-      avatarColor: author ? author.avatar_color : '#E53E3E',
-      username: author ? author.username : null,
-      faculty: author ? author.faculty : null,
-      major: author ? author.major : null,
-      generation: author ? author.generation : null,
-    },
-  };
-};
-
-// 11a. Get Forum Post Comments (GET /forum-posts/:postId/comments)
-const handleGetForumPostComments = (req, res) => {
+// 11a. Endpoint Detail Profil Milik Sendiri (GET /profiles/me)
+// Identitas viewer = MOCK_ME_ID (akun demo mock), konsisten dengan postingan —
+// lihat docs/integrasi-community-posts/README.md bagian "Identitas Penulis di Mock".
+// Cakupan: detail profil saja — post, pengikut, dan diikuti tidak termasuk.
+const handleGetMyProfile = (req, res) => {
   const db = router.db.getState();
-  const postId = req.params.postId;
+  const profile = (db.profiles || []).find((p) => p.id === MOCK_ME_ID);
 
-  const comments = (db.forum_comments || []).filter(
-    (c) =>
-      c.post_id === postId ||
-      (postId === '1' && c.post_id === '50000000-0000-4000-8000-000000000001')
-  );
+  if (!profile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
 
-  comments.sort(
-    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-  );
+  // Mirror sesi dicabut pada backend asli: akun yang sudah dihapus tidak dapat
+  // lagi mengakses profil (frontend diarahkan ke halaman login oleh handler 401)
+  if (profile.deleted_at) {
+    return res.status(401).json({
+      statusCode: 401,
+      message: ['Akun telah dihapus.'],
+      isError: true,
+      data: null,
+    });
+  }
 
   return res.json({
     statusCode: 200,
-    message: ['Daftar komentar berhasil diambil'],
-    data: comments.map((c) => enrichForumComment(c, db)),
+    message: ['Profil berhasil diambil'],
+    data: { profile: enrichProfile(profile) },
     isError: false,
   });
 };
 
-// 11b. Create Forum Post Comment (POST /forum-posts/:postId/comments)
-const handleCreateForumPostComment = (req, res) => {
-  const postId = req.params.postId;
-  const { content, parentId, parent_id } = req.body || {};
+server.get('/api/profiles/me', handleGetMyProfile);
+server.get('/profiles/me', handleGetMyProfile);
 
-  const trimmedContent = typeof content === 'string' ? content.trim() : '';
-  if (!trimmedContent) {
-    return res.status(400).json({
-      statusCode: 400,
-      message: ['Isi komentar wajib diisi.'],
-      isError: true,
-      data: null,
-    });
-  }
-
+// 11b. Endpoint Perbarui Profil Milik Sendiri (PATCH /profiles/me)
+// Patch parsial: hanya field yang dikirim yang diubah; string kosong pada field
+// nullable (website/github/linkedin/avatarUrl/...) berarti dikosongkan (null).
+const handleUpdateMyProfile = (req, res) => {
   const db = router.db.getState();
-  const post = (db.forum_posts || []).find(
-    (p) =>
-      p.id === postId ||
-      (postId === '1' && p.id === '50000000-0000-4000-8000-000000000001')
-  );
+  const profile = (db.profiles || []).find((p) => p.id === MOCK_ME_ID);
 
-  const resolvedPostId = post ? post.id : postId;
-  const resolvedParentId = parentId || parent_id || null;
-
-  const now = new Date().toISOString();
-  const newComment = {
-    id: crypto.randomUUID(),
-    post_id: resolvedPostId,
-    author_id: MOCK_ME_ID,
-    parent_id: resolvedParentId,
-    content: trimmedContent,
-    score: 0,
-    created_at: now,
-    updated_at: now,
-  };
-
-  if (!db.forum_comments) db.forum_comments = [];
-  db.forum_comments.push(newComment);
-
-  if (post) {
-    post.comments_count = (post.comments_count || 0) + 1;
-  }
-
-  router.db.write();
-
-  return res.status(201).json({
-    statusCode: 201,
-    message: ['Komentar berhasil dikirim'],
-    data: enrichForumComment(newComment, db),
-    isError: false,
-  });
-};
-
-// 11c. Update Forum Post Comment (PATCH /forum-posts/:postId/comments/:commentId)
-const handleUpdateForumPostComment = (req, res) => {
-  const commentId = req.params.commentId;
-  const { content } = req.body || {};
-
-  const trimmedContent = typeof content === 'string' ? content.trim() : '';
-  if (!trimmedContent) {
-    return res.status(400).json({
-      statusCode: 400,
-      message: ['Isi komentar wajib diisi.'],
-      isError: true,
-      data: null,
-    });
-  }
-
-  const db = router.db.getState();
-  const comment = (db.forum_comments || []).find((c) => c.id === commentId);
-
-  if (!comment) {
+  if (!profile) {
     return res.status(404).json({
       statusCode: 404,
-      message: ['Komentar tidak ditemukan.'],
+      message: ['Profil tidak ditemukan'],
       isError: true,
       data: null,
     });
   }
 
-  if (comment.author_id !== MOCK_ME_ID) {
-    return res.status(403).json({
-      statusCode: 403,
-      message: ['Hanya pemilik yang dapat menyunting komentar ini.'],
+  // Akun yang sudah dihapus tidak dapat lagi menyunting profil
+  if (profile.deleted_at) {
+    return res.status(401).json({
+      statusCode: 401,
+      message: ['Akun telah dihapus.'],
       isError: true,
       data: null,
     });
   }
 
-  comment.content = trimmedContent;
-  comment.updated_at = new Date().toISOString();
+  const body = req.body || {};
+  const has = (key) => Object.prototype.hasOwnProperty.call(body, key);
+  const trimStr = (value) => (typeof value === 'string' ? value.trim() : '');
+  const messages = [];
 
-  router.db.write();
-
-  return res.json({
-    statusCode: 200,
-    message: ['Komentar berhasil diperbarui'],
-    data: enrichForumComment(comment, db),
-    isError: false,
-  });
-};
-
-// 11d. Delete Forum Post Comment (DELETE /forum-posts/:postId/comments/:commentId)
-const handleDeleteForumPostComment = (req, res) => {
-  const commentId = req.params.commentId;
-  const db = router.db.getState();
-  const comment = (db.forum_comments || []).find((c) => c.id === commentId);
-
-  if (!comment) {
-    return res.status(404).json({
-      statusCode: 404,
-      message: ['Komentar tidak ditemukan.'],
-      isError: true,
-      data: null,
-    });
+  // Validasi (cermin dari profiles.schemas.ts di frontend)
+  if (has('displayName') && !trimStr(body.displayName)) {
+    messages.push('Nama lengkap wajib diisi.');
   }
-
-  if (comment.author_id !== MOCK_ME_ID) {
-    return res.status(403).json({
-      statusCode: 403,
-      message: ['Hanya pemilik yang dapat menghapus komentar ini.'],
-      isError: true,
-      data: null,
-    });
-  }
-
-  const toDelete = new Set([comment.id]);
-  let added = true;
-  while (added) {
-    added = false;
-    for (const c of db.forum_comments || []) {
-      if (c.parent_id && toDelete.has(c.parent_id) && !toDelete.has(c.id)) {
-        toDelete.add(c.id);
-        added = true;
-      }
+  if (has('username')) {
+    const username = trimStr(body.username);
+    if (!username) {
+      messages.push('Username wajib diisi.');
+    } else if (username.length > 30) {
+      messages.push('Username maksimal 30 karakter.');
+    } else {
+      const taken = (db.profiles || []).some(
+        (p) =>
+          p.id !== MOCK_ME_ID &&
+          (p.username || '').toLowerCase() === username.toLowerCase()
+      );
+      if (taken) messages.push('Username sudah digunakan.');
     }
   }
-
-  const totalDeleted = toDelete.size;
-
-  db.forum_comments = (db.forum_comments || []).filter((c) => !toDelete.has(c.id));
-  if (db.forum_comment_votes) {
-    db.forum_comment_votes = db.forum_comment_votes.filter(
-      (v) => !toDelete.has(v.comment_id)
-    );
+  if (has('bio') && typeof body.bio === 'string' && body.bio.length > 160) {
+    messages.push('Bio maksimal 160 karakter.');
+  }
+  for (const key of ['website', 'github', 'linkedin']) {
+    if (has(key) && typeof body[key] === 'string' && body[key].trim().length > 300) {
+      messages.push('Tautan maksimal 300 karakter.');
+    }
+  }
+  if (messages.length > 0) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: messages,
+      isError: true,
+      data: null,
+    });
   }
 
-  const post = (db.forum_posts || []).find((p) => p.id === comment.post_id);
-  if (post) {
-    post.comments_count = Math.max(0, (post.comments_count || 0) - totalDeleted);
+  // Merge patch parsial
+  if (has('displayName')) profile.display_name = trimStr(body.displayName);
+  if (has('username')) profile.username = trimStr(body.username);
+  if (has('bio')) profile.bio = typeof body.bio === 'string' ? body.bio : '';
+  if (has('faculty')) profile.faculty = trimStr(body.faculty) || null;
+  if (has('major')) profile.major = trimStr(body.major) || null;
+  if (has('generation')) profile.generation = trimStr(body.generation) || null;
+  for (const key of ['website', 'github', 'linkedin']) {
+    if (has(key)) profile[key] = trimStr(body[key]) || null;
   }
+  if (has('avatarUrl')) profile.avatar_url = trimStr(body.avatarUrl) || null;
+  if (has('bannerUrl')) profile.banner_url = trimStr(body.bannerUrl) || null;
+  if (has('showEmail')) profile.show_email = Boolean(body.showEmail);
+  if (has('showCommunities')) profile.show_communities = Boolean(body.showCommunities);
 
   router.db.write();
 
   return res.json({
     statusCode: 200,
-    message: ['Komentar berhasil dihapus'],
+    message: ['Profil berhasil diperbarui'],
+    data: { profile: enrichProfile(profile) },
+    isError: false,
+  });
+};
+
+server.patch('/api/profiles/me', handleUpdateMyProfile);
+server.patch('/profiles/me', handleUpdateMyProfile);
+
+// 11c. Endpoint Hapus Akun (DELETE /profiles/me) — SOFT DELETE, nama tetap
+// Keputusan desain (lihat docs/integrasi-profil/03-delete-account.md):
+// - Akun hanya DITANDAI lewat kolom `deleted_at` (baris profil TIDAK dihapus).
+// - SELURUH konten yang dibuat (artikel, komentar artikel, post forum, komentar
+//   forum) TIDAK disentuh — beserta nama penulisnya, agar dapat ditelusuri
+//   (tracing). Tidak ada baris di tabel lain yang diubah.
+// - Akun terhapus tidak dapat lagi mengakses/menyunting profil (401), dan di
+//   sisi frontend sesi langsung diakhiri (logout).
+const handleDeleteMyAccount = (req, res) => {
+  const db = router.db.getState();
+  const profile = (db.profiles || []).find((p) => p.id === MOCK_ME_ID);
+
+  if (!profile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (profile.deleted_at) {
+    return res.status(401).json({
+      statusCode: 401,
+      message: ['Akun telah dihapus.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  profile.deleted_at = new Date().toISOString();
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Akun berhasil dihapus. Konten yang Anda buat tetap tersimpan.'],
     data: null,
     isError: false,
   });
 };
 
-server.get('/api/forum-posts/:postId/comments', handleGetForumPostComments);
-server.get('/forum-posts/:postId/comments', handleGetForumPostComments);
-server.get('/api/communities/:communityId/posts/:postId/comments', handleGetForumPostComments);
-server.get('/communities/:communityId/posts/:postId/comments', handleGetForumPostComments);
-
-server.post('/api/forum-posts/:postId/comments', handleCreateForumPostComment);
-server.post('/forum-posts/:postId/comments', handleCreateForumPostComment);
-server.post('/api/communities/:communityId/posts/:postId/comments', handleCreateForumPostComment);
-server.post('/communities/:communityId/posts/:postId/comments', handleCreateForumPostComment);
-
-server.patch('/api/forum-posts/:postId/comments/:commentId', handleUpdateForumPostComment);
-server.patch('/forum-posts/:postId/comments/:commentId', handleUpdateForumPostComment);
-server.patch('/api/forum-comments/:commentId', handleUpdateForumPostComment);
-server.patch('/forum-comments/:commentId', handleUpdateForumPostComment);
-
-server.delete('/api/forum-posts/:postId/comments/:commentId', handleDeleteForumPostComment);
-server.delete('/forum-posts/:postId/comments/:commentId', handleDeleteForumPostComment);
-server.delete('/api/forum-comments/:commentId', handleDeleteForumPostComment);
-server.delete('/forum-comments/:commentId', handleDeleteForumPostComment);
+server.delete('/api/profiles/me', handleDeleteMyAccount);
+server.delete('/profiles/me', handleDeleteMyAccount);
 
 // Mount router pada /api dan /
 server.use('/api', router);
