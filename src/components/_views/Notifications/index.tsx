@@ -14,9 +14,26 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
+type NotificationType = "like" | "comment" | "mention" | "follow" | "forum";
+
+interface NotificationItem {
+    id: number;
+    type: NotificationType;
+    actor: string;
+    avatarUrl?: string;
+    message: string;
+    target?: string;
+    time: string;
+    isRead?: boolean;
+    href?: string;
+    imageUrl?: string;
+}
+
+type TabKey = "semua" | "belum_dibaca" | "komentar" | "forum";
+
 // TODO: ganti dummy data ini dengan data dari API
 // imageUrl opsional: thumbnail post/artikel di sisi kanan (seperti Reddit)
-const dummyNotifications = [
+const dummyNotifications: NotificationItem[] = [
     { id: 1, type: "comment", actor: "Rifky Muhammad Prayudhi", message: "Mengomentari artikelmu:", target: "Apakah C4 akan menggantikan Diagram Conventional saat ini?", time: "5 menit lalu", isRead: false, href: "/home", imageUrl: "/images/persona-c4.jpg" },
     { id: 2, type: "like", actor: "Aruna Jannu", message: "Menyukai postinganmu di", target: "Kuliner Telkom", time: "1 jam lalu", isRead: false, href: "/discussion-forums" },
     { id: 3, type: "mention", actor: "Dimas Pratama", message: "Menyebutmu di diskusi:", target: "Game Persona 5 Rilis yang Baru?", time: "3 jam lalu", isRead: false, href: "/discussion-forums", imageUrl: "/images/persona-c4.jpg" },
@@ -26,7 +43,7 @@ const dummyNotifications = [
     { id: 7, type: "comment", actor: "Dimas Pratama", message: "Membalas komentarmu di", target: "Wisata Telkom", time: "5 hari lalu", isRead: true, href: "/discussion-forums" },
 ];
 
-const typeIcon = {
+const typeIcon: Record<NotificationType, React.ComponentType<{ className?: string }>> = {
     like: ThumbsUp,
     comment: MessageSquareMore,
     mention: AtSign,
@@ -45,7 +62,7 @@ function NotificationRow({
     href = "#",
     imageUrl,
     onClick,
-}) {
+}: NotificationItem & { onClick?: () => void }) {
     const Icon = typeIcon[type];
 
     return (
@@ -118,18 +135,18 @@ function NotificationRow({
     );
 }
 
-const tabs = [
+const tabs: { value: TabKey; label: string }[] = [
     { value: "semua", label: "Semua" },
     { value: "belum_dibaca", label: "Belum Dibaca" },
     { value: "komentar", label: "Komentar & Mention" },
     { value: "forum", label: "Forum" },
 ];
 
-const filters = {
+const filters: Record<TabKey, (n: NotificationItem) => boolean> = {
     semua: () => true,
-    belum_dibaca: (n) => !n.isRead,
-    komentar: (n) => n.type === "comment" || n.type === "mention",
-    forum: (n) => n.type === "forum",
+    belum_dibaca: (n: NotificationItem) => !n.isRead,
+    komentar: (n: NotificationItem) => n.type === "comment" || n.type === "mention",
+    forum: (n: NotificationItem) => n.type === "forum",
 };
 
 export default function NotificationsView() {
@@ -140,7 +157,7 @@ export default function NotificationsView() {
     const markAllRead = () =>
         setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
 
-    const markRead = (id) =>
+    const markRead = (id: number) =>
         setNotifications((prev) =>
             prev.map((n) => (n.id === id ? { ...n, isRead: true } : n))
         );
