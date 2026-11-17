@@ -11,6 +11,9 @@ import type {
   DeleteForumCommentVariables,
   RepostStatusDto,
   UserRepostItemDto,
+  UpdateForumPostVariables,
+  CreateCommunityPayload,
+  CommunityItemDto,
 } from "./community-posts.types";
 
 export const communityPostKeys = {
@@ -154,6 +157,97 @@ export function useCreateCommunityPost() {
       void queryClient.invalidateQueries({
         queryKey: communityPostKeys.list(communityId),
       });
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.all,
+      });
+    },
+  });
+}
+
+/**
+ * Hook query seluruh postingan forum (feed utama /discussion-forums).
+ */
+export function useAllForumPosts() {
+  return useQuery<CommunityPostDto[]>({
+    queryKey: communityPostKeys.lists(),
+    queryFn: async (): Promise<CommunityPostDto[]> => {
+      const res = await communityPostsApi.listAllForumPosts();
+      return res.data;
+    },
+  });
+}
+
+/**
+ * Hook mutasi penghapusan postingan forum by ID saja (tanpa perlu tahu communityId).
+ */
+export function useDeleteForumPost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (postId: string) => communityPostsApi.deleteForumPost(postId),
+    retry: false,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.all,
+      });
+    },
+  });
+}
+
+/**
+ * Hook mutasi pembaruan postingan forum by ID saja.
+ */
+export function useUpdateForumPost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ postId, payload }: UpdateForumPostVariables) =>
+      communityPostsApi.updateForumPost(postId, payload),
+    retry: false,
+    onSuccess: (res) => {
+      if (res?.data?.id) {
+        queryClient.setQueryData(
+          communityPostKeys.detail(res.data.id),
+          res.data
+        );
+      }
+      void queryClient.invalidateQueries({
+        queryKey: communityPostKeys.all,
+      });
+    },
+  });
+}
+
+/**
+ * Hook mutasi pembuatan komunitas baru (POST /proxy/communities).
+ */
+export function useCreateCommunity() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateCommunityPayload) =>
+      communityPostsApi.createCommunity(payload),
+    retry: false,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: ["communities"],
+      });
+      void queryClient.invalidateQueries({
+        queryKey: ["recommendations", "communities"],
+      });
+    },
+  });
+}
+
+/**
+ * Hook query daftar seluruh komunitas (GET /proxy/communities).
+ */
+export function useCommunities() {
+  return useQuery<CommunityItemDto[]>({
+    queryKey: ["communities"],
+    queryFn: async () => {
+      const res = await communityPostsApi.listCommunities();
+      return res.data;
     },
   });
 }

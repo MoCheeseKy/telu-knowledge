@@ -81,6 +81,9 @@ export interface ForumDetailContentProps {
 
 export interface ForumDetailHeaderProps {
   post: ForumPostDetail;
+  isMine?: boolean;
+  communityId?: string;
+  postId?: string;
 }
 
 export function formatForumCommentDate(dateString?: string): string {

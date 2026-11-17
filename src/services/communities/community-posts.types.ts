@@ -133,6 +133,37 @@ export interface DeleteForumCommentVariables {
   commentId: string;
 }
 
+export interface UpdateForumPostVariables {
+  postId: string;
+  payload: UpdateCommunityPostPayload;
+}
+
+export interface CreateCommunityPayload {
+  name: string;
+  description: string;
+  category?: string;
+  visibility?: "publik" | "terbatas" | "privat";
+  bannerUrl?: string | null;
+  avatarColor?: string;
+}
+
+export interface CommunityItemDto {
+  id: string;
+  creator_id?: string;
+  name: string;
+  slug: string;
+  description: string;
+  category?: string;
+  visibility?: "publik" | "terbatas" | "privat";
+  avatar_url?: string | null;
+  avatar_color?: string;
+  banner_url?: string | null;
+  member_count?: number;
+  post_count?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
 /**
  * Identitas penulis/viewer tetap mock (lihat docs/integrasi-community-posts/README.md
  * bagian "Identitas Penulis di Mock"). Dipakai untuk cek kepemilikan postingan di UI.

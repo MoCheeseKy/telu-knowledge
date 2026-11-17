@@ -1,25 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, PenLine, Heart, MessageCircle, Bookmark } from "lucide-react";
+import { useArticleFeed, useToggleArticleBookmark } from "@/services/articles/articles.queries";
+import { useToast } from "@/components/ui/toast";
+import { formatDate } from "@/lib/formatters";
+import { getErrorMessage } from "@/lib/api/error-messages";
+import type { DiscoverArticleItem } from "./discover-articles.types";
 
 const WRITE_ROUTE = "/editor-studio";
 
-type ArticleItem = {
-  id: number;
-  category: string;
-  author: string;
-  date: string;
-  title: string;
-  description: string;
-  likes: string;
-  comments: string;
-  image: string;
-};
-
-const articles: ArticleItem[] = Array.from({ length: 10 }, (_, i) => ({
+const defaultArticles: DiscoverArticleItem[] = Array.from({ length: 6 }, (_, i) => ({
   id: i + 1,
   category: "Software Engineering",
   author: "Rifky Muhammad Prayudhi",
@@ -33,11 +25,52 @@ const articles: ArticleItem[] = Array.from({ length: 10 }, (_, i) => ({
 }));
 
 export default function DiscoverArticles() {
+  const { data: feedArticles, isLoading, isError, error, refetch } = useArticleFeed();
+  const toggleBookmarkMutation = useToggleArticleBookmark();
+  const { toast } = useToast();
   const [query, setQuery] = useState("");
+
+  const articles: DiscoverArticleItem[] = useMemo(() => {
+    if (feedArticles && feedArticles.length > 0) {
+      return feedArticles.map((a) => ({
+        id: a.id,
+        category: a.topic || "Artikel Tel-U",
+        author: a.author?.displayName || "Mahasiswa Tel-U",
+        date: a.publishedAt
+          ? formatDate(a.publishedAt)
+          : a.createdAt
+          ? formatDate(a.createdAt)
+          : "Baru saja",
+        title: a.title,
+        description:
+          a.excerpt || a.subtitle || "Artikel bacaan mahasiswa Telkom University.",
+        likes: (a.stats?.likesCount ?? 0).toLocaleString("id-ID"),
+        comments: (a.stats?.commentsCount ?? 0).toLocaleString("id-ID"),
+        image: a.coverImageUrl || "/images/repost-cover.png",
+        isBookmarked: Boolean(a.isBookmarked),
+      }));
+    }
+    return defaultArticles;
+  }, [feedArticles]);
 
   const filtered = articles.filter((a) =>
     a.title.toLowerCase().includes(query.toLowerCase())
   );
+
+  const handleToggleBookmark = (id: string | number) => {
+    toggleBookmarkMutation.mutate(String(id), {
+      onSuccess: (res) => {
+        if (res.data?.isBookmarked) {
+          toast.success("Artikel disimpan ke bookmark.");
+        } else {
+          toast.success("Artikel dihapus dari bookmark.");
+        }
+      },
+      onError: (err) => {
+        toast.error(getErrorMessage(err, "Gagal mengubah status bookmark."));
+      },
+    });
+  };
 
   return (
     <div className="flex w-full flex-col gap-6 sm:gap-8 py-2">
@@ -62,7 +95,32 @@ export default function DiscoverArticles() {
         </Link>
       </div>
 
-      {filtered.length === 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
+          {[1, 2, 3, 4].map((n) => (
+            <div
+              key={n}
+              className="h-36 rounded-lg bg-[var(--dust)]/20 animate-pulse"
+            />
+          ))}
+        </div>
+      ) : isError ? (
+        <div className="flex min-h-[200px] flex-col items-center justify-center rounded-xl border border-dashed border-[var(--dust)]/70 p-8 text-center gap-3">
+          <p className="text-sm font-semibold text-[var(--foreground)]">
+            Gagal memuat daftar artikel
+          </p>
+          <p className="text-xs text-[var(--muted)]">
+            {getErrorMessage(error, "Terjadi gangguan saat memuat artikel.")}
+          </p>
+          <button
+            type="button"
+            onClick={() => void refetch()}
+            className="inline-flex h-8 items-center rounded-lg border border-[var(--dust)] px-3 text-xs font-semibold text-[var(--foreground)] hover:bg-[var(--background-accent)] cursor-pointer"
+          >
+            Coba lagi
+          </button>
+        </div>
+      ) : filtered.length === 0 ? (
         <p className="py-12 text-center text-sm text-gray-500">
           Artikel tidak ditemukan.
         </p>
@@ -71,7 +129,7 @@ export default function DiscoverArticles() {
           {filtered.map((a) => (
             <article
               key={a.id}
-              className="flex flex-col gap-3 rounded-lg bg-white p-3 shadow-sm"
+              className="flex flex-col gap-3 rounded-lg bg-white p-3 shadow-sm group"
             >
               <div className="flex items-center justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-2">
@@ -83,23 +141,29 @@ export default function DiscoverArticles() {
                 <button
                   type="button"
                   aria-label="Simpan artikel"
-                  className="shrink-0 text-red-600"
+                  onClick={() => handleToggleBookmark(a.id)}
+                  className="shrink-0 text-red-600 cursor-pointer hover:opacity-80 transition-opacity"
                 >
-                  <Bookmark className="size-4" />
+                  <Bookmark
+                    className={`size-4 ${
+                      a.isBookmarked ? "fill-red-600 text-red-600" : ""
+                    }`}
+                  />
                 </button>
               </div>
 
-              <div className="flex gap-3 sm:gap-4">
-                <Image
+              <Link
+                href={`/discover-articles/${a.id}`}
+                className="flex gap-3 sm:gap-4 cursor-pointer"
+              >
+                <img
                   src={a.image}
                   alt={a.title}
-                  width={112}
-                  height={112}
-                  className="size-24 sm:size-28 shrink-0 rounded-lg object-cover"
+                  className="size-24 sm:size-28 shrink-0 rounded-lg object-cover bg-gray-100"
                 />
 
                 <div className="flex min-w-0 flex-1 flex-col">
-                  <h3 className="line-clamp-2 text-sm font-bold leading-snug">
+                  <h3 className="line-clamp-2 text-sm font-bold leading-snug group-hover:text-red-600 transition-colors">
                     {a.title}
                   </h3>
                   <p className="mt-1 line-clamp-3 text-xs text-gray-600">
@@ -117,7 +181,7 @@ export default function DiscoverArticles() {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             </article>
           ))}
         </div>

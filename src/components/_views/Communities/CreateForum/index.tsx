@@ -5,9 +5,15 @@ import { useRouter } from "next/navigation";
 import { Globe, Lock, EyeOff, ImagePlus, X } from "lucide-react";
 import ActiveForumRecommendationCard from "@/components/_shared/ActiveForumRecommendations/ActiveForumRecommendationCard";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
+import { useCreateCommunity } from "@/services/communities/community-posts.queries";
+import { getErrorMessage } from "@/lib/api/error-messages";
 import { cn } from "@/lib/utils";
-
-type Visibility = "publik" | "terbatas" | "privat";
+import type {
+  FieldLabelProps,
+  Visibility,
+  VisibilityOption,
+} from "./create-forum.types";
 
 const NAME_MAX = 30;
 const DESC_MAX = 500;
@@ -24,12 +30,7 @@ const topicOptions = [
     "Hobi",
 ];
 
-const visibilityOptions: {
-    value: Visibility;
-    label: string;
-    description: string;
-    icon: React.ComponentType<{ className?: string }>;
-}[] = [
+const visibilityOptions: VisibilityOption[] = [
     { value: "publik", label: "Publik", description: "Siapa saja bisa melihat dan bergabung.", icon: Globe },
     { value: "terbatas", label: "Terbatas", description: "Siapa saja bisa melihat, tapi gabung perlu persetujuan.", icon: EyeOff },
     { value: "privat", label: "Privat", description: "Hanya anggota yang bisa melihat dan memposting.", icon: Lock },
@@ -42,11 +43,7 @@ function FieldLabel({
     htmlFor,
     title,
     hint,
-}: {
-    htmlFor?: string;
-    title: string;
-    hint?: string;
-}) {
+}: FieldLabelProps) {
     return (
         <div className="flex flex-col gap-0.5">
             <label htmlFor={htmlFor} className="font-sans text-[15px] font-semibold text-[var(--foreground)]">
@@ -59,6 +56,8 @@ function FieldLabel({
 
 export default function CreateForumView() {
     const router = useRouter();
+    const { toast } = useToast();
+    const createCommunityMutation = useCreateCommunity();
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -91,9 +90,37 @@ export default function CreateForumView() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!isValid) return;
-        // TODO: kirim { name, description, topics, visibility, banner } ke API
-        router.push("/discussion-forums");
+        if (!isValid || createCommunityMutation.isPending) return;
+
+        createCommunityMutation.mutate(
+            {
+                name: name.trim(),
+                description: description.trim(),
+                category: topics[0] || "Umum",
+                visibility,
+                bannerUrl: bannerPreview,
+                avatarColor: "#EA5753",
+            },
+            {
+                onSuccess: (res) => {
+                    toast.success("Forum komunitas berhasil dibuat!");
+                    const created = res?.data;
+                    if (created?.id) {
+                        router.push(`/communities/${created.id}`);
+                    } else {
+                        router.push("/discussion-forums");
+                    }
+                },
+                onError: (err) => {
+                    toast.error(
+                        getErrorMessage(
+                            err,
+                            "Gagal membuat forum komunitas. Silakan coba lagi."
+                        )
+                    );
+                },
+            }
+        );
     };
 
     return (
@@ -285,10 +312,10 @@ export default function CreateForumView() {
                         <Button
                             type="submit"
                             variant="default"
-                            disabled={!isValid}
+                            disabled={!isValid || createCommunityMutation.isPending}
                             className="h-9 px-4 rounded-lg shadow-xs"
                         >
-                            Buat Forum
+                            {createCommunityMutation.isPending ? "Membuat..." : "Buat Forum"}
                         </Button>
                     </div>
                 </div>
