@@ -1,3 +1,6 @@
+/**
+ * Representasi item forum atau komunitas untuk daftar rekomendasi.
+ */
 export interface ForumItem {
     id?: string | number;
     title: string;
@@ -7,6 +10,9 @@ export interface ForumItem {
     href?: string;
 }
 
+/**
+ * Data dummy daftar forum aktif untuk nilai bawaan komponen rekomendasi.
+ */
 export const dummyForums: ForumItem[] = [
     {
         id: 1,
@@ -34,6 +40,9 @@ export const dummyForums: ForumItem[] = [
     },
 ];
 
+/**
+ * Properti untuk komponen kartu rekomendasi forum aktif.
+ */
 export interface ActiveForumRecommendationCardProps {
     title?: string;
     description?: string;
@@ -44,6 +53,9 @@ export interface ActiveForumRecommendationCardProps {
     className?: string;
 }
 
+/**
+ * Properti untuk komponen daftar rekomendasi forum aktif.
+ */
 export interface ActiveForumRecommendationsProps {
     title?: string;
     forums?: ForumItem[];

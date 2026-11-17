@@ -3,6 +3,7 @@ import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CommunityHighlightsProps } from "./community-detail.types";
 
+/** Menampilkan kartu sorotan (highlights) utama di bagian atas feed komunitas. */
 export default function CommunityHighlights({
   highlights,
 }: CommunityHighlightsProps) {

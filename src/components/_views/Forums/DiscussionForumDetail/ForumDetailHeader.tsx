@@ -7,6 +7,9 @@ import type { ForumDetailHeaderProps } from "./discussion-forum-detail.types";
 import { Button } from "@/components/ui/button";
 import CommunityPostDeleteButton from "@/components/_views/Communities/CommunityDetail/CommunityPostDeleteButton";
 
+/**
+ * Header halaman detail forum yang berisi tautan kembali, aksi sunting/hapus bagi pemilik, dan metadata penulis.
+ */
 export default function ForumDetailHeader({
   post,
   isMine = false,

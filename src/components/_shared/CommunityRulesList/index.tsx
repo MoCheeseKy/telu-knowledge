@@ -10,6 +10,9 @@ import type {
 
 export type { CommunityRuleItem, CommunityRulesListProps };
 
+/**
+ * Daftar aturan komunitas interaktif dengan tampilan akordeon yang dapat dibuka-tutup per item.
+ */
 export default function CommunityRulesList({
   rules,
   className = "",

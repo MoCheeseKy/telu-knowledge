@@ -5,6 +5,7 @@ interface PageProps {
   params: Promise<{ id: string; postId: string }>;
 }
 
+/** Menghasilkan metadata halaman sunting postingan komunitas berdasarkan ID komunitas. */
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
   const community = getSampleCommunity(id);
@@ -15,6 +16,7 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
+/** Halaman untuk menyunting postingan pada komunitas tertentu. */
 export default async function EditCommunityPostPage({ params }: PageProps) {
   const { id, postId } = await params;
   const community = getSampleCommunity(id);

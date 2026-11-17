@@ -1,6 +1,7 @@
 import type { CommunityPostDto } from "@/services/communities/community-posts.types";
 import { formatDate } from "@/lib/formatters";
 
+/** Item sorotan komunitas yang ditampilkan pada bagian highlights. */
 export interface CommunityHighlight {
   id: string;
   title: string;
@@ -9,12 +10,14 @@ export interface CommunityHighlight {
   href: string;
 }
 
+/** Aturan komunitas yang ditampilkan pada sidebar detail maupun pembuatan postingan. */
 export interface CommunityRule {
   id: number;
   title: string;
   description: string;
 }
 
+/** Representasi postingan komunitas untuk kebutuhan tampilan kartu feed. */
 export interface CommunityPost {
   /** ID postingan di mock server (CommunityPostDto.id). */
   id: string | number;
@@ -36,6 +39,10 @@ export interface CommunityPost {
 /**
  * Mengubah CommunityPostDto (mock server) menjadi bentuk tampilan kartu feed.
  * Deskripsi dipotong menjadi ringkasan maksimal 280 karakter.
+ *
+ * @param dto - Data postingan mentah dari API komunitas.
+ * @param topicName - Nama topik atau komunitas sebagai label kartu.
+ * @returns Objek postingan yang siap dirender pada kartu feed.
  */
 export function mapCommunityPostDto(
   dto: CommunityPostDto,
@@ -65,6 +72,7 @@ export function mapCommunityPostDto(
   };
 }
 
+/** Data lengkap komunitas untuk halaman detail beserta sidebar dan sorotan. */
 export interface CommunityDetail {
   id: string;
   name: string;
@@ -81,26 +89,31 @@ export interface CommunityDetail {
   highlights: CommunityHighlight[];
 }
 
+/** Properti untuk komponen utama halaman detail komunitas. */
 export interface CommunityDetailViewProps {
   community: CommunityDetail;
 }
 
+/** Properti untuk komponen banner header komunitas. */
 export interface CommunityBannerProps {
   community: CommunityDetail;
   isJoined: boolean;
   onToggleJoin: () => void;
 }
 
+/** Properti untuk komponen daftar feed postingan komunitas. */
 export interface CommunityFeedProps {
   posts: CommunityPost[];
   /** Dibutuhkan untuk menyusun tautan "Sunting" pada post milik sendiri. */
   communityId: string;
 }
 
+/** Properti untuk komponen sorotan komunitas. */
 export interface CommunityHighlightsProps {
   highlights: CommunityHighlight[];
 }
 
+/** Properti untuk tombol hapus postingan komunitas beserta dialog konfirmasinya. */
 export interface CommunityPostDeleteButtonProps {
   communityId: string;
   /** ID postingan di mock server (CommunityPost.id / CommunityPostDto.id). */
@@ -115,10 +128,12 @@ export interface CommunityPostDeleteButtonProps {
   redirectHref?: string;
 }
 
+/** Properti untuk komponen sidebar detail komunitas. */
 export interface CommunitySidebarProps {
   community: CommunityDetail;
 }
 
+/** Contoh data statis komunitas untuk fallback/pratinjau lokal. */
 export const sampleCommunity: CommunityDetail = {
   id: "komunitas-makanan-telkom",
   name: "Komunitas Makanan Telkom University Bandung",
@@ -187,6 +202,12 @@ export const sampleCommunity: CommunityDetail = {
   ],
 };
 
+/**
+ * Mengembalikan data contoh detail komunitas dengan ID sesuai parameter.
+ *
+ * @param id - ID komunitas yang diminta.
+ * @returns Objek CommunityDetail contoh dengan ID tersebut.
+ */
 export function getSampleCommunity(id: string): CommunityDetail {
   return { ...sampleCommunity, id };
 }

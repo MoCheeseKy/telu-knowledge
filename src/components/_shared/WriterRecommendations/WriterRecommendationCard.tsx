@@ -7,6 +7,9 @@ import { cn } from "@/lib/utils";
 
 export { dummyWriters };
 
+/**
+ * Kartu rekomendasi penulis dengan avatar dan tombol toggle untuk mengikuti penulis.
+ */
 export default function WriterRecommendationCard({
     name = "mocheeseky",
     avatarUrl,

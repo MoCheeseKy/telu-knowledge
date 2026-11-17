@@ -14,6 +14,10 @@ import type { TitleFieldProps } from "./editor-studio.types";
 
 export type { TitleFieldProps };
 
+/**
+ * Input textarea auto-resize untuk judul utama artikel yang menormalisasi karakter baris baru
+ * dan meneruskan penekanan tombol Enter ke field berikutnya.
+ */
 const TitleField = forwardRef<HTMLTextAreaElement, TitleFieldProps>(
   function TitleField(
     {

@@ -1,3 +1,6 @@
+/**
+ * Representasi item topik pada daftar rekomendasi topik.
+ */
 export interface TopicItem {
     id?: string | number;
     title: string;
@@ -12,6 +15,9 @@ export const dummyTopics: TopicItem[] = [
     { id: 4, title: "Startup", count: "32 Artikel", href: "/discover-articles?topic=startup" },
 ];
 
+/**
+ * Properti untuk komponen {@link TopicRecommendationCard}.
+ */
 export interface TopicRecommendationCardProps {
     title?: string;
     count?: string | number;
@@ -20,6 +26,9 @@ export interface TopicRecommendationCardProps {
     onClick?: () => void;
 }
 
+/**
+ * Properti untuk komponen {@link TopicRecommendations}.
+ */
 export interface TopicRecommendationsProps {
     title?: string;
     topics?: TopicItem[];

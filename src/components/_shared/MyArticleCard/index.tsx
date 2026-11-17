@@ -15,6 +15,10 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
+/**
+ * Kartu artikel milik pengguna yang mendukung aksi edit, hapus dengan dialog konfirmasi,
+ * serta publikasi untuk artikel berstatus draf.
+ */
 export default function MyArticleCard({
     id,
     title,
@@ -125,7 +129,6 @@ export default function MyArticleCard({
                 </div>
             </div>
 
-            {/* Dialog Konfirmasi Hapus */}
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

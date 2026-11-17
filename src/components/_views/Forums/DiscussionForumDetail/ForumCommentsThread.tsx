@@ -19,6 +19,9 @@ import {
   useDeleteForumComment,
 } from "@/services/communities/community-posts.queries";
 
+/**
+ * Item komentar tunggal beserta dukungan balasan bersarang, penyuntingan, penghapusan, dan tombol suka.
+ */
 function CommentItem({
   comment,
   postId,
@@ -38,12 +41,10 @@ function CommentItem({
   const [replyText, setReplyText] = useState("");
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
-  // Mode sunting
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(comment.content);
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
 
-  // Konfirmasi hapus
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -97,7 +98,6 @@ function CommentItem({
 
   return (
     <div className="flex flex-col py-4 border-b border-[var(--dust)]/40 last:border-b-0">
-      {/* Penulis & Waktu */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           {comment.author.avatarUrl ? (
@@ -131,7 +131,6 @@ function CommentItem({
           </span>
         </div>
 
-        {/* Tombol aksi Sunting & Hapus untuk komentar milik sendiri */}
         {isMine && !isEditing && !isConfirmingDelete && (
           <div className="flex items-center gap-1">
             <button
@@ -159,7 +158,6 @@ function CommentItem({
         )}
       </div>
 
-      {/* Konfirmasi Hapus Komentar */}
       {isConfirmingDelete && (
         <div className="mt-2.5 pl-8 p-3 bg-[var(--failed-soft)]/50 border border-[var(--failed)]/40 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
           <p className="text-xs text-[var(--failed-text)] font-medium">
@@ -194,7 +192,6 @@ function CommentItem({
         </div>
       )}
 
-      {/* Mode Edit vs Konten Normal */}
       {isEditing ? (
         <form onSubmit={handleSaveEdit} className="mt-3 pl-8 flex flex-col gap-2">
           <textarea
@@ -236,12 +233,10 @@ function CommentItem({
         </form>
       ) : (
         <>
-          {/* Konten komentar */}
           <p className="font-sans text-[14px] text-[var(--foreground)] leading-relaxed mt-2 pl-8 whitespace-pre-line">
             {comment.content}
           </p>
 
-          {/* Aksi Suka & Balas */}
           <div className="flex items-center gap-3 mt-2 pl-8">
             <button
               type="button"
@@ -272,7 +267,6 @@ function CommentItem({
         </>
       )}
 
-      {/* Form Balasan Inline */}
       {isReplying && (
         <form onSubmit={handleSendReply} className="mt-3 pl-8 flex flex-col gap-2">
           <textarea
@@ -312,7 +306,6 @@ function CommentItem({
         </form>
       )}
 
-      {/* Balasan bersarang (Nested replies) */}
       {comment.replies && comment.replies.length > 0 && (
         <div className="pl-6 mt-3 flex flex-col gap-2 border-l border-[var(--dust)]/40 ml-3">
           {comment.replies.map((reply) => (
@@ -331,6 +324,9 @@ function CommentItem({
   );
 }
 
+/**
+ * Bagian utas komentar diskusi forum yang mengelola pengambilan, pembuatan, balasan, penyuntingan, dan penghapusan komentar.
+ */
 export default function ForumCommentsThread({
   postId,
   initialComments = [],
@@ -341,7 +337,6 @@ export default function ForumCommentsThread({
 
   const postIdStr = postId ? String(postId) : "";
 
-  // 1. Get Forum Post Comments dari mock server
   const {
     data: commentDtos,
     isLoading,
@@ -349,19 +344,16 @@ export default function ForumCommentsThread({
     refetch,
   } = useForumPostComments(postIdStr);
 
-  // 2. Mutasi Create, Update, Delete Comment
   const createCommentMutation = useCreateForumComment();
   const updateCommentMutation = useUpdateForumComment();
   const deleteCommentMutation = useDeleteForumComment();
 
-  // Susun data komentar berstruktur pohon (tree) jika data dari API tersedia
   const comments: ForumComment[] = commentDtos
     ? buildForumCommentTree(commentDtos)
     : initialComments;
 
   const totalComments = commentDtos ? commentDtos.length : comments.length;
 
-  // Handler Buat Komentar Utama
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     const content = newCommentText.trim();
@@ -389,7 +381,6 @@ export default function ForumCommentsThread({
     }
   };
 
-  // Handler Balas Komentar (Nested Reply)
   const handleReplySubmit = async (parentId: string | number, text: string) => {
     const content = text.trim();
     if (!content) return;
@@ -410,7 +401,6 @@ export default function ForumCommentsThread({
     }
   };
 
-  // Handler Sunting Komentar (Update Comment)
   const handleEditSubmit = async (
     commentId: string | number,
     text: string
@@ -437,7 +427,6 @@ export default function ForumCommentsThread({
     }
   };
 
-  // Handler Hapus Komentar (Delete Comment)
   const handleDeleteSubmit = async (commentId: string | number) => {
     if (!postIdStr) {
       toast.error("ID postingan tidak ditemukan.");
@@ -463,7 +452,6 @@ export default function ForumCommentsThread({
         Tanggapan & Diskusi ({totalComments})
       </h3>
 
-      {/* Input komentar baru */}
       <form onSubmit={handleAddComment} className="flex flex-col gap-2.5 mb-6">
         <textarea
           value={newCommentText}
@@ -491,7 +479,6 @@ export default function ForumCommentsThread({
         </div>
       </form>
 
-      {/* Daftar komentar / Status pemuatan */}
       <div className="flex flex-col">
         {postIdStr && isLoading ? (
           <div className="flex flex-col gap-4 py-4 animate-pulse">

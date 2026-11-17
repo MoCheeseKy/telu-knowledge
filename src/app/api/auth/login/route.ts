@@ -6,6 +6,12 @@ import { setAuthCookies } from "@/lib/auth/cookies";
 import { loginSchema } from "@/services/auth/auth.schemas";
 import type { BackendLoginData } from "@/services/auth/auth.types";
 
+/**
+ * Route handler BFF untuk proses login pengguna dan penyimpanan token ke HttpOnly cookie.
+ *
+ * @param request - Request HTTP berisi kredensial login dan opsi rememberMe.
+ * @returns Respons JSON berisi data user tanpa mengekspos token ke browser.
+ */
 export async function POST(request: Request) {
   const originError = assertSameOrigin(request);
   if (originError) return originError;
@@ -48,7 +54,6 @@ export async function POST(request: Request) {
       clientIp,
     });
 
-    // Simpan token ke HttpOnly cookie
     await setAuthCookies(backendRes.data, rememberMe ?? false);
 
     // Kembalikan envelope TANPA token ke browser (hanya data user)

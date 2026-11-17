@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FileQuestion, Home } from "lucide-react";
 
+/** Halaman 404 yang ditampilkan ketika rute yang diminta tidak ditemukan. */
 export default function NotFoundPage() {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center px-4 py-16 text-center bg-[var(--background)]">

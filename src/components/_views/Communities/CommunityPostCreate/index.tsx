@@ -28,6 +28,7 @@ const FLAIR_OPTIONS = [
   "Tips",
 ];
 
+/** Formulir untuk membuat postingan baru atau menyunting postingan yang sudah ada di komunitas. */
 export default function CommunityPostCreateView({
   community,
   mode = "create",
@@ -167,7 +168,6 @@ export default function CommunityPostCreateView({
   return (
     <div className="grid w-full grid-cols-1 gap-x-10 py-2 sm:py-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start xl:grid-cols-[minmax(0,1fr)_340px] xl:gap-x-12">
       <form onSubmit={handleSubmit} className="min-w-0">
-        {/* Komunitas tujuan */}
         <div className="flex items-center justify-between gap-4">
           <Link
             href={`/communities/${community.id}`}
@@ -184,7 +184,6 @@ export default function CommunityPostCreateView({
           </Link>
         </div>
 
-        {/* Judul */}
         <div className="mt-6">
           <label htmlFor="post-title" className="sr-only">
             Judul postingan
@@ -208,7 +207,6 @@ export default function CommunityPostCreateView({
           </div>
         </div>
 
-        {/* Flair dan tag */}
         <div className="mt-5">
           <button
             type="button"
@@ -279,7 +277,6 @@ export default function CommunityPostCreateView({
           </p>
         </div>
 
-        {/* Lampirkan Gambar Cover */}
         <div className="mt-6">
           <p className="font-sans text-[13px] font-bold text-[var(--foreground)]">
             Gambar cover{" "}
@@ -348,7 +345,6 @@ export default function CommunityPostCreateView({
           </div>
         </div>
 
-        {/* Isi postingan (Input deskripsi biasa) */}
         <div className="mt-6">
           <label
             htmlFor="post-description"

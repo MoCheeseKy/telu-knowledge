@@ -13,6 +13,7 @@ import type {
   UpdateArticleVariables,
 } from "./articles.types";
 
+/** Factory query key React Query untuk fitur artikel. */
 export const articleKeys = {
   all: ["articles"] as const,
   lists: () => [...articleKeys.all, "list"] as const,
@@ -129,6 +130,7 @@ export function useMyArticles(params?: ListMyArticlesParams) {
   });
 }
 
+/** Alias untuk `useMyArticles`. */
 export const useListMyArticles = useMyArticles;
 
 /**

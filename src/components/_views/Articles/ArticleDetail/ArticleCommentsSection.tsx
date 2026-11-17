@@ -13,6 +13,9 @@ import { formatDateTime as formatCommentDate } from "@/lib/formatters";
 import { getErrorMessage } from "@/lib/api/error-messages";
 import type { ArticleCommentsSectionProps } from "./article-detail.types";
 
+/**
+ * Item komentar tunggal beserta daftar balasan berjenjang dan form balasan inline.
+ */
 function CommentItem({
   comment,
   replies = [],
@@ -38,7 +41,6 @@ function CommentItem({
 
   return (
     <div className="flex flex-col py-4 border-b border-[var(--dust)]/40 last:border-b-0">
-      {/* Baris identitas penulis komentar */}
       <div className="flex items-center gap-2.5">
         {author.avatarUrl ? (
           <img
@@ -71,12 +73,10 @@ function CommentItem({
         </div>
       </div>
 
-      {/* Isi teks komentar */}
       <p className="font-sans text-[14px] sm:text-[15px] leading-relaxed text-[#2B2725] mt-2.5 pl-9">
         {comment.content}
       </p>
 
-      {/* Aksi balas komentar */}
       <div className="mt-2 pl-9 flex items-center gap-3">
         <button
           type="button"
@@ -88,7 +88,6 @@ function CommentItem({
         </button>
       </div>
 
-      {/* Form balasan komentar jika tombol balas diklik */}
       {isReplying && (
         <form
           onSubmit={handleSendReply}
@@ -126,7 +125,6 @@ function CommentItem({
         </form>
       )}
 
-      {/* Daftar balasan (nested replies) */}
       {replies.length > 0 && (
         <div className="mt-3 pl-6 border-l-2 border-[var(--dust)]/50 flex flex-col gap-3">
           {replies.map((reply) => {
@@ -173,6 +171,9 @@ function CommentItem({
   );
 }
 
+/**
+ * Bagian komentar dan diskusi artikel yang mendukung pengiriman komentar baru dan balasan berjenjang.
+ */
 export default function ArticleCommentsSection({
   articleId,
   initialComments,
@@ -180,7 +181,6 @@ export default function ArticleCommentsSection({
   const { toast } = useToast();
   const [commentText, setCommentText] = useState("");
 
-  // 1. Ambil data komentar dari API / Mock Server
   const {
     data: apiComments,
     isLoading,
@@ -189,10 +189,8 @@ export default function ArticleCommentsSection({
     refetch,
   } = useArticleComments(articleId);
 
-  // 2. Siapkan mutasi untuk mengirim komentar
   const createCommentMutation = useCreateArticleComment(articleId || "");
 
-  // Gunakan data API. Jika API belum mengembalikan data (loading), fallback ke initialComments
   const comments = apiComments || initialComments || [];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -203,7 +201,7 @@ export default function ArticleCommentsSection({
       { content: commentText.trim() },
       {
         onSuccess: () => {
-          setCommentText(""); // Kosongkan input setelah sukses
+          setCommentText("");
           toast.success("Komentar berhasil dikirim!");
         },
         onError: (err) => {
@@ -230,7 +228,6 @@ export default function ArticleCommentsSection({
     );
   };
 
-  // Pisahkan root comments (tanpa parent_id) dan replies (berdasarkan parent_id)
   const rootComments = comments.filter((c) => !c.parentId);
   const repliesMap = comments.reduce<Record<string, ArticleComment[]>>(
     (acc, c) => {
@@ -252,7 +249,6 @@ export default function ArticleCommentsSection({
         </h3>
       </div>
 
-      {/* Form tambah komentar baru */}
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-2.5 p-4 rounded-xl border border-[var(--dust)] bg-[var(--background)] shadow-2xs"
@@ -280,7 +276,6 @@ export default function ArticleCommentsSection({
         </div>
       </form>
 
-      {/* Daftar komentar */}
       <div className="mt-6 flex flex-col">
         {isLoading ? (
           <p className="py-8 text-center text-xs text-[var(--muted)] font-sans">

@@ -30,6 +30,7 @@ function mapRepostToItem(r: UserRepostItemDto): RepostItem {
   };
 }
 
+/** Tab Reposts yang mengambil dan merender daftar postingan yang di-repost oleh pengguna aktif. */
 function RepostsTab() {
   const { data, isLoading, isError } = useUserReposts("me");
 
@@ -81,6 +82,7 @@ function RepostsTab() {
   );
 }
 
+/** Konten utama halaman profil mencakup tab Home, tab Reposts, dan sidebar profil. */
 function ProfilesContent() {
   const { profile, isLoading, isError, refetchProfile } = useProfile();
 
@@ -159,6 +161,7 @@ function ProfilesContent() {
   );
 }
 
+/** Halaman profil pengguna yang membungkus konten utama dengan `ProfileProvider`. */
 export default function Profiles() {
   return (
     <ProfileProvider>

@@ -16,6 +16,10 @@ const MAX_FILE_SIZE_BYTES = 4 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES =
   "image/png,image/jpeg,image/webp,image/gif";
 
+/**
+ * Komponen input gambar sampul artikel dengan pratinjau, validasi ukuran maksimal 4MB,
+ * serta aksi unggah, ganti, dan hapus gambar.
+ */
 export default function CoverImageField({
   value,
   onChange,

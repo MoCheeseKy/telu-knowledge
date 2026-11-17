@@ -3,6 +3,12 @@
 import React from "react";
 import type { TiptapDoc, TiptapNode } from "./article-detail.types";
 
+/**
+ * Merender node teks Tiptap beserta seluruh mark pemformatan (bold, italic, link, dll.).
+ * @param textNode - Node teks Tiptap yang akan dirender.
+ * @param key - Key unik React untuk elemen fragmen.
+ * @returns Elemen React hasil pemformatan teks.
+ */
 function renderTextWithMarks(textNode: TiptapNode, key: string | number): React.ReactNode {
   let element: React.ReactNode = textNode.text ?? "";
 
@@ -50,6 +56,12 @@ function renderTextWithMarks(textNode: TiptapNode, key: string | number): React.
   return <React.Fragment key={key}>{element}</React.Fragment>;
 }
 
+/**
+ * Merender satu node Tiptap menjadi elemen React secara rekursif.
+ * @param node - Node Tiptap yang akan dirender.
+ * @param index - Indeks node pada daftar anak untuk pembentukan key React.
+ * @returns Elemen React yang merepresentasikan node Tiptap.
+ */
 function renderNode(node: TiptapNode, index: number): React.ReactNode {
   const key = `node-${index}`;
 
@@ -161,6 +173,9 @@ function renderNode(node: TiptapNode, index: number): React.ReactNode {
   }
 }
 
+/**
+ * Merender konten dokumen Tiptap JSON maupun teks biasa menjadi elemen HTML semantik.
+ */
 export default function TiptapRenderer({
   content,
 }: {
@@ -168,7 +183,6 @@ export default function TiptapRenderer({
 }) {
   if (!content) return null;
 
-  // Jika konten adalah objek doc Tiptap
   if (
     typeof content === "object" &&
     content !== null &&
@@ -183,7 +197,6 @@ export default function TiptapRenderer({
     );
   }
 
-  // Fallback jika konten berupa string teks biasa
   if (typeof content === "string") {
     const paragraphs = content.split("\n\n").filter(Boolean);
     return (

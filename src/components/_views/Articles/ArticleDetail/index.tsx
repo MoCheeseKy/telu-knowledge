@@ -13,24 +13,21 @@ import ArticleCommentsSection from "./ArticleCommentsSection";
 import ArticleAuthorSidebar from "./ArticleAuthorSidebar";
 import type { ArticleDetailViewProps } from "./article-detail.types";
 
+/** Skeleton placeholder saat detail artikel sedang dimuat. */
 function ArticleDetailSkeleton() {
   return (
     <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-12 xl:gap-16 py-6 animate-pulse">
       <div className="flex-1 flex flex-col w-full max-w-[679px]">
-        {/* Header Skeleton */}
         <div className="h-4 w-24 bg-[var(--dust)]/40 rounded mb-4" />
 
-        {/* Title & Subtitle Skeleton */}
         <div className="mt-6 space-y-3">
           <div className="h-10 w-full bg-[var(--dust)]/40 rounded" />
           <div className="h-10 w-4/5 bg-[var(--dust)]/40 rounded" />
           <div className="h-5 w-2/3 bg-[var(--dust)]/30 rounded mt-3" />
         </div>
 
-        {/* Cover Skeleton */}
         <div className="w-full h-72 rounded-2xl bg-[var(--dust)]/40 my-6" />
 
-        {/* Paragraphs Skeleton */}
         <div className="space-y-4">
           <div className="h-4 w-full bg-[var(--dust)]/30 rounded" />
           <div className="h-4 w-full bg-[var(--dust)]/30 rounded" />
@@ -39,7 +36,6 @@ function ArticleDetailSkeleton() {
         </div>
       </div>
 
-      {/* Sidebar Skeleton */}
       <div className="w-full lg:w-[320px] xl:w-[340px] shrink-0 flex flex-col gap-8 pt-2">
         <div className="w-full h-60 rounded-xl bg-[var(--dust)]/40" />
         <div className="w-full h-48 rounded-xl bg-[var(--dust)]/30" />
@@ -48,6 +44,9 @@ function ArticleDetailSkeleton() {
   );
 }
 
+/**
+ * Tampilan utama halaman detail artikel beserta aksi interaksi, komentar, dan sidebar penulis.
+ */
 export default function ArticleDetailView({
   articleId,
 }: ArticleDetailViewProps) {
@@ -100,7 +99,6 @@ export default function ArticleDetailView({
 
   return (
     <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-12 xl:gap-16 py-6">
-      {/* Kolom Utama Artikel */}
       <div className="flex-1 flex flex-col w-full max-w-[679px]">
         <ArticleDetailHeader article={article} />
         <ArticleDetailContent article={article} />
@@ -111,7 +109,6 @@ export default function ArticleDetailView({
         />
       </div>
 
-      {/* Sidebar Penulis & Rekomendasi */}
       <ArticleAuthorSidebar author={article.author} />
     </div>
   );

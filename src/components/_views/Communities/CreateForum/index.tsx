@@ -39,6 +39,7 @@ const visibilityOptions: VisibilityOption[] = [
 const inputClass =
     "w-full rounded-lg border border-[var(--dust)] bg-[var(--background)] px-3.5 py-2.5 font-sans text-[15px] text-[var(--foreground)] placeholder:text-[var(--muted)] outline-none transition-colors focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20";
 
+/** Label dan teks petunjuk untuk setiap input pada formulir pembuatan forum. */
 function FieldLabel({
     htmlFor,
     title,
@@ -54,6 +55,7 @@ function FieldLabel({
     );
 }
 
+/** Halaman formulir pembuatan forum komunitas baru beserta panel pratinjau langsung. */
 export default function CreateForumView() {
     const router = useRouter();
     const { toast } = useToast();
@@ -129,7 +131,6 @@ export default function CreateForumView() {
                 onSubmit={handleSubmit}
                 className="flex-1 flex flex-col w-full max-w-[679px]"
             >
-                {/* 1. JUDUL HALAMAN */}
                 <div className="flex flex-col gap-2 mb-10">
                     <h1 className="font-sans text-[32px] font-bold text-[var(--primary-text)] leading-tight">
                         Buat Forum Baru
@@ -140,7 +141,6 @@ export default function CreateForumView() {
                 </div>
 
                 <div className="flex flex-col gap-8">
-                    {/* 2. NAMA FORUM */}
                     <div className="flex flex-col gap-2">
                         <FieldLabel
                             htmlFor="forum-name"
@@ -161,7 +161,6 @@ export default function CreateForumView() {
                         </span>
                     </div>
 
-                    {/* 3. DESKRIPSI */}
                     <div className="flex flex-col gap-2">
                         <FieldLabel
                             htmlFor="forum-desc"
@@ -182,7 +181,6 @@ export default function CreateForumView() {
                         </span>
                     </div>
 
-                    {/* 4. TOPIK */}
                     <div className="flex flex-col gap-3">
                         <FieldLabel
                             title="Topik"
@@ -211,7 +209,6 @@ export default function CreateForumView() {
                         </div>
                     </div>
 
-                    {/* 5. BANNER */}
                     <div className="flex flex-col gap-3">
                         <FieldLabel
                             title="Banner forum"
@@ -247,7 +244,6 @@ export default function CreateForumView() {
                         )}
                     </div>
 
-                    {/* 6. VISIBILITAS */}
                     <div className="flex flex-col gap-3">
                         <FieldLabel title="Tipe forum" />
                         <div role="radiogroup" className="flex flex-col gap-2">
@@ -299,7 +295,6 @@ export default function CreateForumView() {
                         </div>
                     </div>
 
-                    {/* 7. AKSI */}
                     <div className="flex items-center justify-end gap-3 pt-6 border-t border-[var(--dust)]/40">
                         <Button
                             type="button"
@@ -321,7 +316,6 @@ export default function CreateForumView() {
                 </div>
             </form>
 
-            {/* PRATINJAU (sidebar kanan, sama seperti halaman lain) */}
             <aside className="w-full lg:w-[320px] xl:w-[340px] shrink-0 lg:sticky lg:top-24 flex flex-col pt-2">
                 <h3 className="font-sans text-[16px] font-bold uppercase text-[var(--primary-text)] tracking-wider mb-3">
                     PRATINJAU

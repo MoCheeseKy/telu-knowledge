@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+/**
+ * Properti untuk komponen kartu postingan forum diskusi.
+ */
 export default interface ForumPostCardProps {
   id?: string | number;
   topic: string;

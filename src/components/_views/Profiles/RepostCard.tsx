@@ -7,6 +7,7 @@ import {
   Share2,
 } from "lucide-react";
 
+/** Representasi item postingan atau artikel yang ditampilkan pada `RepostCard`. */
 export type RepostItem = {
   id: string | number;
   category: string;
@@ -20,6 +21,7 @@ export type RepostItem = {
   image: string;
 };
 
+/** Kartu ringkasan postingan/artikel untuk daftar tab beranda dan repost di halaman profil. */
 export default function RepostCard({ item }: { item: RepostItem }) {
   return (
     <article className="flex items-start justify-between gap-4 sm:gap-6 border-b border-[var(--dust)]/60 py-5 sm:py-8">

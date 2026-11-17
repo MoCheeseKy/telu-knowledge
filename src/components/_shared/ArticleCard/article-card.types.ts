@@ -1,3 +1,6 @@
+/**
+ * Properti untuk komponen kartu ringkasan artikel.
+ */
 export default interface ArticleCardProps {
   id?: string | number;
   topic: string;

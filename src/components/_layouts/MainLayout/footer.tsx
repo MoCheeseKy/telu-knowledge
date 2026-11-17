@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Wrapper from "@/components/_shared/Wrapper";
 
+/** Footer utama aplikasi yang menampilkan ringkasan platform dan tautan navigasi. */
 export default function MainFooter() {
     return (
         <footer className="w-full border-t border-[var(--dust)] bg-[var(--background)] mt-auto">

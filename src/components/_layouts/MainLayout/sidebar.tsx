@@ -50,6 +50,10 @@ const navSections: NavSection[] = [
   },
 ];
 
+/**
+ * Sidebar drawer navigasi utama yang menampilkan daftar menu terkelompok,
+ * informasi akun yang sedang masuk, dan aksi keluar.
+ */
 export default function MainSidebar({ isOpen, onOpenChange }: MainSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -136,7 +140,6 @@ export default function MainSidebar({ isOpen, onOpenChange }: MainSidebarProps) 
             </nav>
           </div>
 
-          {/* User Info & Logout Button */}
           <div className="mt-8 pt-4 border-t border-[var(--dust)]">
             {user?.email && (
               <div className="px-3.5 pb-3">

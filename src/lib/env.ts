@@ -1,10 +1,5 @@
 import "server-only";
 
-/**
- * Modul pembaca dan validator environment variables sisi server.
- * Menjamin variabel wajib terisi dan memberikan pesan kesalahan yang jelas.
- */
-
 function getRequiredServerEnv(key: string): string {
   const value = process.env[key];
   if (!value || value.trim() === "") {
@@ -15,6 +10,10 @@ function getRequiredServerEnv(key: string): string {
   return value.trim().replace(/\/+$/, "");
 }
 
+/**
+ * Konfigurasi environment variables sisi server yang tervalidasi.
+ * Menjamin variabel wajib terisi dan memberikan pesan kesalahan yang jelas.
+ */
 export const serverEnv = {
   get API_BASE_URL(): string {
     return getRequiredServerEnv("API_BASE_URL");

@@ -2,6 +2,7 @@ import EditorLayout from "@/components/_layouts/EditorLayout";
 import AuthenticatedShell from "@/components/_shared/AuthenticatedShell";
 import { getSession } from "@/lib/auth/session";
 
+/** Layout grup rute editor yang memastikan sesi terautentikasi dan meneruskan nama penulis ke EditorLayout. */
 export default async function EditorRouteLayout({
     children,
 }: {

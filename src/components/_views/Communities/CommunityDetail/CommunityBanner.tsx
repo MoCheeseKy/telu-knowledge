@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CommunityBannerProps } from "./community-detail.types";
 
+/** Header banner komunitas yang menampilkan avatar, nama, ringkasan statistik, dan aksi bergabung. */
 export default function CommunityBanner({
   community,
   isJoined,
@@ -12,7 +13,6 @@ export default function CommunityBanner({
 }: CommunityBannerProps) {
   return (
     <section className="flex w-full flex-col">
-      {/* Banner + avatar */}
       <div className="relative">
         <div className="h-[120px] w-full rounded-xl bg-[var(--primary-text)] sm:h-[140px]" />
         <img
@@ -22,14 +22,12 @@ export default function CommunityBanner({
         />
       </div>
 
-      {/* Judul dan aksi */}
       <div className="flex flex-col gap-4 px-3 pt-10 sm:px-5 sm:pt-8 md:flex-row md:items-start md:justify-between md:gap-6">
         <div className="min-w-0 flex-1 md:pt-2">
           <h1 className="min-w-0 break-words font-sans text-[22px] font-bold leading-[1.25] text-[var(--foreground)] sm:text-[25px]">
             {community.name}
           </h1>
 
-          {/* Statistik ringkas (mobile) */}
           <p className="mt-1.5 flex flex-wrap items-center gap-x-2 font-sans text-[12px] text-[var(--muted)] lg:hidden">
             <span>
               <span className="font-semibold text-[var(--foreground)]">
