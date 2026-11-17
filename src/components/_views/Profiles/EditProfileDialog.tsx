@@ -12,11 +12,7 @@ import EditProfileForm from "./EditProfileForm";
 import { useProfile } from "./profile.context";
 import type { UpdateProfilePayload } from "@/services/profiles/profiles.types";
 import { useToast } from "@/components/ui/toast";
-
-interface EditProfileDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+import type { EditProfileDialogProps } from "./profile.types";
 
 export default function EditProfileDialog({
   open,

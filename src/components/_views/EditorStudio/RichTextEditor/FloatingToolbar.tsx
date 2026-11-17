@@ -21,12 +21,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { aiSelectionHighlightPluginKey } from "./ai-selection-highlight";
+import type { FloatingToolbarProps } from "./rich-text-editor.types";
 
-export interface FloatingToolbarProps {
-  editor: Editor;
-  onRequestAiHelp?: () => void;
-  isAiPanelOpen?: boolean;
-}
+export type { FloatingToolbarProps };
 
 const SCHEME_REGEX = /^[a-zA-Z][a-zA-Z0-9+.-]*:/;
 const ALLOWED_PROTOCOLS = new Set(["http:", "https:", "mailto:"]);

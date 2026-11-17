@@ -1,7 +1,7 @@
 "use client";
 
 import ActiveForumRecommendationCard from "./ActiveForumRecommendationCard";
-import { ActiveForumRecommendationsProps, dummyForums } from "./_types";
+import { ActiveForumRecommendationsProps, dummyForums } from "./active-forum-recommendations.types";
 import { cn } from "@/lib/utils";
 
 export default function ActiveForumRecommendations({

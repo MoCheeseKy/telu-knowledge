@@ -1,4 +1,4 @@
-import MyForumsView from "@/components/_views/MyForums";
+import MyForumsView from "@/components/_views/Forums/MyForums";
 
 export const metadata = {
   title: "Forum Saya | Tel-U Knowledge",

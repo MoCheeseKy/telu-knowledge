@@ -1,5 +1,5 @@
-import CommunityPostCreateView from "@/components/_views/CommunityPostCreate";
-import { getSampleCommunity } from "@/components/_views/CommunityDetail/types";
+import CommunityPostCreateView from "@/components/_views/Communities/CommunityPostCreate";
+import { getSampleCommunity } from "@/components/_views/Communities/CommunityDetail/community-detail.types";
 
 interface PageProps {
   params: Promise<{ id: string }>;

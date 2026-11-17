@@ -16,11 +16,8 @@ import Wrapper from "@/components/_shared/Wrapper";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMe } from "@/services/auth/auth.queries";
-import { useEditorStudio, type EditorSaveStatus } from "./context";
-
-interface EditorHeaderProps {
-    authorName?: string;
-}
+import { useEditorStudio } from "./context";
+import type { EditorHeaderProps, EditorSaveStatus } from "./editor-layout.types";
 
 const SAVE_STATUS_CONFIG: Record<
     EditorSaveStatus,

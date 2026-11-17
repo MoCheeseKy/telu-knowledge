@@ -206,7 +206,7 @@ export default function ProfileSidebar() {
             </div>
 
             <Link
-              href="/discovers-forums"
+              href="/discover-forums"
               className="mt-6 flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--foreground)] transition-colors group cursor-pointer"
             >
               <span>Lihat semua komunitas yang diikuti</span>

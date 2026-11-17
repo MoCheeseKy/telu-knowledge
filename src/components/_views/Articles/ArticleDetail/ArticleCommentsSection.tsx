@@ -1,0 +1,320 @@
+"use client";
+
+import React, { useState } from "react";
+import { MessageSquare, Send, Reply } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
+import type { ArticleComment } from "@/services/articles/articles.types";
+import { 
+  useArticleComments, 
+  useCreateArticleComment 
+} from "@/services/articles/article-comments.queries";
+import { formatDateTime as formatCommentDate } from "@/lib/formatters";
+import { getErrorMessage } from "@/lib/api/error-messages";
+import type { ArticleCommentsSectionProps } from "./article-detail.types";
+
+function CommentItem({
+  comment,
+  replies = [],
+  onReplySubmit,
+}: {
+  comment: ArticleComment;
+  replies?: ArticleComment[];
+  onReplySubmit: (parentId: string, content: string) => void;
+}) {
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyText, setReplyText] = useState("");
+
+  const author = comment.author;
+  const initial = (author.displayName || "U").charAt(0).toUpperCase();
+
+  const handleSendReply = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyText.trim()) return;
+    onReplySubmit(comment.id, replyText.trim());
+    setReplyText("");
+    setIsReplying(false);
+  };
+
+  return (
+    <div className="flex flex-col py-4 border-b border-[var(--dust)]/40 last:border-b-0">
+      {/* Baris identitas penulis komentar */}
+      <div className="flex items-center gap-2.5">
+        {author.avatarUrl ? (
+          <img
+            src={author.avatarUrl}
+            alt={author.displayName}
+            className="w-7 h-7 rounded-[4px] object-cover shrink-0"
+          />
+        ) : (
+          <div
+            aria-hidden="true"
+            style={{ backgroundColor: author.avatarColor || "var(--primary)" }}
+            className="w-7 h-7 rounded-[4px] text-white text-xs font-bold flex items-center justify-center shrink-0 select-none shadow-xs"
+          >
+            {initial}
+          </div>
+        )}
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="font-sans text-xs sm:text-sm font-semibold text-[var(--foreground)]">
+            {author.displayName}
+          </span>
+          {author.major && (
+            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-[var(--background-accent)] text-[var(--muted)]">
+              {author.major}
+            </span>
+          )}
+          <span className="text-[11px] text-[var(--muted)]">
+            • {formatCommentDate(comment.createdAt)}
+          </span>
+        </div>
+      </div>
+
+      {/* Isi teks komentar */}
+      <p className="font-sans text-[14px] sm:text-[15px] leading-relaxed text-[#2B2725] mt-2.5 pl-9">
+        {comment.content}
+      </p>
+
+      {/* Aksi balas komentar */}
+      <div className="mt-2 pl-9 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setIsReplying(!isReplying)}
+          className="inline-flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--primary-text)] font-medium transition-colors cursor-pointer"
+        >
+          <Reply className="w-3.5 h-3.5" />
+          <span>Balas</span>
+        </button>
+      </div>
+
+      {/* Form balasan komentar jika tombol balas diklik */}
+      {isReplying && (
+        <form
+          onSubmit={handleSendReply}
+          className="mt-3 pl-9 flex flex-col gap-2"
+        >
+          <textarea
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            placeholder={`Balas komentar ${author.displayName}...`}
+            rows={2}
+            className="w-full p-2.5 rounded-lg border border-[var(--dust)] text-xs font-sans text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] resize-none bg-[var(--background)]"
+          />
+          <div className="flex items-center justify-end gap-2">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setIsReplying(false);
+                setReplyText("");
+              }}
+              className="text-xs h-7 px-2.5 cursor-pointer text-[var(--muted)]"
+            >
+              Batal
+            </Button>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={!replyText.trim()}
+              className="text-xs h-7 px-3 bg-[var(--primary-text)] hover:opacity-90 text-white cursor-pointer"
+            >
+              Kirim Balasan
+            </Button>
+          </div>
+        </form>
+      )}
+
+      {/* Daftar balasan (nested replies) */}
+      {replies.length > 0 && (
+        <div className="mt-3 pl-6 border-l-2 border-[var(--dust)]/50 flex flex-col gap-3">
+          {replies.map((reply) => {
+            const rAuthor = reply.author;
+            const rInitial = (rAuthor.displayName || "U")
+              .charAt(0)
+              .toUpperCase();
+            return (
+              <div key={reply.id} className="flex flex-col py-1">
+                <div className="flex items-center gap-2">
+                  {rAuthor.avatarUrl ? (
+                    <img
+                      src={rAuthor.avatarUrl}
+                      alt={rAuthor.displayName}
+                      className="w-6 h-6 rounded-[3px] object-cover shrink-0"
+                    />
+                  ) : (
+                    <div
+                      aria-hidden="true"
+                      style={{
+                        backgroundColor: rAuthor.avatarColor || "var(--primary)",
+                      }}
+                      className="w-6 h-6 rounded-[3px] text-white text-[10px] font-bold flex items-center justify-center shrink-0 select-none"
+                    >
+                      {rInitial}
+                    </div>
+                  )}
+                  <span className="font-sans text-xs font-semibold text-[var(--foreground)]">
+                    {rAuthor.displayName}
+                  </span>
+                  <span className="text-[11px] text-[var(--muted)]">
+                    • {formatCommentDate(reply.createdAt)}
+                  </span>
+                </div>
+                <p className="font-sans text-[13px] sm:text-[14px] leading-relaxed text-[#2B2725] mt-1.5 pl-8">
+                  {reply.content}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function ArticleCommentsSection({
+  articleId,
+  initialComments,
+}: ArticleCommentsSectionProps) {
+  const { toast } = useToast();
+  const [commentText, setCommentText] = useState("");
+
+  // 1. Ambil data komentar dari API / Mock Server
+  const {
+    data: apiComments,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useArticleComments(articleId);
+
+  // 2. Siapkan mutasi untuk mengirim komentar
+  const createCommentMutation = useCreateArticleComment(articleId || "");
+
+  // Gunakan data API. Jika API belum mengembalikan data (loading), fallback ke initialComments
+  const comments = apiComments || initialComments || [];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim() || !articleId) return;
+
+    createCommentMutation.mutate(
+      { content: commentText.trim() },
+      {
+        onSuccess: () => {
+          setCommentText(""); // Kosongkan input setelah sukses
+          toast.success("Komentar berhasil dikirim!");
+        },
+        onError: (err) => {
+          toast.error(
+            getErrorMessage(err, "Gagal mengirim komentar. Silakan coba lagi.")
+          );
+        },
+      }
+    );
+  };
+
+  const handleReplySubmit = (parentId: string, content: string) => {
+    if (!articleId) return;
+    createCommentMutation.mutate(
+      { content, parent_id: parentId },
+      {
+        onSuccess: () => {
+          toast.success("Balasan berhasil dikirim!");
+        },
+        onError: (err) => {
+          toast.error(getErrorMessage(err, "Gagal mengirim balasan."));
+        },
+      }
+    );
+  };
+
+  // Pisahkan root comments (tanpa parent_id) dan replies (berdasarkan parent_id)
+  const rootComments = comments.filter((c) => !c.parentId);
+  const repliesMap = comments.reduce<Record<string, ArticleComment[]>>(
+    (acc, c) => {
+      if (c.parentId) {
+        if (!acc[c.parentId]) acc[c.parentId] = [];
+        acc[c.parentId].push(c);
+      }
+      return acc;
+    },
+    {}
+  );
+
+  return (
+    <section id="komentar" className="mt-10 flex flex-col w-full scroll-mt-24">
+      <div className="flex items-center gap-2 mb-4">
+        <MessageSquare className="w-5 h-5 text-[var(--primary-text)]" />
+        <h3 className="font-sans text-lg font-bold text-[var(--foreground)]">
+          Komentar & Diskusi ({comments.length})
+        </h3>
+      </div>
+
+      {/* Form tambah komentar baru */}
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-2.5 p-4 rounded-xl border border-[var(--dust)] bg-[var(--background)] shadow-2xs"
+      >
+        <textarea
+          value={commentText}
+          onChange={(e) => setCommentText(e.target.value)}
+          placeholder="Tulis tanggapan atau pertanyaan Anda terkait artikel ini..."
+          rows={3}
+          className="w-full p-3 rounded-lg border border-[var(--dust)] text-xs sm:text-sm font-sans text-[var(--foreground)] placeholder:text-[var(--muted)] focus:outline-none focus:ring-1 focus:ring-[var(--primary)] resize-none bg-[var(--background)]"
+        />
+
+        <div className="flex items-center justify-end">
+          <Button
+            type="submit"
+            size="sm"
+            disabled={!commentText.trim() || createCommentMutation.isPending}
+            className="gap-1.5 text-xs font-semibold px-4 py-2 bg-[var(--primary-text)] hover:opacity-90 text-white rounded-lg cursor-pointer disabled:opacity-50"
+          >
+            <Send className="w-3.5 h-3.5" />
+            <span>
+              {createCommentMutation.isPending ? "Mengirim..." : "Kirim Komentar"}
+            </span>
+          </Button>
+        </div>
+      </form>
+
+      {/* Daftar komentar */}
+      <div className="mt-6 flex flex-col">
+        {isLoading ? (
+          <p className="py-8 text-center text-xs text-[var(--muted)] font-sans">
+            Memuat komentar...
+          </p>
+        ) : isError ? (
+          <div className="py-8 flex flex-col items-center justify-center text-center gap-2 border border-dashed border-[var(--dust)] rounded-xl">
+            <p className="text-xs text-[var(--failed)] font-medium">
+              {getErrorMessage(error, "Gagal memuat komentar artikel.")}
+            </p>
+            <button
+              type="button"
+              onClick={() => refetch()}
+              className="text-xs text-[var(--primary-text)] font-semibold hover:underline cursor-pointer"
+            >
+              Coba lagi
+            </button>
+          </div>
+        ) : rootComments.length === 0 ? (
+          <p className="py-8 text-center text-xs text-[var(--muted)] font-sans">
+            Belum ada komentar pada artikel ini. Jadilah yang pertama memberikan
+            tanggapan!
+          </p>
+        ) : (
+          rootComments.map((comment) => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              replies={repliesMap[comment.id] || []}
+              onReplySubmit={handleReplySubmit}
+            />
+          ))
+        )}
+      </div>
+    </section>
+  );
+}

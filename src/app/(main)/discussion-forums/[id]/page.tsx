@@ -1,4 +1,4 @@
-import DiscussionForumDetailView from "@/components/_views/DiscussionForumDetail";
+import DiscussionForumDetailView from "@/components/_views/Forums/DiscussionForumDetail";
 
 interface PageProps {
   params: Promise<{ id: string }>;

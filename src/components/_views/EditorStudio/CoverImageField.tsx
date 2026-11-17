@@ -8,17 +8,13 @@ import { Button } from "@/components/ui/button";
 import { isApiError } from "@/lib/api/errors";
 import { cn } from "@/lib/utils";
 import { useUploadArticleImage } from "@/services/articles/articles.queries";
+import type { CoverImageFieldProps } from "./editor-studio.types";
+
+export type { CoverImageFieldProps };
 
 const MAX_FILE_SIZE_BYTES = 4 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES =
   "image/png,image/jpeg,image/webp,image/gif";
-
-export interface CoverImageFieldProps {
-  value: string | null;
-  onChange: (url: string | null) => void;
-  disabled?: boolean;
-  className?: string;
-}
 
 export default function CoverImageField({
   value,

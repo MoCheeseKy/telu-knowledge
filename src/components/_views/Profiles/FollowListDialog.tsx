@@ -11,15 +11,9 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useMyFollowers, useMyFollowing } from "@/services/profiles/profiles.queries";
 import type { FollowUserDto } from "@/services/profiles/profiles.types";
+import type { FollowListDialogProps, FollowTab } from "./profile.types";
 
-export type FollowTab = "followers" | "following";
-
-interface FollowListDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  tab: FollowTab;
-  onTabChange: (tab: FollowTab) => void;
-}
+export type { FollowTab };
 
 function FollowList({
   users,

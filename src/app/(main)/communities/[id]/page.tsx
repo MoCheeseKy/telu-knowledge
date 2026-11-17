@@ -1,5 +1,5 @@
-import CommunityDetailView from "@/components/_views/CommunityDetail";
-import { getSampleCommunity } from "@/components/_views/CommunityDetail/types";
+import CommunityDetailView from "@/components/_views/Communities/CommunityDetail";
+import { getSampleCommunity } from "@/components/_views/Communities/CommunityDetail/community-detail.types";
 
 interface PageProps {
   params: Promise<{ id: string }>;

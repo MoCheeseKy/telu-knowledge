@@ -41,16 +41,13 @@ import {
   type EditorDraftSnapshot,
   type EditorLocalBackup,
 } from "../../../hooks/useDraftAutosave";
+import type {
+  EditorStudioCanvasProps,
+  EditorStudioViewProps,
+  ToastState,
+} from "./editor-studio.types";
 
-export interface EditorStudioViewProps {
-  articleId?: string;
-  onRequestAiHelp?: () => void;
-}
-
-interface ToastState {
-  variant: "success" | "error";
-  message: string;
-}
+export type { EditorStudioViewProps };
 
 function normalizeArticleContent(raw: unknown): JSONContent {
   if (
@@ -118,11 +115,6 @@ function EditorStudioSkeleton() {
       </div>
     </div>
   );
-}
-
-interface EditorStudioCanvasProps {
-  initialArticle: Article | null;
-  onRequestAiHelp?: () => void;
 }
 
 function EditorStudioCanvas({

@@ -25,6 +25,41 @@ export interface UserProfile {
   showCommunities: boolean;
 }
 
+export interface ProfileContextType {
+  profile: UserProfile;
+  /**
+   * Menyimpan pembaruan profil secara persisten ke mock server
+   * (PATCH /proxy/profiles/me). Melempar error bila gagal — pemanggil
+   * (form) menampilkannya lewat FormAlert.
+   */
+  updateProfile: (payload: UpdateProfilePayload) => Promise<void>;
+  isLoading: boolean;
+  isError: boolean;
+  refetchProfile: () => void;
+  isEditDialogOpen: boolean;
+  setIsEditDialogOpen: (open: boolean) => void;
+}
+
+export interface EditProfileDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export interface EditProfileFormProps {
+  initialData: UserProfile;
+  onSave: (payload: UpdateProfilePayload) => void | Promise<void>;
+  onCancel?: () => void;
+}
+
+export type FollowTab = "followers" | "following";
+
+export interface FollowListDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  tab: FollowTab;
+  onTabChange: (tab: FollowTab) => void;
+}
+
 export const SAMPLE_FOLLOW_STATS = (
   dto: Pick<ProfileDto, "followersCount" | "followingCount">
 ) => ({
