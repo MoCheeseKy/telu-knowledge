@@ -175,8 +175,8 @@ const handleArticleDetail = (req, res, next) => {
   );
   const isFollowingAuthor = author
     ? (db.follows || []).some(
-        (f) => f.follower_id === MOCK_ME_ID && f.following_id === author.id
-      )
+      (f) => f.follower_id === MOCK_ME_ID && f.following_id === author.id
+    )
     : false;
 
   // Komentar pada artikel
@@ -958,9 +958,9 @@ const handleCreateCommunityPost = (req, res) => {
     flair: typeof flair === 'string' && flair.trim() ? flair.trim() : null,
     tags: Array.isArray(tags)
       ? tags
-          .filter((t) => typeof t === 'string' && t.trim())
-          .map((t) => t.trim())
-          .slice(0, 6)
+        .filter((t) => typeof t === 'string' && t.trim())
+        .map((t) => t.trim())
+        .slice(0, 6)
       : [],
     status: 'aktif',
     is_highlighted: false,
@@ -1292,8 +1292,12 @@ const enrichProfile = (profile) => ({
   linkedin: profile.linkedin || null,
   showEmail: Boolean(profile.show_email),
   showCommunities: profile.show_communities !== false,
-  followersCount: profile.followers_count || 0,
-  followingCount: profile.following_count || 0,
+  followersCount: (router.db.getState().follows || []).filter(
+    (f) => f.following_id === profile.id
+  ).length,
+  followingCount: (router.db.getState().follows || []).filter(
+    (f) => f.follower_id === profile.id
+  ).length,
   createdAt: profile.created_at,
 });
 
@@ -1486,3 +1490,78 @@ server.listen(PORT, () => {
   console.log(`📁 Seed: ${seedFile}`);
   console.log(`======================================================\n`);
 });
+
+//12. Endpoint Forum/Komunitas yang diikuti viewer
+const handleJoinedCommunities = (req, res) => {
+  const db = router.db.getState();
+  const data = (db.community_members || [])
+    .filter((m) => m.user_id === MOCK_ME_ID)
+    .map((m) => {
+      const c = (db.communities || []).find((x) => x.id === m.community_id);
+      if (!c) return null;
+      return {
+        id: c.id,
+        title: c.name,
+        description: c.description || '',
+        activeMemberCount: `${(c.member_count || 0).toLocaleString('id-ID')} Anggota`,
+        isFollowing: true,
+        href: `/communities/${c.id}`,
+        role: m.role,
+        joinedAt: m.joined_at,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => new Date(b.joinedAt) - new Date(a.joinedAt));
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar forum yang diikuti berhasil diambil'],
+    data,
+    isError: false,
+  });
+};
+
+server.get('/api/communities/joined', handleJoinedCommunities);
+server.get('/communities/joined', handleJoinedCommunities);
+
+// 13. Daftar Pengikut / Diikuti milik sendiri
+const toFollowUser = (profile, db, followedAt) => ({
+  id: profile.id,
+  displayName: profile.display_name || 'Anggota Tel-U',
+  username: profile.username || null,
+  avatarUrl: profile.avatar_url || null,
+  avatarColor: profile.avatar_color || '#E53E3E',
+  bio: profile.bio || '',
+  isFollowing: (db.follows || []).some(
+    (f) => f.follower_id === MOCK_ME_ID && f.following_id === profile.id
+  ),
+  followedAt,
+});
+
+const buildFollowListHandler = (direction) => (req, res) => {
+  const db = router.db.getState();
+  const isFollowers = direction === 'followers';
+  const data = (db.follows || [])
+    .filter((f) =>
+      isFollowers ? f.following_id === MOCK_ME_ID : f.follower_id === MOCK_ME_ID
+    )
+    .map((f) => {
+      const otherId = isFollowers ? f.follower_id : f.following_id;
+      const p = (db.profiles || []).find((x) => x.id === otherId && !x.deleted_at);
+      return p ? toFollowUser(p, db, f.created_at) : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => new Date(b.followedAt) - new Date(a.followedAt));
+
+  return res.json({
+    statusCode: 200,
+    message: [isFollowers ? 'Daftar pengikut berhasil diambil' : 'Daftar diikuti berhasil diambil'],
+    data,
+    isError: false,
+  });
+};
+
+server.get('/api/profiles/me/followers', buildFollowListHandler('followers'));
+server.get('/profiles/me/followers', buildFollowListHandler('followers'));
+server.get('/api/profiles/me/following', buildFollowListHandler('following'));
+server.get('/profiles/me/following', buildFollowListHandler('following'));

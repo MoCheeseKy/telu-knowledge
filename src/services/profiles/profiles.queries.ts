@@ -1,11 +1,29 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { profilesApi } from "./profiles.api";
-import type { ProfileDto, UpdateProfilePayload } from "./profiles.types";
+import type { FollowUserDto, ProfileDto, UpdateProfilePayload } from "./profiles.types";
 
 export const profileKeys = {
   all: ["profiles"] as const,
   me: ["profiles", "me"] as const,
+  followers: ["profiles", "followers"] as const,
+  following: ["profiles", "following"] as const,
 };
+
+export function useMyFollowers(enabled = true) {
+  return useQuery<FollowUserDto[]>({
+    queryKey: profileKeys.followers,
+    queryFn: async () => (await profilesApi.getMyFollowers()).data,
+    enabled,
+  });
+}
+
+export function useMyFollowing(enabled = true) {
+  return useQuery<FollowUserDto[]>({
+    queryKey: profileKeys.following,
+    queryFn: async () => (await profilesApi.getMyFollowing()).data,
+    enabled,
+  });
+}
 
 /**
  * Hook query detail profil milik sendiri (GET /proxy/profiles/me).

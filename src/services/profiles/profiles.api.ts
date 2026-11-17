@@ -1,6 +1,6 @@
 import { apiFetch } from "@/lib/api/client";
 import type { ApiEnvelope } from "@/lib/api/types";
-import type { MyProfileData, UpdateProfilePayload } from "./profiles.types";
+import type { FollowUserDto, MyProfileData, UpdateProfilePayload } from "./profiles.types";
 
 /**
  * Mengambil detail profil milik sendiri (GET /proxy/profiles/me).
@@ -41,8 +41,24 @@ export async function deleteMyAccount(): Promise<ApiEnvelope<null>> {
   });
 }
 
+export async function getMyFollowers(): Promise<ApiEnvelope<FollowUserDto[]>> {
+  return apiFetch<FollowUserDto[]>("/proxy/profiles/me/followers", {
+    method: "GET",
+    source: "mock",
+  });
+}
+
+export async function getMyFollowing(): Promise<ApiEnvelope<FollowUserDto[]>> {
+  return apiFetch<FollowUserDto[]>("/proxy/profiles/me/following", {
+    method: "GET",
+    source: "mock",
+  });
+}
+
 export const profilesApi = {
   getMyProfile,
   updateMyProfile,
   deleteMyAccount,
+  getMyFollowers,
+  getMyFollowing,
 };

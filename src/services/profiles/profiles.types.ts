@@ -25,6 +25,18 @@ export interface ProfileDto {
   createdAt: string;
 }
 
+export interface FollowUserDto {
+  id: string;
+  displayName: string;
+  username: string | null;
+  avatarUrl: string | null;
+  avatarColor: string;
+  bio: string;
+  /** Apakah viewer (akun mock) mengikuti orang ini. */
+  isFollowing: boolean;
+  followedAt: string;
+}
+
 export interface MyProfileData {
   profile: ProfileDto;
 }
