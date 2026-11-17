@@ -14,6 +14,7 @@ const communities = [
   { id: 4, name: "Desain Grafis", desc: "Komunitas desain & multimedia...", members: "64.000 Anggota" },
 ];
 
+/** Ikon SVG GitHub untuk tautan eksternal profil. */
 function GithubIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -22,6 +23,7 @@ function GithubIcon({ className }: { className?: string }) {
   );
 }
 
+/** Ikon SVG LinkedIn untuk tautan eksternal profil. */
 function LinkedinIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -30,6 +32,10 @@ function LinkedinIcon({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Sidebar profil pengguna yang menampilkan avatar, identitas, statistik koneksi,
+ * info akademik, tautan eksternal, aksi ubah profil, dan daftar komunitas aktif.
+ */
 export default function ProfileSidebar() {
   const { profile, isEditDialogOpen, setIsEditDialogOpen } = useProfile();
   const [followingStates, setFollowingStates] = useState<Record<number, boolean>>({
@@ -51,7 +57,6 @@ export default function ProfileSidebar() {
   return (
     <>
       <aside className="w-full lg:w-72 lg:shrink-0 lg:border-l lg:border-[var(--dust)]/60 lg:pl-8">
-        {/* Avatar */}
         <div className="mb-4 relative">
           {profile.avatarUrl ? (
             <img
@@ -69,7 +74,6 @@ export default function ProfileSidebar() {
           )}
         </div>
 
-        {/* Identity */}
         <h2 className="font-semibold text-base text-[var(--foreground)] leading-tight">
           {profile.fullName || profile.username}
         </h2>
@@ -77,7 +81,6 @@ export default function ProfileSidebar() {
           @{profile.username}
         </p>
 
-        {/* Followers / Following */}
         <p className="mb-3 text-xs text-[var(--muted)]">
           <button
             type="button"
@@ -96,12 +99,10 @@ export default function ProfileSidebar() {
           </button>
         </p>
 
-        {/* Bio */}
         <p className="mb-4 text-xs text-[var(--foreground)]/80 leading-relaxed">
           {profile.bio}
         </p>
 
-        {/* Akademik Info jika diisi */}
         {(profile.faculty || profile.major) && (
           <div className="mb-4 p-2.5 rounded-lg bg-[var(--background-accent)]/60 text-[11px] text-[var(--muted)] flex flex-col gap-1 border border-[var(--dust)]/40">
             {profile.major && <span className="font-medium text-[var(--foreground)]">{profile.major}</span>}
@@ -110,7 +111,6 @@ export default function ProfileSidebar() {
           </div>
         )}
 
-        {/* Social / External links */}
         {(profile.website || profile.github || profile.linkedin) && (
           <div className="mb-4 flex items-center gap-2 text-[var(--muted)]">
             {profile.website && (
@@ -149,7 +149,6 @@ export default function ProfileSidebar() {
           </div>
         )}
 
-        {/* Action Link: Edit profile */}
         <div className="flex items-center gap-2 mb-6">
           <button
             type="button"
@@ -168,7 +167,6 @@ export default function ProfileSidebar() {
           </Link>
         </div>
 
-        {/* Komunitas Aktif */}
         {profile.showCommunities && (
           <div className="border-t border-[var(--dust)] pt-6">
             <h3 className="mb-4 text-xs font-bold text-[var(--primary-text)] uppercase tracking-wider">
@@ -216,7 +214,6 @@ export default function ProfileSidebar() {
         )}
       </aside>
 
-      {/* Edit Profile Dialog Modal */}
       <EditProfileDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}

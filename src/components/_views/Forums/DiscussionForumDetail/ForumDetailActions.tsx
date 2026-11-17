@@ -11,6 +11,9 @@ import type { ForumDetailActionsProps } from "./discussion-forum-detail.types";
 const actionButtonClass =
   "h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4 transition-colors cursor-pointer";
 
+/**
+ * Bar aksi interaktif pada detail postingan forum (suka, komentar, repost, simpan, dan bagikan tautan).
+ */
 export default function ForumDetailActions({
   postId,
   initialScore,
@@ -65,7 +68,6 @@ export default function ForumDetailActions({
 
   return (
     <div className="mt-8 flex items-center justify-between gap-2 border-y border-[var(--dust)]/40 py-3">
-      {/* Suka, Komentar, Repost */}
       <div className="flex items-center gap-1 sm:gap-2">
         <Button
           type="button"
@@ -130,7 +132,6 @@ export default function ForumDetailActions({
         </Button>
       </div>
 
-      {/* Simpan & Bagikan */}
       <div className="flex items-center gap-1">
         <Button
           type="button"

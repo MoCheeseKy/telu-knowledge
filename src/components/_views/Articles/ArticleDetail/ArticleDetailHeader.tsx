@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import type { ArticleDetailHeaderProps } from "./article-detail.types";
 
+/**
+ * Header bagian atas halaman detail artikel yang menyediakan tombol navigasi kembali.
+ */
 export default function ArticleDetailHeader({}: ArticleDetailHeaderProps) {
   const router = useRouter();
 
   return (
     <div className="flex flex-col w-full mb-4">
-      {/* Tombol kembali ke halaman sebelumnya */}
       <button
         type="button"
         onClick={() => router.back()}

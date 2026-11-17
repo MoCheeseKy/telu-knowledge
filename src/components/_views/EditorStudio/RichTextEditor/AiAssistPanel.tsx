@@ -41,6 +41,12 @@ const QUICK_ACTION_CHIPS: ReadonlyArray<{
     { label: "Perbaiki tata bahasa", action: "fix_grammar" },
   ];
 
+/**
+ * Memeriksa apakah error berasal dari pembatalan permintaan (AbortError).
+ *
+ * @param error - Objek error yang ditangkap saat pemanggilan API AI.
+ * @returns `true` jika error merupakan `AbortError`, selain itu `false`.
+ */
 function isAbortError(error: unknown): boolean {
   if (!error) return false;
   if (error instanceof DOMException && error.name === "AbortError") {
@@ -52,6 +58,12 @@ function isAbortError(error: unknown): boolean {
   return false;
 }
 
+/**
+ * Memformat error dari layanan AI menjadi pesan yang ramah pengguna berbahasa Indonesia.
+ *
+ * @param error - Error dari mutasi bantuan AI.
+ * @returns Pesan kesalahan yang siap ditampilkan di UI.
+ */
 function formatAiErrorMessage(error: unknown): string {
   if (isApiError(error)) {
     if (error.statusCode === 429) {
@@ -65,6 +77,10 @@ function formatAiErrorMessage(error: unknown): string {
   return "Gagal memproses permintaan bantuan AI. Silakan coba lagi.";
 }
 
+/**
+ * Panel mengambang Bantuan AI Telu yang menempel pada rentang teks terpilih di editor,
+ * mendukung aksi cepat, instruksi kustom, serta opsi ganti atau sisipkan hasil ke dokumen.
+ */
 export default function AiAssistPanel({
   editor,
   session,
@@ -153,7 +169,6 @@ export default function AiAssistPanel({
     };
   }, [updatePanelPosition, resultText, errorMessage, isLoading]);
 
-  // Fokus otomatis ke textarea saat panel dibuka & abort request saat unmount
   useEffect(() => {
     requestAnimationFrame(() => {
       textareaRef.current?.focus();
@@ -164,7 +179,6 @@ export default function AiAssistPanel({
     };
   }, []);
 
-  // Pintasan Escape untuk menutup panel dan mengembalikan seleksi
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -330,7 +344,6 @@ export default function AiAssistPanel({
         coords ? "opacity-100" : "opacity-0 pointer-events-none"
       )}
     >
-      {/* Kartu Preview Teks Terpilih + Chip Selection (sesuai FLOATING_AI_HELP.png) */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div className="w-fit max-w-[260px] rounded-2xl border border-[var(--dust)] bg-[var(--background-accent)]/60 p-3 flex flex-col justify-between gap-3">
           <p className="text-xs leading-relaxed text-[var(--muted)] line-clamp-2">
@@ -342,7 +355,6 @@ export default function AiAssistPanel({
           </div>
         </div>
 
-        {/* Chip Aksi Cepat */}
         <div
           role="group"
           aria-label="Aksi cepat AI"
@@ -372,7 +384,6 @@ export default function AiAssistPanel({
         </div>
       </div>
 
-      {/* TODO(design): Sesuaikan tampilan bagian loading, error, dan hasil generasi AI bila desain final tersedia */}
       {isLoading && (
         <div
           role="status"
@@ -451,7 +462,6 @@ export default function AiAssistPanel({
         </div>
       )}
 
-      {/* Input Area "Ask Telu…" + Tombol + (disabled) & Tombol Kirim Merah */}
       <div className="flex flex-col gap-2 pt-1">
         <textarea
           ref={textareaRef}

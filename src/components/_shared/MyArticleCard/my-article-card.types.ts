@@ -1,3 +1,6 @@
+/**
+ * Representasi data ringkas satu artikel milik pengguna.
+ */
 export interface MyArticleItem {
     id?: string | number;
     title: string;
@@ -7,6 +10,9 @@ export interface MyArticleItem {
     imageUrl?: string;
 }
 
+/**
+ * Properti untuk komponen {@link MyArticleCard}.
+ */
 export interface MyArticleCardProps {
     id?: string | number;
     title: string;
@@ -75,7 +81,7 @@ export const dummyDraftArticles: MyArticleItem[] = [
     },
 
 ];
-// Data khusus Tab Terjadwal
+
 export const dummyScheduledArticles: MyArticleItem[] = [
     {
         id: 1,
@@ -85,7 +91,7 @@ export const dummyScheduledArticles: MyArticleItem[] = [
         updatedAt: "Terjadwal 26 Oktober 2026",
     },
 ];
-// Data khusus Tab Diterbitkan
+
 export const dummyPublishedArticles: MyArticleItem[] = [
     {
         id: 3,

@@ -1,8 +1,7 @@
 /**
- * Kontrak data postingan forum/komunitas (mock server: forum_posts).
+ * Informasi penulis postingan forum/komunitas (mock server: forum_posts).
  * Ditulis manual karena endpoint mock belum tercakup OpenAPI schema backend.
  */
-
 export interface CommunityPostAuthor {
   id: string;
   displayName: string;
@@ -14,6 +13,7 @@ export interface CommunityPostAuthor {
   generation?: string | null;
 }
 
+/** Data postingan forum atau komunitas. */
 export interface CommunityPostDto {
   id: string;
   communityId: string;
@@ -39,6 +39,7 @@ export interface CommunityPostDto {
   author: CommunityPostAuthor;
 }
 
+/** Payload untuk membuat postingan komunitas/forum baru. */
 export interface CreateCommunityPostPayload {
   title: string;
   content: string;
@@ -48,42 +49,45 @@ export interface CreateCommunityPostPayload {
   imageCaption?: string | null;
 }
 
+/** Variabel mutasi untuk membuat postingan komunitas. */
 export interface CreateCommunityPostVariables {
   communityId: string;
   payload: CreateCommunityPostPayload;
 }
 
 /**
- * Patch parsial: field yang tidak dikirim tidak diubah;
+ * Payload pembaruan parsial postingan: field yang tidak dikirim tidak diubah;
  * null eksplisit untuk menghapus coverImageUrl / imageCaption / flair.
  */
 export type UpdateCommunityPostPayload = Partial<CreateCommunityPostPayload>;
 
+/** Variabel mutasi untuk memperbarui postingan komunitas. */
 export interface UpdateCommunityPostVariables {
   communityId: string;
   postId: string;
   payload: UpdateCommunityPostPayload;
 }
 
+/** Variabel mutasi untuk menghapus postingan komunitas. */
 export interface DeleteCommunityPostVariables {
   communityId: string;
   postId: string;
 }
 
+/** Status dan jumlah repost satu postingan forum. */
 export interface RepostStatusDto {
   isReposted: boolean;
   repostsCount: number;
 }
 
+/** Item postingan forum yang di-repost oleh pengguna. */
 export interface UserRepostItemDto {
   repostId: string;
   repostedAt: string;
   post: CommunityPostDto;
 }
 
-/**
- * Tipe data komentar postingan forum (mock server: forum_comments).
- */
+/** Informasi penulis komentar postingan forum (mock server: forum_comments). */
 export interface ForumCommentAuthor {
   id: string;
   displayName: string;
@@ -95,6 +99,7 @@ export interface ForumCommentAuthor {
   generation?: string | null;
 }
 
+/** Data komentar atau balasan pada postingan forum (mock server: forum_comments). */
 export interface ForumCommentDto {
   id: string;
   postId: string;
@@ -108,36 +113,43 @@ export interface ForumCommentDto {
   author: ForumCommentAuthor;
 }
 
+/** Payload untuk menambahkan komentar atau balasan baru pada postingan forum. */
 export interface CreateForumCommentPayload {
   content: string;
   parentId?: string | null;
 }
 
+/** Payload untuk memperbarui isi komentar pada postingan forum. */
 export interface UpdateForumCommentPayload {
   content: string;
 }
 
+/** Variabel mutasi untuk menambahkan komentar pada postingan forum. */
 export interface CreateForumCommentVariables {
   postId: string;
   payload: CreateForumCommentPayload;
 }
 
+/** Variabel mutasi untuk memperbarui komentar pada postingan forum. */
 export interface UpdateForumCommentVariables {
   postId: string;
   commentId: string;
   payload: UpdateForumCommentPayload;
 }
 
+/** Variabel mutasi untuk menghapus komentar pada postingan forum. */
 export interface DeleteForumCommentVariables {
   postId: string;
   commentId: string;
 }
 
+/** Variabel mutasi untuk memperbarui postingan forum berdasarkan ID postingan. */
 export interface UpdateForumPostVariables {
   postId: string;
   payload: UpdateCommunityPostPayload;
 }
 
+/** Payload untuk membuat komunitas atau forum baru. */
 export interface CreateCommunityPayload {
   name: string;
   description: string;
@@ -147,6 +159,7 @@ export interface CreateCommunityPayload {
   avatarColor?: string;
 }
 
+/** Data item komunitas atau forum. */
 export interface CommunityItemDto {
   id: string;
   creator_id?: string;

@@ -22,6 +22,9 @@ import { getErrorMessage } from "@/lib/api/error-messages";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import type { ArticleDetailActionsProps } from "./article-detail.types";
 
+/**
+ * Bar aksi interaksi artikel meliputi suka, navigasi ke komentar, repost, bookmark, dan salin tautan.
+ */
 export default function ArticleDetailActions({
   article,
 }: ArticleDetailActionsProps) {
@@ -117,7 +120,6 @@ export default function ArticleDetailActions({
 
   return (
     <div className="mt-8 flex items-center justify-between gap-2 border-y border-[var(--dust)]/40 py-3">
-      {/* Sisi Kiri: Suka & Komentar */}
       <div className="flex items-center gap-1 sm:gap-2">
         <Button
           type="button"
@@ -155,7 +157,6 @@ export default function ArticleDetailActions({
         </Button>
       </div>
 
-      {/* Sisi Kanan: Repost, Bookmark, Share */}
       <div className="flex items-center gap-1 sm:gap-2">
         <Button
           type="button"

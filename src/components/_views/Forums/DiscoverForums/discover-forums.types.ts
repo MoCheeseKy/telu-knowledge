@@ -1,3 +1,6 @@
+/**
+ * Representasi item komunitas pada halaman Jelajah Forum.
+ */
 export interface DiscoverCommunityItem {
   id: string | number;
   name: string;
@@ -8,6 +11,9 @@ export interface DiscoverCommunityItem {
   image: string;
 }
 
+/**
+ * Properti untuk komponen kartu komunitas pada halaman Jelajah Forum.
+ */
 export interface CommunityCardProps {
   community: DiscoverCommunityItem;
   followed: boolean;

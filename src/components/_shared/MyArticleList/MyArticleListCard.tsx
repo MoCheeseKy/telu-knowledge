@@ -7,6 +7,10 @@ import { cn } from "@/lib/utils";
 
 export { dummyMyLists };
 
+/**
+ * Kartu daftar bacaan (reading list) milik pengguna yang menampilkan pemilik,
+ * judul, jumlah artikel, status privasi, dan gambar sampul.
+ */
 export default function MyArticleListCard({
     ownerName,
     ownerAvatarUrl,

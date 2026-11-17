@@ -1,6 +1,10 @@
 import ArticleCard from "@/components/_shared/ArticleCard";
 import MyArticleList from "@/components/_shared/MyArticleList";
 
+/**
+ * Halaman koleksi/perpustakaan pengguna yang menampilkan daftar artikel tersimpan
+ * beserta daftar artikel milik pengguna di sidebar.
+ */
 export default function LibrariesView() {
     return (
          <div className="w-full flex flex-col lg:flex-row items-start justify-between gap-10 lg:gap-12 xl:gap-16 py-2 sm:py-6">

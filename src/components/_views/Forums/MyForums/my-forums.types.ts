@@ -1,9 +1,15 @@
+/**
+ * Struktur input aturan komunitas saat membuat forum baru.
+ */
 export interface CommunityRuleInput {
   id: number;
   title: string;
   description: string;
 }
 
+/**
+ * Representasi item komunitas milik atau yang diikuti pengguna pada halaman Forum Saya.
+ */
 export interface MyCommunityItem {
   id: string | number;
   name: string;
@@ -22,6 +28,9 @@ export interface MyCommunityItem {
   isFollowing: boolean;
 }
 
+/**
+ * Representasi ringkas postingan forum buatan pengguna pada tab Postingan Saya.
+ */
 export interface MyForumPostItem {
   id: string | number;
   title: string;
@@ -33,22 +42,34 @@ export interface MyForumPostItem {
   status: "Aktif" | "Pin" | "Terkunci";
 }
 
+/**
+ * Properti untuk dialog pembuatan komunitas baru.
+ */
 export interface CreateCommunityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreate: (community: MyCommunityItem) => void;
 }
 
+/**
+ * Draf aturan sementara pada formulir pembuatan komunitas.
+ */
 export interface RuleDraft {
   title: string;
   description: string;
 }
 
+/**
+ * Properti untuk komponen kartu komunitas pada halaman Forum Saya.
+ */
 export interface MyForumCardProps {
   item: MyCommunityItem;
   onToggleFollow: (id: string | number) => void;
 }
 
+/**
+ * Daftar komunitas awal sebagai data fallback saat data API belum tersedia.
+ */
 export const initialCommunities: MyCommunityItem[] = [
   {
     id: 1,
@@ -142,6 +163,9 @@ export const initialCommunities: MyCommunityItem[] = [
   },
 ];
 
+/**
+ * Daftar postingan forum awal sebagai data fallback saat pengguna belum memiliki postingan dari API.
+ */
 export const initialMyPosts: MyForumPostItem[] = [
   {
     id: 1,

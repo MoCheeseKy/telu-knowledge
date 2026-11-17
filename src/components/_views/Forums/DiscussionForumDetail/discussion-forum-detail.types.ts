@@ -4,6 +4,9 @@ import type {
 } from "@/services/communities/community-posts.types";
 import { formatDate, formatDateTime } from "@/lib/formatters";
 
+/**
+ * Representasi komentar pada utas diskusi forum beserta daftar balasannya.
+ */
 export interface ForumComment {
   id: string | number;
   authorId?: string;
@@ -22,6 +25,9 @@ export interface ForumComment {
   replies?: ForumComment[];
 }
 
+/**
+ * Struktur data lengkap untuk halaman detail postingan forum diskusi.
+ */
 export interface ForumPostDetail {
   id: string | number;
   title: string;
@@ -53,20 +59,32 @@ export interface ForumPostDetail {
   comments: ForumComment[];
 }
 
+/**
+ * Properti untuk komponen tampilan utama detail postingan forum.
+ */
 export interface DiscussionForumDetailViewProps {
   postId?: string;
   initialPost?: ForumPostDetail;
 }
 
+/**
+ * Properti untuk komponen utas komentar forum.
+ */
 export interface ForumCommentsThreadProps {
   postId?: string | number;
   initialComments?: ForumComment[];
 }
 
+/**
+ * Properti untuk komponen sidebar informasi komunitas pada detail forum.
+ */
 export interface ForumCommunitySidebarProps {
   post: ForumPostDetail;
 }
 
+/**
+ * Properti untuk komponen bar aksi interaktif pada detail postingan forum.
+ */
 export interface ForumDetailActionsProps {
   postId?: string | number;
   initialScore: number;
@@ -75,10 +93,16 @@ export interface ForumDetailActionsProps {
   isSaved?: boolean;
 }
 
+/**
+ * Properti untuk komponen konten artikel pada detail postingan forum.
+ */
 export interface ForumDetailContentProps {
   post: ForumPostDetail;
 }
 
+/**
+ * Properti untuk komponen header pada detail postingan forum.
+ */
 export interface ForumDetailHeaderProps {
   post: ForumPostDetail;
   isMine?: boolean;
@@ -86,10 +110,22 @@ export interface ForumDetailHeaderProps {
   postId?: string;
 }
 
+/**
+ * Memformat tanggal komentar forum menjadi teks tanggal dan waktu yang mudah dibaca.
+ *
+ * @param dateString String tanggal ISO opsional dari server.
+ * @returns String tanggal dan waktu terformat.
+ */
 export function formatForumCommentDate(dateString?: string): string {
   return formatDateTime(dateString);
 }
 
+/**
+ * Menyusun daftar datar DTO komentar forum menjadi struktur pohon bersarang berdasarkan `parentId`.
+ *
+ * @param dtos Daftar komentar datar dari API.
+ * @returns Array komentar tingkat akar dengan properti `replies` terisi.
+ */
 export function buildForumCommentTree(dtos: ForumCommentDto[]): ForumComment[] {
   const map = new Map<string, ForumComment>();
   const rootComments: ForumComment[] = [];
@@ -143,6 +179,9 @@ export function buildForumCommentTree(dtos: ForumCommentDto[]): ForumComment[] {
  * Cakupan integrasi: konten post saja (judul, penulis, tanggal, paragraf,
  * cover, callout, tags). Field komunitas sidebar (slug, anggota, deskripsi,
  * aturan) serta userVote/isSaved memakai nilai contoh — di luar cakupan.
+ *
+ * @param dto Data postingan komunitas dari mock server.
+ * @returns Objek detail postingan forum siap tampil.
  */
 export function mapForumPostDtoToDetail(dto: CommunityPostDto): ForumPostDetail {
   const { author } = dto;
@@ -186,6 +225,9 @@ export function mapForumPostDtoToDetail(dto: CommunityPostDto): ForumPostDetail 
   };
 }
 
+/**
+ * Data contoh postingan forum untuk fallback saat pratinjau atau data awal belum tersedia.
+ */
 export const sampleForumPost: ForumPostDetail = {
   id: 1,
   title: "Game Persona 5 Rilis yang Baru? Tinjauan Game Design dan Nilai Filosofis",

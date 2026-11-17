@@ -49,6 +49,12 @@ import type {
 
 export type { EditorStudioViewProps };
 
+/**
+ * Menormalisasi data konten mentah dari server menjadi struktur `JSONContent` Tiptap yang valid.
+ *
+ * @param raw - Nilai konten mentah dari objek artikel.
+ * @returns Konten Tiptap yang valid atau `DEFAULT_INITIAL_CONTENT` sebagai fallback.
+ */
 function normalizeArticleContent(raw: unknown): JSONContent {
   if (
     raw &&
@@ -61,6 +67,13 @@ function normalizeArticleContent(raw: unknown): JSONContent {
   return DEFAULT_INITIAL_CONTENT;
 }
 
+/**
+ * Memeriksa apakah ada cadangan draf lokal yang lebih baru daripada data artikel di server,
+ * serta membersihkan cadangan yang sudah kedaluwarsa atau identik.
+ *
+ * @param initialArticle - Data artikel awal dari server, atau `null` untuk artikel baru.
+ * @returns Data cadangan lokal yang layak dipulihkan, atau `null`.
+ */
 function computeInitialPendingBackup(
   initialArticle: Article | null
 ): EditorLocalBackup | null {
@@ -94,6 +107,9 @@ function computeInitialPendingBackup(
   return null;
 }
 
+/**
+ * Tampilan skeleton pemuatan saat mengambil data artikel pada rute penyuntingan.
+ */
 function EditorStudioSkeleton() {
   return (
     <div
@@ -117,6 +133,10 @@ function EditorStudioSkeleton() {
   );
 }
 
+/**
+ * Kanvas utama penyuntingan artikel yang mengelola state judul, subjudul, gambar sampul,
+ * isi artikel, autosave, pemulihan cadangan lokal, serta aksi publikasi.
+ */
 function EditorStudioCanvas({
   initialArticle,
   onRequestAiHelp,
@@ -165,7 +185,6 @@ function EditorStudioCanvas({
     [globalToast]
   );
 
-  // Periksa cadangan lokal dari localStorage di client setelah komponen mount
   useEffect(() => {
     const backup = computeInitialPendingBackup(initialArticle);
     if (backup) {
@@ -386,7 +405,6 @@ function EditorStudioCanvas({
   return (
     <div className="w-full max-w-[920px] mx-auto py-4 sm:py-6">
       <div className="w-full pl-0 sm:pl-12 md:pl-16 flex flex-col gap-5 sm:gap-6">
-        {/* Banner 401: Sesi Berakhir */}
         {isSessionExpired && (
           <div
             role="alert"
@@ -426,7 +444,6 @@ function EditorStudioCanvas({
           </div>
         )}
 
-        {/* Banner Pemulihan Cadangan Lokal (localStorage) */}
         {pendingBackup && (
           <div
             role="alert"
@@ -464,12 +481,10 @@ function EditorStudioCanvas({
           </div>
         )}
 
-        {/* Banner Error Validasi Publikasi (message array dari backend) */}
         {publishErrors.length > 0 && (
           <FormAlert variant="error" messages={publishErrors} />
         )}
 
-        {/* Banner Error Simpan Non-401 + Tombol Coba Lagi */}
         {saveError && !isSessionExpired && (
           <FormAlert variant="error" messages={saveError}>
             <div className="pt-2">
@@ -524,6 +539,10 @@ function EditorStudioCanvas({
   );
 }
 
+/**
+ * Komponen tampilan utama Editor Studio untuk membuat artikel baru atau menyunting artikel yang ada,
+ * lengkap dengan penanganan status pemuatan dan kesalahan pengambilan data artikel.
+ */
 export default function EditorStudioView({
   articleId,
   onRequestAiHelp,

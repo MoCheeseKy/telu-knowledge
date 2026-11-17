@@ -21,10 +21,18 @@ export type {
     EditorStudioContextValue,
 };
 
+/**
+ * Context untuk berbagi status penyimpanan, status artikel, dan aksi editor
+ * antara halaman editor dan header EditorLayout.
+ */
 export const EditorStudioContext = createContext<EditorStudioContextValue | null>(
     null
 );
 
+/**
+ * Provider yang mengelola state status penyimpanan, status publikasi artikel,
+ * serta registrasi aksi editor studio untuk komponen turunannya.
+ */
 export function EditorStudioProvider({ children }: { children: ReactNode }) {
     const [saveStatus, setSaveStatus] = useState<EditorSaveStatus>("idle");
     const [articleStatus, setArticleStatus] = useState<"draft" | "published">("draft");
@@ -81,6 +89,11 @@ export function EditorStudioProvider({ children }: { children: ReactNode }) {
     );
 }
 
+/**
+ * Hook untuk mengakses state dan aksi EditorStudioContext di dalam EditorLayout.
+ *
+ * @returns Nilai context EditorStudio yang berisi status simpan, status artikel, dan handler aksi editor.
+ */
 export function useEditorStudio(): EditorStudioContextValue {
     const context = useContext(EditorStudioContext);
     if (!context) {

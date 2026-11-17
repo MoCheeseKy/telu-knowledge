@@ -1,3 +1,4 @@
+/** Item artikel yang ditampilkan pada daftar halaman jelajah artikel. */
 export interface DiscoverArticleItem {
   id: string | number;
   category: string;

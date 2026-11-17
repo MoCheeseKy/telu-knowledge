@@ -6,6 +6,9 @@ import { cn } from "@/lib/utils";
 
 export { dummyTopics };
 
+/**
+ * Kartu item rekomendasi topik yang menampilkan nama topik dan jumlah artikelnya.
+ */
 export default function TopicRecommendationCard({
     title = "Game Development",
     count = "32 Artikel",

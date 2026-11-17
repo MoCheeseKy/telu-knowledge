@@ -1,3 +1,6 @@
+/**
+ * Representasi item reading list milik pengguna.
+ */
 export interface MyListItem {
     id?: string | number;
     ownerName: string;
@@ -49,6 +52,9 @@ export const dummyMyLists: MyListItem[] = [
     },
 ];
 
+/**
+ * Properti untuk komponen {@link MyArticleListCard}.
+ */
 export interface MyArticleListCardProps {
     ownerName: string;
     ownerAvatarUrl?: string;
@@ -62,6 +68,9 @@ export interface MyArticleListCardProps {
     className?: string;
 }
 
+/**
+ * Properti untuk komponen {@link MyArticleList}.
+ */
 export interface MyArticleListProps {
     items?: MyListItem[];
     className?: string;

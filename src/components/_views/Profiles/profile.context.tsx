@@ -12,6 +12,10 @@ import {
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
+/**
+ * Provider konteks profil pengguna yang mengelola pengambilan data profil,
+ * pembaruan ke server, dan status dialog edit profil.
+ */
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
   // Detail profil langsung dari mock server (GET /proxy/profiles/me).
   // Tidak ada localStorage — perubahan data lewat mutasi + invalidasi query.
@@ -51,6 +55,12 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+/**
+ * Hook untuk mengakses state dan aksi profil dari `ProfileContext`.
+ *
+ * @returns Nilai `ProfileContextType` dari provider terdekat.
+ * @throws {Error} Jika dipanggil di luar `ProfileProvider`.
+ */
 export function useProfile() {
   const context = useContext(ProfileContext);
   if (!context) {

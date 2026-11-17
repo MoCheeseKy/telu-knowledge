@@ -1,3 +1,6 @@
+/**
+ * Representasi item penulis pada daftar rekomendasi penulis.
+ */
 export interface WriterItem {
     id?: string | number;
     name: string;
@@ -14,6 +17,9 @@ export const dummyWriters: WriterItem[] = [
     { id: 3, name: "mocheeseky", isFollowing: false },
 ];
 
+/**
+ * Properti untuk komponen {@link WriterRecommendationCard}.
+ */
 export interface WriterRecommendationCardProps {
     name?: string;
     avatarUrl?: string;
@@ -23,6 +29,9 @@ export interface WriterRecommendationCardProps {
     className?: string;
 }
 
+/**
+ * Properti untuk komponen {@link WriterRecommendations}.
+ */
 export interface WriterRecommendationsProps {
     title?: string;
     writers?: WriterItem[];

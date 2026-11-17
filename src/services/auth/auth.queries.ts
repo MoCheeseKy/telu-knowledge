@@ -10,6 +10,9 @@ import type {
   ResetPasswordPayload,
 } from "./auth.types";
 
+/**
+ * Daftar query key TanStack Query untuk entitas autentikasi.
+ */
 export const authKeys = {
   all: ["auth"] as const,
   me: ["auth", "me"] as const,

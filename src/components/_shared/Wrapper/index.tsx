@@ -1,5 +1,8 @@
 import WrapperInterface from "./wrapper.types";
 
+/**
+ * Pembungkus tata letak responsif dengan lebar maksimum 1200px yang terpusat.
+ */
 export default function Wrapper({
     children,
     className = '',

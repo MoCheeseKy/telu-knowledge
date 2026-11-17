@@ -18,6 +18,9 @@ import type {
 const AUTOSAVE_DEBOUNCE_MS = 1500;
 const BACKUP_DEBOUNCE_MS = 1000;
 
+/**
+ * Snapshot isi draf artikel di editor.
+ */
 export interface EditorDraftSnapshot {
   title: string;
   subtitle: string;
@@ -25,14 +28,29 @@ export interface EditorDraftSnapshot {
   content: JSONContent;
 }
 
+/**
+ * Format cadangan draf lokal yang disimpan di `localStorage`.
+ */
 export interface EditorLocalBackup extends EditorDraftSnapshot {
   savedAt: string;
 }
 
+/**
+ * Membentuk key `localStorage` untuk menyimpan cadangan draf editor.
+ *
+ * @param articleId - ID artikel, atau `null` untuk draf baru.
+ * @returns Key penyimpanan lokal.
+ */
 export function getBackupStorageKey(articleId: string | null): string {
   return `telu:editor-backup:${articleId ?? "new"}`;
 }
 
+/**
+ * Membaca cadangan draf lokal dari `localStorage` jika tersedia dan valid.
+ *
+ * @param articleId - ID artikel, atau `null` untuk draf baru.
+ * @returns Objek cadangan lokal atau `null` jika tidak ada/tidak valid.
+ */
 export function readLocalBackup(
   articleId: string | null
 ): EditorLocalBackup | null {
@@ -63,6 +81,12 @@ export function readLocalBackup(
   }
 }
 
+/**
+ * Menyimpan snapshot draf ke `localStorage` sebagai cadangan darurat.
+ *
+ * @param articleId - ID artikel, atau `null` untuk draf baru.
+ * @param snapshot - Snapshot draf yang akan disimpan.
+ */
 export function writeLocalBackup(
   articleId: string | null,
   snapshot: EditorDraftSnapshot
@@ -82,6 +106,11 @@ export function writeLocalBackup(
   }
 }
 
+/**
+ * Menghapus cadangan draf lokal dari `localStorage`.
+ *
+ * @param articleId - ID artikel, atau `null` untuk draf baru.
+ */
 export function clearLocalBackup(articleId: string | null): void {
   if (typeof window === "undefined") return;
   try {
@@ -103,6 +132,12 @@ function hasImageNode(node: unknown): boolean {
   return false;
 }
 
+/**
+ * Memeriksa apakah snapshot draf memiliki konten berarti untuk disimpan.
+ *
+ * @param snapshot - Snapshot draf editor.
+ * @returns `true` jika judul, subjudul, cover, teks, atau gambar terisi.
+ */
 export function isMeaningfulDraft(snapshot: EditorDraftSnapshot): boolean {
   return (
     snapshot.title.trim().length > 0 ||
@@ -113,6 +148,13 @@ export function isMeaningfulDraft(snapshot: EditorDraftSnapshot): boolean {
   );
 }
 
+/**
+ * Membandingkan dua snapshot draf untuk mendeteksi adanya perubahan.
+ *
+ * @param a - Snapshot pertama.
+ * @param b - Snapshot kedua.
+ * @returns `true` jika seluruh field snapshot identik.
+ */
 export function areSnapshotsEqual(
   a: EditorDraftSnapshot,
   b: EditorDraftSnapshot
@@ -155,16 +197,29 @@ function computeChangedPayload(
   return changed ? payload : null;
 }
 
+/**
+ * Opsi konfigurasi untuk hook {@link useDraftAutosave}.
+ */
 export interface UseDraftAutosaveOptions {
   initialArticleId: string | null;
   draft: EditorDraftSnapshot;
   enabled: boolean;
 }
 
+/**
+ * Opsi untuk pemanggilan {@link useDraftAutosave} `flushSave`.
+ */
 export interface FlushSaveOptions {
   forceCreateIfEmpty?: boolean;
 }
 
+/**
+ * Hook untuk mengelola autosave draf artikel secara sekuensial dengan debounce,
+ * cadangan `localStorage`, serta sinkronisasi baseline dan status penyimpanan.
+ *
+ * @param options - ID artikel awal, snapshot draf aktif, dan flag aktif/nonaktif autosave.
+ * @returns State penyimpanan, error, serta fungsi `flushSave` dan `resetBaseline`.
+ */
 export function useDraftAutosave({
   initialArticleId,
   draft,
@@ -342,7 +397,6 @@ export function useDraftAutosave({
     [createMutateAsync, setSaveStatus, updateMutateAsync]
   );
 
-  // Efek debounce autosave (1500ms) dan cadangan localStorage (1000ms)
   useEffect(() => {
     if (!enabled) return;
 
@@ -399,7 +453,6 @@ export function useDraftAutosave({
     [performSaveLoop]
   );
 
-  // Peringatan beforeunload saat terdapat perubahan yang belum tersimpan ke server
   useEffect(() => {
     if (!enabled) return;
 

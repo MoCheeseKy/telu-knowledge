@@ -5,6 +5,9 @@ import { ThumbsUp, MessageSquareMore, Repeat2, Bookmark, Share2 } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+/**
+ * Kartu artikel yang menampilkan info penulis, judul, ringkasan, gambar, dan metrik interaksi.
+ */
 export default function ArticleCard({
     publisher = "Rifky Muhammad Prayudhi",
     postDate = "12 Sep 2026",

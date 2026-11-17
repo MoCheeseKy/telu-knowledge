@@ -6,6 +6,9 @@ import { useJoinedForums } from "@/services/communities/forum.queries";
 
 const statusClass = "font-sans text-[14px] text-[var(--muted)]";
 
+/**
+ * Menampilkan daftar forum yang diikuti pengguna saat ini beserta status muat dan galatnya.
+ */
 export default function JoinedForums({
   title = "FORUM YANG KAMU IKUTI",
   className = "",

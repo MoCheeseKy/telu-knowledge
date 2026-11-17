@@ -24,6 +24,9 @@ const defaultArticles: DiscoverArticleItem[] = Array.from({ length: 6 }, (_, i) 
   image: "/images/repost-cover.png",
 }));
 
+/**
+ * Tampilan halaman jelajah artikel dengan pencarian judul dan aksi bookmark.
+ */
 export default function DiscoverArticles() {
   const { data: feedArticles, isLoading, isError, error, refetch } = useArticleFeed();
   const toggleBookmarkMutation = useToggleArticleBookmark();

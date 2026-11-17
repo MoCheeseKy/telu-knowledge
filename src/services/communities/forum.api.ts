@@ -12,4 +12,5 @@ export async function getJoinedForums(): Promise<ApiEnvelope<JoinedForum[]>> {
   });
 }
 
+/** Kumpulan service API untuk daftar forum yang diikuti pengguna. */
 export const forumApi = { getJoinedForums };

@@ -23,6 +23,7 @@ function GithubIcon({ className }: { className?: string }) {
   );
 }
 
+/** Ikon SVG LinkedIn untuk tautan profil sosial penulis. */
 function LinkedinIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -31,6 +32,11 @@ function LinkedinIcon({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Memastikan URL eksternal memiliki skema protokol HTTP/HTTPS yang valid.
+ * @param url - URL mentah dari profil penulis.
+ * @returns URL terformat dengan protokol `https://` jika belum tersedia, atau string kosong.
+ */
 const formatExternalUrl = (url?: string | null): string => {
   if (!url) return "";
   const trimmed = url.trim();
@@ -40,6 +46,9 @@ const formatExternalUrl = (url?: string | null): string => {
   return `https://${trimmed}`;
 };
 
+/**
+ * Sidebar detail artikel yang menampilkan profil penulis, tombol ikuti, serta rekomendasi penulis teratas.
+ */
 export default function ArticleAuthorSidebar({
   author,
 }: ArticleAuthorSidebarProps) {
@@ -154,7 +163,6 @@ export default function ArticleAuthorSidebar({
           </div>
         )}
 
-        {/* 5. Tombol Follow Full-Width di Bagian Bawah */}
         <Button
           type="button"
           size="default"
@@ -180,7 +188,6 @@ export default function ArticleAuthorSidebar({
         </Button>
       </div>
 
-      {/* Daftar Top 5 Penulis dengan Followers Terbanyak */}
       <WriterRecommendations
         title="TOP PENULIS"
         writers={topWriters}

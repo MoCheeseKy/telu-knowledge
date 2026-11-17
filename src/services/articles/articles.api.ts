@@ -134,6 +134,7 @@ export async function uploadArticleImage(
 
 export { aiAssist };
 
+/** Kumpulan service API untuk pengelolaan artikel dan interaksi pembaca. */
 export const articlesApi = {
   createArticle,
   getArticle,

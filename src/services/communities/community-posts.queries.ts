@@ -16,6 +16,7 @@ import type {
   CommunityItemDto,
 } from "./community-posts.types";
 
+/** Factory query key React Query untuk postingan, komentar, dan repost komunitas/forum. */
 export const communityPostKeys = {
   all: ["community-posts"] as const,
   lists: () => [...communityPostKeys.all, "list"] as const,
@@ -25,7 +26,6 @@ export const communityPostKeys = {
   detail: (id: string) => [...communityPostKeys.details(), id] as const,
   comments: (postId: string) =>
     [...communityPostKeys.detail(postId), "comments"] as const,
-  // === Repost ===
   repostStatus: (postId: string) =>
     [...communityPostKeys.all, "repost-status", postId] as const,
   userReposts: (userId: string) =>
@@ -153,7 +153,6 @@ export function useCreateCommunityPost() {
       communityPostsApi.createCommunityPost(communityId, payload),
     retry: false,
     onSuccess: (_res, { communityId }) => {
-      // Siapkan invalidasi untuk langkah integrasi daftar postingan (GET)
       void queryClient.invalidateQueries({
         queryKey: communityPostKeys.list(communityId),
       });
@@ -332,10 +331,6 @@ export function useDeleteForumComment() {
   });
 }
 
-// ============================================================================
-// REPOST
-// ============================================================================
-
 /**
  * Hook query status repost satu postingan
  * (GET /proxy/forum-posts/:postId/repost/status).
@@ -397,21 +392,19 @@ export function useToggleForumPostRepost(postId: string) {
       }
     },
     onSuccess: (res) => {
-      // Sinkronkan dengan angka final dari server
       if (res?.data) {
         queryClient.setQueryData(
           communityPostKeys.repostStatus(postId),
           res.data
         );
       }
-      // Refresh detail & list (biar count di kartu/list konsisten)
       void queryClient.invalidateQueries({
         queryKey: communityPostKeys.detail(postId),
       });
       void queryClient.invalidateQueries({
         queryKey: communityPostKeys.lists(),
       });
-      // Refresh tab Reposts di profil (semua user — ringan untuk mock)
+      // Invalidate seluruh user karena ringan untuk mock
       void queryClient.invalidateQueries({
         queryKey: [...communityPostKeys.all, "user-reposts"],
       });

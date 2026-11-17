@@ -30,9 +30,12 @@ const ALLOWED_PROTOCOLS = new Set(["http:", "https:", "mailto:"]);
 
 /**
  * Menormalisasi dan memvalidasi URL tautan.
- * - Menambahkan https:// bila pengguna belum menyertakan skema.
- * - Menolak skema berbahaya seperti javascript:, data:, vbscript:, file:.
- * - Hanya mengizinkan http:, https:, dan mailto:.
+ * - Menambahkan `https://` bila pengguna belum menyertakan skema.
+ * - Menolak skema berbahaya seperti `javascript:`, `data:`, `vbscript:`, dan `file:`.
+ * - Hanya mengizinkan `http:`, `https:`, dan `mailto:`.
+ *
+ * @param rawUrl - String URL mentah dari input pengguna.
+ * @returns Objek hasil validasi berisi URL yang telah dinormalisasi atau pesan error.
  */
 export function normalizeAndValidateLinkUrl(
   rawUrl: string
@@ -42,7 +45,6 @@ export function normalizeAndValidateLinkUrl(
     return { ok: false, error: "URL tautan tidak boleh kosong." };
   }
 
-  // Tolak karakter kontrol atau spasi di dalam URL
   if (/[\s\u0000-\u001F\u007F]/.test(trimmed)) {
     return { ok: false, error: "Format URL tidak valid." };
   }
@@ -93,6 +95,10 @@ export function normalizeAndValidateLinkUrl(
   }
 }
 
+/**
+ * Toolbar pemformatan teks mengambang (BubbleMenu) yang muncul saat pengguna menyeleksi teks,
+ * menyediakan kontrol format inline, heading, kutipan, input tautan, serta pemicu Bantuan AI.
+ */
 export default function FloatingToolbar({
   editor,
   onRequestAiHelp,
@@ -151,7 +157,6 @@ export default function FloatingToolbar({
     [editor]
   );
 
-  // Tutup mode input link otomatis apabila seleksi teks menjadi kosong
   useEffect(() => {
     const handleSelectionUpdate = () => {
       const { state } = editor;
@@ -167,7 +172,6 @@ export default function FloatingToolbar({
     };
   }, [editor]);
 
-  // Shortcut Ctrl+K / Cmd+K untuk membuka input link saat ada seleksi teks non-kosong
   useEffect(() => {
     const dom = editor.view.dom;
 
@@ -288,7 +292,6 @@ export default function FloatingToolbar({
       }}
       className="z-40 flex flex-col items-center gap-2 select-none"
     >
-      {/* Bar Utama Floating Toolbar */}
       <div
         role="toolbar"
         aria-label="Pemformatan teks"
@@ -357,7 +360,6 @@ export default function FloatingToolbar({
           </div>
         ) : (
           <div className="flex items-center gap-1 sm:gap-1.5">
-            {/* 1. Bold */}
             <button
               type="button"
               onMouseDown={handleMouseDownPreventDefault}
@@ -375,7 +377,6 @@ export default function FloatingToolbar({
               B
             </button>
 
-            {/* 2. Italic */}
             <button
               type="button"
               onMouseDown={handleMouseDownPreventDefault}
@@ -393,7 +394,6 @@ export default function FloatingToolbar({
               i
             </button>
 
-            {/* 3. Link */}
             <button
               type="button"
               onMouseDown={handleMouseDownPreventDefault}
@@ -411,7 +411,6 @@ export default function FloatingToolbar({
               <Link2 className="w-4 h-4 -rotate-45" />
             </button>
 
-            {/* 4. H2 (T Besar) */}
             <button
               type="button"
               onMouseDown={handleMouseDownPreventDefault}
@@ -431,7 +430,6 @@ export default function FloatingToolbar({
               T
             </button>
 
-            {/* 5. H3 (T Kecil) */}
             <button
               type="button"
               onMouseDown={handleMouseDownPreventDefault}
@@ -451,7 +449,6 @@ export default function FloatingToolbar({
               T
             </button>
 
-            {/* 6. Blockquote */}
             <button
               type="button"
               onMouseDown={handleMouseDownPreventDefault}
@@ -469,7 +466,6 @@ export default function FloatingToolbar({
               “
             </button>
 
-            {/* 7. Komentar (disabled + tooltip "Segera hadir") */}
             <div className="relative group flex items-center">
               <button
                 type="button"
@@ -493,7 +489,6 @@ export default function FloatingToolbar({
         )}
       </div>
 
-      {/* Pill "Bantuan AI" dengan caret kecil di bawahnya */}
       <div className="flex flex-col items-center">
         <button
           type="button"
