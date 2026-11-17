@@ -5,24 +5,10 @@ import { useMyProfile, useUpdateMyProfile } from "@/services/profiles/profiles.q
 import type { UpdateProfilePayload } from "@/services/profiles/profiles.types";
 import {
   UserProfile,
+  ProfileContextType,
   defaultProfile,
   mapProfileDtoToUserProfile,
 } from "./profile.types";
-
-interface ProfileContextType {
-  profile: UserProfile;
-  /**
-   * Menyimpan pembaruan profil secara persisten ke mock server
-   * (PATCH /proxy/profiles/me). Melempar error bila gagal — pemanggil
-   * (form) menampilkannya lewat FormAlert.
-   */
-  updateProfile: (payload: UpdateProfilePayload) => Promise<void>;
-  isLoading: boolean;
-  isError: boolean;
-  refetchProfile: () => void;
-  isEditDialogOpen: boolean;
-  setIsEditDialogOpen: (open: boolean) => void;
-}
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 

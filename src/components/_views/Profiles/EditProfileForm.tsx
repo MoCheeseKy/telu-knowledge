@@ -2,7 +2,11 @@
 
 import React, { useState } from "react";
 import { Check } from "lucide-react";
-import { UserProfile, mapUserProfileToUpdatePayload } from "./profile.types";
+import {
+  EditProfileFormProps,
+  UserProfile,
+  mapUserProfileToUpdatePayload,
+} from "./profile.types";
 import { validateUpdateProfile } from "@/services/profiles/profiles.schemas";
 import type { UpdateProfilePayload } from "@/services/profiles/profiles.types";
 import { getErrorMessages } from "@/lib/api/error-messages";
@@ -13,12 +17,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import DeleteAccountSection from "./DeleteAccountSection";
 
 const MAX_AVATAR_SIZE_BYTES = 4 * 1024 * 1024;
-
-interface EditProfileFormProps {
-  initialData: UserProfile;
-  onSave: (payload: UpdateProfilePayload) => void | Promise<void>;
-  onCancel?: () => void;
-}
 
 export default function EditProfileForm({
   initialData,

@@ -27,20 +27,9 @@ import { cn } from "@/lib/utils";
 import { useAiAssist } from "@/services/ai/ai.queries";
 import type { AiAssistAction, AiAssistPayload } from "@/services/ai/ai.types";
 import { getAiSelectionHighlightRange } from "./ai-selection-highlight";
+import type { AiAssistPanelProps, AiSession } from "./rich-text-editor.types";
 
-export interface AiSession {
-  from: number;
-  to: number;
-  text: string;
-  contextBefore?: string;
-  contextAfter?: string;
-}
-
-export interface AiAssistPanelProps {
-  editor: Editor;
-  session: AiSession;
-  onClose: (restoreSelection?: boolean) => void;
-}
+export type { AiAssistPanelProps, AiSession };
 
 const QUICK_ACTION_CHIPS: ReadonlyArray<{
   label: string;

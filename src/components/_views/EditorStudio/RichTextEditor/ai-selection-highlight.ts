@@ -1,16 +1,12 @@
 import { Extension, type Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { Decoration, DecorationSet } from "@tiptap/pm/view";
+import type {
+  AiHighlightPluginState,
+  AiHighlightRange,
+} from "./rich-text-editor.types";
 
-export interface AiHighlightRange {
-  from: number;
-  to: number;
-}
-
-export interface AiHighlightPluginState {
-  range: AiHighlightRange | null;
-  decorations: DecorationSet;
-}
+export type { AiHighlightPluginState, AiHighlightRange };
 
 type AiHighlightMeta =
   | { type: "set"; from: number; to: number }

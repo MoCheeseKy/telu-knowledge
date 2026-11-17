@@ -1,5 +1,5 @@
-import CommunityPostEditView from "@/components/_views/CommunityPostEdit";
-import { getSampleCommunity } from "@/components/_views/CommunityDetail/types";
+import CommunityPostEditView from "@/components/_views/Communities/CommunityPostEdit";
+import { getSampleCommunity } from "@/components/_views/Communities/CommunityDetail/community-detail.types";
 
 interface PageProps {
   params: Promise<{ id: string; postId: string }>;

@@ -21,6 +21,25 @@ export function getErrorMessages(error: unknown): string[] {
 }
 
 /**
+ * Mengambil pesan error tunggal yang sudah digabung menjadi satu string siap tampil
+ * (misal untuk Toast notifikasi atau inline status), dengan dukungan fallback kontekstual.
+ */
+export function getErrorMessage(error: unknown, fallback?: string): string {
+  if (isApiError(error) && error.messages.length > 0) {
+    return error.messages.join(", ");
+  }
+
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return (
+    fallback ||
+    "Terjadi kesalahan yang tidak terduga. Silakan coba beberapa saat lagi."
+  );
+}
+
+/**
  * Memeriksa apakah error merupakan kegagalan autentikasi akibat email belum diverifikasi.
  * Mengembalikan true jika statusCode 401 dan pesan mengandung kata "belum diverifikasi".
  */

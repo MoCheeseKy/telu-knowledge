@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import ForumPostCardProps from "./_types";
+import ForumPostCardProps from "./forum-post-card.types";
 import { ThumbsUp, MessageSquareMore, Repeat2, Share2, Pencil, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { copyTextToClipboard } from "@/lib/clipboard";
 import { useToast } from "@/components/ui/toast";
 
 const actionButtonClass =
@@ -49,24 +50,12 @@ export default function ForumPostCard({
                 ? `${window.location.origin}/discussion-forums/${id}`
                 : `/discussion-forums/${id}`;
 
-        try {
-            if (navigator?.clipboard?.writeText) {
-                await navigator.clipboard.writeText(shareUrl);
-            } else {
-                const textArea = document.createElement("textarea");
-                textArea.value = shareUrl;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-9999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textArea);
-            }
+        const copiedOk = await copyTextToClipboard(shareUrl);
+        if (copiedOk) {
             setCopied(true);
             toast.success("Tautan postingan forum berhasil disalin ke clipboard!");
             setTimeout(() => setCopied(false), 2000);
-        } catch {
+        } else {
             toast.error("Gagal menyalin tautan ke clipboard.");
         }
     };

@@ -99,20 +99,12 @@ function findPlaceholderRange(
   return found;
 }
 
-export interface RichTextEditorProps {
-  initialContent?: JSONContent;
-  onUpdate?: (json: JSONContent) => void;
-  onEditorReady?: (editor: Editor | null) => void;
-  onRequestAiHelp?: () => void;
-  className?: string;
-  ariaLabel?: string;
-}
+import type {
+  RichTextEditorHandle,
+  RichTextEditorProps,
+} from "./rich-text-editor.types";
 
-export interface RichTextEditorHandle {
-  focusStart: () => void;
-  setContent: (content: JSONContent) => void;
-  getEditor: () => Editor | null;
-}
+export type { RichTextEditorHandle, RichTextEditorProps };
 
 const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(
   function RichTextEditor(

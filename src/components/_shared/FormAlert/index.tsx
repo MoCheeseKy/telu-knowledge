@@ -1,13 +1,9 @@
 import React from "react";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { FormAlertProps } from "./form-alert.types";
 
-export interface FormAlertProps {
-  variant?: "error" | "success";
-  messages?: string | string[];
-  children?: React.ReactNode;
-  className?: string;
-}
+export type { FormAlertProps };
 
 export default function FormAlert({
   variant = "error",

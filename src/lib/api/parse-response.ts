@@ -1,5 +1,5 @@
 import { ApiError } from "./errors";
-import type { ApiEnvelope, ApiErrorEnvelope } from "./types";
+import type { ApiEnvelope, ApiErrorEnvelope } from "./api.types";
 
 /**
  * Helper bersama untuk mem-parse Response fetch menjadi ApiEnvelope<T>.

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import MainLayoutProps from "./_types";
+import MainLayoutProps from "./main-layout.types";
 import MainHeader from "./header";
 import MainSidebar from "./sidebar";
 import MainFooter from "./footer";

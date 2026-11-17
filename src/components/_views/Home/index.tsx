@@ -7,32 +7,10 @@ import {
   useWriterRecommendations,
 } from "@/services/recommendations/recommendations.queries";
 import ArticleCard from "@/components/_shared/ArticleCard";
-import WritterRecommendations from "@/components/_shared/WritterRecommendations";
+import WriterRecommendations from "@/components/_shared/WriterRecommendations";
 import ActiveForumRecommendations from "@/components/_shared/ActiveForumRecommendations";
-
-function formatDate(dateString?: string | null): string {
-  if (!dateString) return "";
-  try {
-    const d = new Date(dateString);
-    if (isNaN(d.getTime())) return dateString;
-    return new Intl.DateTimeFormat("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(d);
-  } catch {
-    return dateString;
-  }
-}
-
-function formatCounter(count?: number): string {
-  if (typeof count !== "number") return "0";
-  if (count >= 1000) {
-    const formatted = (count / 1000).toFixed(1).replace(".", ",");
-    return `${formatted}k`;
-  }
-  return String(count);
-}
+import { formatDate, formatCounter } from "@/lib/formatters";
+import { getErrorMessage } from "@/lib/api/error-messages";
 
 function ArticleCardSkeleton() {
   return (
@@ -60,7 +38,7 @@ function ArticleCardSkeleton() {
 
 export default function HomeView() {
   const router = useRouter();
-  const { data: articles, isLoading, isError, refetch } = useArticleFeed();
+  const { data: articles, isLoading, isError, error, refetch } = useArticleFeed();
   const { data: writers } = useWriterRecommendations();
   const { data: communities } = useCommunityRecommendations();
 
@@ -88,7 +66,7 @@ export default function HomeView() {
           ) : isError ? (
             <div className="flex flex-col items-center justify-center p-8 text-center border border-dashed rounded-xl border-[var(--dust)]">
               <p className="text-sm text-[var(--foreground)] font-medium mb-3">
-                Gagal memuat feed artikel dari mock server.
+                {getErrorMessage(error, "Gagal memuat feed artikel.")}
               </p>
               <button
                 type="button"
@@ -121,7 +99,7 @@ export default function HomeView() {
                   isBookmarked={article.isBookmarked}
                   onClick={() =>
                     router.push(
-                      `/discovers-articles/${article.id}/article-detail`
+                      `/discover-articles/${article.id}`
                     )
                   }
                 />
@@ -135,7 +113,7 @@ export default function HomeView() {
       </div>
 
       <aside className="w-full lg:w-[320px] xl:w-[340px] shrink-0 lg:sticky lg:top-24 flex flex-col gap-[32px] pt-2">
-        <WritterRecommendations writers={writers} />
+        <WriterRecommendations writers={writers} />
         <ActiveForumRecommendations forums={communities} />
       </aside>
     </div>

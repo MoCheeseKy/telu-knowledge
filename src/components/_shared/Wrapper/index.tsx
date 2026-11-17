@@ -1,4 +1,4 @@
-import WrapperInterface from "./_types";
+import WrapperInterface from "./wrapper.types";
 
 export default function Wrapper({
     children,
