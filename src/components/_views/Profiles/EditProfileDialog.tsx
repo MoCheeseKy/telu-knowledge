@@ -14,6 +14,7 @@ import type { UpdateProfilePayload } from "@/services/profiles/profiles.types";
 import { useToast } from "@/components/ui/toast";
 import type { EditProfileDialogProps } from "./profile.types";
 
+/** Modal dialog untuk mengubah informasi profil pengguna dari halaman profil. */
 export default function EditProfileDialog({
   open,
   onOpenChange,

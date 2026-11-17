@@ -2,8 +2,14 @@ import { toApiError } from "./errors";
 import { parseApiResponse } from "./parse-response";
 import type { ApiEnvelope } from "./api.types";
 
+/**
+ * Target sumber data untuk request API sisi client.
+ */
 export type DataSource = "backend" | "mock";
 
+/**
+ * Opsi konfigurasi untuk {@link apiFetch}.
+ */
 export interface ApiFetchOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
   /**
@@ -17,6 +23,10 @@ export interface ApiFetchOptions extends Omit<RequestInit, "body"> {
 /**
  * Fetcher sisi client (Browser -> Next.js Route Handler / BFF).
  * Selalu memanggil endpoint same-origin (/api/...) dengan credentials: "same-origin".
+ *
+ * @param path - Path endpoint API (dengan atau tanpa prefiks `/api`).
+ * @param init - Opsi request tambahan termasuk body JSON dan sumber data.
+ * @returns Promise berisi {@link ApiEnvelope} hasil respons server.
  */
 export async function apiFetch<T>(
   path: string,
@@ -33,7 +43,6 @@ export async function apiFetch<T>(
   const requestHeaders = new Headers(init.headers);
   requestHeaders.set("Accept", "application/json");
 
-  // Jika opsi source disetel ke 'mock', sertakan header penanda untuk Next.js proxy
   if (init.source === "mock") {
     requestHeaders.set("x-data-source", "mock");
   }

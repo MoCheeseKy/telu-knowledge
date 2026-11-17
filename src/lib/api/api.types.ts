@@ -1,7 +1,6 @@
 /**
- * Kontrak respons envelope standar backend NestJS Tel-U Knowledge.
+ * Kontrak respons envelope sukses standar backend NestJS Tel-U Knowledge.
  */
-
 export interface ApiEnvelope<T> {
   statusCode: number;
   message: string;
@@ -9,6 +8,9 @@ export interface ApiEnvelope<T> {
   data: T;
 }
 
+/**
+ * Kontrak respons envelope error standar backend NestJS Tel-U Knowledge.
+ */
 export interface ApiErrorEnvelope {
   statusCode: number;
   message: string | string[];

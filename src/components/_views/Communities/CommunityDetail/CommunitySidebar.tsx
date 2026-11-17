@@ -4,13 +4,13 @@ import { Calendar } from "lucide-react";
 import CommunityRulesList from "@/components/_shared/CommunityRulesList";
 import type { CommunitySidebarProps } from "./community-detail.types";
 
+/** Sidebar informasi komunitas yang menampilkan deskripsi, statistik, admin, dan aturan. */
 export default function CommunitySidebar({
   community,
 }: CommunitySidebarProps) {
   return (
     <aside className="w-full shrink-0 pt-2 lg:w-[320px] xl:w-[340px]">
       <section className="rounded-xl border border-[var(--dust)]/70 bg-white p-5">
-        {/* Identitas komunitas */}
         <div className="flex items-center gap-3">
           <img
             src={community.avatarUrl}
@@ -29,7 +29,6 @@ export default function CommunitySidebar({
           {community.description}
         </p>
 
-        {/* Statistik */}
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div className="flex flex-col">
             <span className="font-sans text-[20px] font-bold leading-none text-[var(--primary-text)]">
@@ -54,7 +53,6 @@ export default function CommunitySidebar({
           <span>Dibuat {community.createdAt}</span>
         </div>
 
-        {/* Admin */}
         <div className="my-4 border-t border-[var(--dust)]/50" />
 
         <p className="font-sans text-[11px] uppercase tracking-wide text-[var(--muted)]">
@@ -78,7 +76,6 @@ export default function CommunitySidebar({
           </span>
         </div>
 
-        {/* Aturan komunitas */}
         <div className="my-4 border-t border-[var(--dust)]/50" />
 
         <p className="font-sans text-[11px] uppercase tracking-wide text-[var(--muted)]">

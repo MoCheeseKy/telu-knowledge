@@ -1,6 +1,7 @@
 import CommunityRulesList from "@/components/_shared/CommunityRulesList";
 import type { PostGuidelinesSidebarProps } from "./community-post-create.types";
 
+/** Sidebar panduan moderator dan daftar aturan komunitas saat membuat atau menyunting postingan. */
 export default function PostGuidelinesSidebar({
   community,
 }: PostGuidelinesSidebarProps) {

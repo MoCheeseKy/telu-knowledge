@@ -1,5 +1,7 @@
+/** Kategori jenis aktivitas notifikasi. */
 export type NotificationType = "like" | "comment" | "mention" | "follow" | "forum";
 
+/** Struktur data satu item notifikasi pada halaman notifikasi. */
 export interface NotificationItem {
   id: number;
   type: NotificationType;
@@ -13,4 +15,5 @@ export interface NotificationItem {
   imageUrl?: string;
 }
 
+/** Kunci tab filter yang tersedia pada halaman notifikasi. */
 export type NotificationTabKey = "semua" | "belum_dibaca" | "komentar" | "forum";

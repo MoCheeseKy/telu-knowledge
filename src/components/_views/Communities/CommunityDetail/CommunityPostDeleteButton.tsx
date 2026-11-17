@@ -19,6 +19,7 @@ import { getErrorMessages } from "@/lib/api/error-messages";
 import { cn } from "@/lib/utils";
 import type { CommunityPostDeleteButtonProps } from "./community-detail.types";
 
+/** Tombol dan dialog konfirmasi untuk menghapus postingan komunitas. */
 export default function CommunityPostDeleteButton({
   communityId,
   postId,

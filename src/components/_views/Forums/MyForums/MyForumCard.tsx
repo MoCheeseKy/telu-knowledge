@@ -6,13 +6,15 @@ import type { MyForumCardProps } from "./my-forums.types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+/**
+ * Kartu ringkas komunitas pada halaman Forum Saya dengan aksi kelola atau keluar dari forum.
+ */
 export default function MyForumCard({ item, onToggleFollow }: MyForumCardProps) {
   const [showConfirmLeave, setShowConfirmLeave] = useState(false);
 
   return (
     <div className="flex items-center justify-between gap-4 py-4 border-b border-[var(--dust)]/40 w-full group">
       <div className="flex items-start gap-3 min-w-0 flex-1">
-        {/* Avatar */}
         {item.avatarUrl ? (
           <img
             src={item.avatarUrl}
@@ -30,7 +32,6 @@ export default function MyForumCard({ item, onToggleFollow }: MyForumCardProps) 
           </div>
         )}
 
-        {/* Info */}
         <div className="flex flex-col min-w-0 flex-1 gap-0.5">
           <div className="flex items-center gap-2">
             <Link
@@ -56,7 +57,6 @@ export default function MyForumCard({ item, onToggleFollow }: MyForumCardProps) 
         </div>
       </div>
 
-      {/* Action Button */}
       <div className="shrink-0">
         {item.role !== "Anggota" ? (
           <Button

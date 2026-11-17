@@ -1,5 +1,6 @@
 import Wrapper from "@/components/_shared/Wrapper";
 
+/** Footer untuk halaman editor yang menampilkan info penyimpanan otomatis dan dukungan format tulisan. */
 export default function EditorFooter() {
   return (
     <footer className="w-full border-t border-[var(--dust)] bg-[var(--background)] mt-auto py-3">

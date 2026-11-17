@@ -4,6 +4,12 @@ import { getClientIp, serverFetch } from "@/lib/api/server";
 import { toApiError } from "@/lib/api/errors";
 import { resetPasswordSchema } from "@/services/auth/auth.schemas";
 
+/**
+ * Route handler BFF untuk mengatur ulang kata sandi menggunakan token recovery.
+ *
+ * @param request - Request HTTP berisi kata sandi baru dan token recovery.
+ * @returns Respons JSON status pembaruan kata sandi.
+ */
 export async function POST(request: Request) {
   const originError = assertSameOrigin(request);
   if (originError) return originError;

@@ -12,6 +12,7 @@ import ActiveForumRecommendations from "@/components/_shared/ActiveForumRecommen
 import { formatDate, formatCounter } from "@/lib/formatters";
 import { getErrorMessage } from "@/lib/api/error-messages";
 
+/** Skeleton placeholder untuk kartu artikel saat data feed sedang dimuat. */
 function ArticleCardSkeleton() {
   return (
     <div className="w-full max-w-[679px] flex flex-col animate-pulse">
@@ -36,6 +37,10 @@ function ArticleCardSkeleton() {
   );
 }
 
+/**
+ * Halaman utama (beranda) yang menampilkan feed artikel publik beserta
+ * panel rekomendasi penulis dan forum aktif di sisi kanan.
+ */
 export default function HomeView() {
   const router = useRouter();
   const { data: articles, isLoading, isError, error, refetch } = useArticleFeed();

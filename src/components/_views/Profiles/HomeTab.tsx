@@ -3,6 +3,7 @@
 import RepostCard, { RepostItem } from "./RepostCard";
 import { useProfile } from "./profile.context";
 
+/** Tab beranda pada halaman profil yang menampilkan daftar artikel/postingan pengguna. */
 export default function HomeTab() {
   const { profile } = useProfile();
 
@@ -11,7 +12,7 @@ export default function HomeTab() {
     {
       id: 1,
       category: "Skripsi & Riset",
-      author: profile.username, // default: diri sendiri
+      author: profile.username,
       date: "12 September 2026",
       title: "Skripsi & Riset",
       description:
@@ -49,7 +50,6 @@ export default function HomeTab() {
     },
   ];
 
-  // wrapper sama persis dengan tab Reposts
   return (
     <div className="flex flex-col gap-6 py-6">
       {articles.map((item) => (

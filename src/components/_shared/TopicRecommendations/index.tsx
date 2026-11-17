@@ -4,6 +4,9 @@ import TopicRecommendationCard from "./TopicRecommendationCard";
 import { TopicRecommendationsProps, dummyTopics } from "./topic-recommendations.types";
 import { cn } from "@/lib/utils";
 
+/**
+ * Bagian sidebar rekomendasi topik pilihan beserta daftar kartunya.
+ */
 export default function TopicRecommendations({
     title = "TOPIK PILIHAN",
     topics = dummyTopics,

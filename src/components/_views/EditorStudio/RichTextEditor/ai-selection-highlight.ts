@@ -12,6 +12,9 @@ type AiHighlightMeta =
   | { type: "set"; from: number; to: number }
   | { type: "clear" };
 
+/**
+ * Kunci plugin ProseMirror untuk melacak state dekorasi highlight Bantuan AI.
+ */
 export const aiSelectionHighlightPluginKey =
   new PluginKey<AiHighlightPluginState>("aiSelectionHighlight");
 
@@ -31,12 +34,22 @@ declare module "@tiptap/core" {
   }
 }
 
+/**
+ * Mengambil rentang posisi highlight Bantuan AI yang sedang aktif pada state editor.
+ *
+ * @param editor - Instance editor Tiptap yang sedang aktif.
+ * @returns Rentang posisi `{ from, to }` atau `null` jika tidak ada highlight aktif.
+ */
 export function getAiSelectionHighlightRange(
   editor: Editor
 ): AiHighlightRange | null {
   return aiSelectionHighlightPluginKey.getState(editor.state)?.range ?? null;
 }
 
+/**
+ * Ekstensi Tiptap untuk mempertahankan sorotan visual pada teks terpilih
+ * selama panel Bantuan AI terbuka dan fokus editor berpindah.
+ */
 export const AiSelectionHighlight = Extension.create({
   name: "aiSelectionHighlight",
 

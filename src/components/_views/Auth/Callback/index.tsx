@@ -19,6 +19,9 @@ type CallbackStatus =
   | "pkce_unsupported"
   | "no_info";
 
+/**
+ * Tampilan callback verifikasi email SSO yang memvalidasi status token hash URL dan menyediakan kirim ulang verifikasi.
+ */
 export default function CallbackView() {
   const [status, setStatus] = useState<CallbackStatus>("loading");
   const [emailInput, setEmailInput] = useState("");
@@ -147,7 +150,6 @@ export default function CallbackView() {
     );
   }
 
-  // State error atau PKCE code
   return (
     <div className="w-full flex flex-col justify-center animate-in fade-in-50 duration-300">
       <div className="p-6 sm:p-8 rounded-xl border border-[var(--dust)] bg-white space-y-5 shadow-xs">
@@ -181,7 +183,6 @@ export default function CallbackView() {
           />
         )}
 
-        {/* Form kecil kirim ulang */}
         <form onSubmit={handleResend} className="space-y-4 pt-1" noValidate>
           <div className="space-y-1.5">
             <label

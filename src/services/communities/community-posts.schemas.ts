@@ -3,6 +3,7 @@ import type { CreateCommunityPostPayload } from "./community-posts.types";
 
 const TITLE_MAX_LENGTH = 300;
 
+/** Skema validasi Zod untuk pembuatan postingan baru di komunitas/forum. */
 export const createCommunityPostSchema = z.object({
   title: z
     .string({ message: "Judul postingan wajib diisi" })
@@ -23,7 +24,10 @@ export const createCommunityPostSchema = z.object({
 });
 
 /**
- * Validasi payload sebelum dikirim ke mock server / backend.
+ * Validasi payload pembuatan postingan sebelum dikirim ke mock server atau backend.
+ *
+ * @param payload - Data postingan komunitas yang akan divalidasi.
+ * @returns Hasil validasi berisi data bersih atau daftar pesan error.
  */
 export function validateCreateCommunityPost(
   payload: CreateCommunityPostPayload

@@ -6,6 +6,7 @@ interface PageProps {
   }>;
 }
 
+/** Halaman detail artikel berdasarkan ID artikel. */
 export default async function ArticleDetailPage({ params }: PageProps) {
   const { id } = await params;
   return <ArticleDetailView articleId={id} />;

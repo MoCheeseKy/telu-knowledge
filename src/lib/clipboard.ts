@@ -1,6 +1,8 @@
 /**
  * Menyalin teks ke clipboard dengan fallback textarea untuk konteks non-HTTPS/lama.
- * Mengembalikan `true` jika berhasil, `false` jika gagal tanpa melempar exception.
+ *
+ * @param text - Teks yang akan disalin ke clipboard.
+ * @returns `true` jika berhasil, atau `false` jika gagal tanpa melempar exception.
  */
 export async function copyTextToClipboard(text: string): Promise<boolean> {
   if (typeof window === "undefined" || typeof document === "undefined") {

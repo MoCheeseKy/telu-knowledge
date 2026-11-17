@@ -8,6 +8,7 @@ import MainFooter from "./footer";
 import Wrapper from "@/components/_shared/Wrapper";
 import { cn } from "@/lib/utils";
 
+/** Layout utama aplikasi yang menyatukan sidebar drawer, header, konten utama, dan footer. */
 export default function MainLayout({ children, className = "" }: MainLayoutProps) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 

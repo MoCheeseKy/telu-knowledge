@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import ActiveForumRecommendations from "@/components/_shared/ActiveForumRecommendations";
 import { cn } from "@/lib/utils";
 
+/**
+ * Sidebar detail komunitas yang menampilkan ringkasan komunitas terkait dan rekomendasi komunitas aktif.
+ */
 export default function ForumCommunitySidebar({
   post,
 }: ForumCommunitySidebarProps) {
@@ -13,7 +16,6 @@ export default function ForumCommunitySidebar({
 
   return (
     <aside className="w-full lg:w-[320px] xl:w-[340px] shrink-0 lg:sticky lg:top-24 flex flex-col gap-[32px] pt-2">
-      {/* 1. Tentang Komunitas */}
       <section className="flex flex-col w-full">
         <h3 className="font-sans text-[16px] font-bold uppercase text-[var(--primary-text)] tracking-wider mb-2">
           TENTANG KOMUNITAS
@@ -49,7 +51,6 @@ export default function ForumCommunitySidebar({
         </div>
       </section>
 
-      {/* 2. Top Komunitas Aktif (Reused Component) */}
       <ActiveForumRecommendations title="TOP KOMUNITAS AKTIF" />
     </aside>
   );

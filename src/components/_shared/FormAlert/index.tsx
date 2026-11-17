@@ -5,6 +5,9 @@ import type { FormAlertProps } from "./form-alert.types";
 
 export type { FormAlertProps };
 
+/**
+ * Banner alert untuk menampilkan pesan error atau sukses pada formulir.
+ */
 export default function FormAlert({
   variant = "error",
   messages,

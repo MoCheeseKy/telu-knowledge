@@ -16,8 +16,15 @@ import type {
 
 export type { InsertMenuAction, InsertMenuProps };
 
+/**
+ * Teks placeholder sementara yang disisipkan ke dokumen saat gambar sedang diunggah.
+ */
 export const UPLOAD_PLACEHOLDER_TEXT = "Mengunggah…";
 
+/**
+ * Menu mengambang (FloatingMenu) pada paragraf kosong di level root editor
+ * untuk menyisipkan blok konten seperti gambar.
+ */
 export default function InsertMenu({
   editor,
   onSelectImage,
@@ -25,7 +32,6 @@ export default function InsertMenu({
 }: InsertMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Tutup deretan aksi ketika posisi kursor atau isi dokumen berubah
   useEffect(() => {
     const handleUpdate = () => {
       setIsOpen(false);
@@ -77,7 +83,6 @@ export default function InsertMenu({
           return false;
         }
 
-        // Hanya tampil pada paragraf kosong di level root dokumen
         const isRootParagraph =
           $anchor.depth === 1 && $anchor.parent.type.name === "paragraph";
         const isEmptyParagraph =

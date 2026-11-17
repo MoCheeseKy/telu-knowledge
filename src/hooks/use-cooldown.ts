@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 
+/**
+ * Nilai kembalian hook {@link useCooldown}.
+ */
 export interface UseCooldownReturn {
   remaining: number;
   isCooling: boolean;
@@ -11,7 +14,10 @@ export interface UseCooldownReturn {
 
 /**
  * Hook untuk menghitung mundur cooldown tombol kirim ulang (misal: verifikasi email atau lupa password).
- * Default durasi: 60 detik. Timer dibersihkan secara aman saat komponen di-unmount.
+ * Timer dibersihkan secara aman saat komponen di-unmount.
+ *
+ * @param defaultSeconds - Durasi awal cooldown dalam detik (default: 60).
+ * @returns State sisa waktu, status cooldown, serta fungsi `start` dan `reset`.
  */
 export function useCooldown(defaultSeconds = 60): UseCooldownReturn {
   const [remaining, setRemaining] = useState(0);

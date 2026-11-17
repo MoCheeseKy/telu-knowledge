@@ -6,6 +6,10 @@ import Wrapper from "@/components/_shared/Wrapper";
 import { useMe } from "@/services/auth/auth.queries";
 import type { MainHeaderProps } from "./main-layout.types";
 
+/**
+ * Header sticky utama aplikasi dengan tombol pembuka sidebar,
+ * tautan beranda, pintasan tulis artikel, dan akses ke profil pengguna.
+ */
 export default function MainHeader({ onOpenSidebar }: MainHeaderProps) {
     const { data: user } = useMe();
 

@@ -2,6 +2,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { profilesApi } from "./profiles.api";
 import type { FollowUserDto, ProfileDto, UpdateProfilePayload } from "./profiles.types";
 
+/**
+ * Daftar query key TanStack Query untuk entitas profil pengguna.
+ */
 export const profileKeys = {
   all: ["profiles"] as const,
   me: ["profiles", "me"] as const,
@@ -9,6 +12,12 @@ export const profileKeys = {
   following: ["profiles", "following"] as const,
 };
 
+/**
+ * Hook query daftar pengikut profil milik sendiri (GET /proxy/profiles/me/followers).
+ *
+ * @param enabled Mengontrol apakah query dijalankan secara otomatis.
+ * @returns State TanStack Query berisi array `FollowUserDto`.
+ */
 export function useMyFollowers(enabled = true) {
   return useQuery<FollowUserDto[]>({
     queryKey: profileKeys.followers,
@@ -17,6 +26,12 @@ export function useMyFollowers(enabled = true) {
   });
 }
 
+/**
+ * Hook query daftar akun yang diikuti oleh profil milik sendiri (GET /proxy/profiles/me/following).
+ *
+ * @param enabled Mengontrol apakah query dijalankan secara otomatis.
+ * @returns State TanStack Query berisi array `FollowUserDto`.
+ */
 export function useMyFollowing(enabled = true) {
   return useQuery<FollowUserDto[]>({
     queryKey: profileKeys.following,

@@ -2,6 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import { aiApi } from "./ai.api";
 import type { AiAssistPayload } from "./ai.types";
 
+/**
+ * Variabel mutasi untuk permintaan bantuan penulisan AI beserta sinyal pembatalan opsional.
+ */
 export interface AiAssistMutationVariables extends AiAssistPayload {
   signal?: AbortSignal;
 }

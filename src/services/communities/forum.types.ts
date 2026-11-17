@@ -1,3 +1,4 @@
+/** Data ringkas forum yang diikuti oleh pengguna. */
 export interface JoinedForum {
   id: string;
   title: string;

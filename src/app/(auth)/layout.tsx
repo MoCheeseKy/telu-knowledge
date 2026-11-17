@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
+/** Layout grup rute autentikasi dengan banner kampus dan area formulir. */
 export default function AuthLayout({
     children,
 }: {

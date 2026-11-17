@@ -6,6 +6,7 @@ import { MOCK_VIEWER_ID } from "@/services/communities/community-posts.types";
 import CommunityPostCreateView from "../CommunityPostCreate";
 import type { CommunityPostEditViewProps } from "./community-post-edit.types";
 
+/** Halaman penyuntingan postingan komunitas yang memuat data awal dan memvalidasi kepemilikan penulis. */
 export default function CommunityPostEditView({
   community,
   postId,

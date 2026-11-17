@@ -14,6 +14,10 @@ import type { SubtitleFieldProps } from "./editor-studio.types";
 
 export type { SubtitleFieldProps };
 
+/**
+ * Input textarea auto-resize satu baris/multi-baris untuk subjudul atau ringkasan artikel
+ * yang menormalisasi karakter baris baru dan membatasi panjang teks.
+ */
 const SubtitleField = forwardRef<HTMLTextAreaElement, SubtitleFieldProps>(
   function SubtitleField(
     {

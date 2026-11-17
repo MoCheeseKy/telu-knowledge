@@ -20,6 +20,7 @@ const tabs = [
 
 type TabId = (typeof tabs)[number]["id"];
 
+/** Tampilan utama halaman detail komunitas dengan banner, tab mobile, feed, dan sidebar. */
 export default function CommunityDetailView({
   community,
 }: CommunityDetailViewProps) {
@@ -72,7 +73,6 @@ export default function CommunityDetailView({
         />
       </div>
 
-      {/* Tab bar hanya untuk mobile; desktop memakai layout dua kolom di bawah */}
       <div
         role="tablist"
         aria-label="Konten komunitas"

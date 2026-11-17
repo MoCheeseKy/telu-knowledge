@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import type { ErrorFallbackProps } from "@/components/_shared/ErrorFallback/error-fallback.types";
 
+/** Batas error global Next.js untuk menangani kesalahan fatal pada root layout. */
 export default function GlobalErrorPage({ error, reset }: ErrorFallbackProps) {
   useEffect(() => {
     console.error("[Global ErrorBoundary]", {

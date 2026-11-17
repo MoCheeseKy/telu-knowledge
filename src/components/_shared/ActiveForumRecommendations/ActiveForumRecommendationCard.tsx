@@ -8,6 +8,9 @@ import { cn } from "@/lib/utils";
 
 export { dummyForums };
 
+/**
+ * Kartu rekomendasi forum/komunitas aktif beserta tombol aksi ikuti.
+ */
 export default function ActiveForumRecommendationCard({
     title = "Kuliner Telkom",
     description = "Cari Kulineran Telkom yang wa...",

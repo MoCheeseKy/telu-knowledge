@@ -41,6 +41,10 @@ const SAVE_STATUS_CONFIG: Record<
     },
 };
 
+/**
+ * Header sticky pada halaman editor yang menampilkan tombol kembali,
+ * nama penulis, status penyimpanan draf, serta tombol simpan dan publikasi.
+ */
 export default function EditorHeader({ authorName }: EditorHeaderProps) {
     const router = useRouter();
     const { data: user } = useMe();

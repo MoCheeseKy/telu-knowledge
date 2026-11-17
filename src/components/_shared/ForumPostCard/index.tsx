@@ -17,6 +17,10 @@ import {
 const actionButtonClass =
     "h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4";
 
+/**
+ * Kartu postingan forum diskusi beserta aksi suka, komentar, repost, bagikan,
+ * serta aksi sunting/hapus untuk pemilik postingan.
+ */
 export default function ForumPostCard({
     id = 1,
     topic,
@@ -73,7 +77,6 @@ export default function ForumPostCard({
                 className
             )}
         >
-            {/* Meta: From {forum} by {penulis}, {tanggal} */}
             <div className="flex items-center gap-2">
                 {avatarUrl ? (
                     <img
@@ -98,7 +101,6 @@ export default function ForumPostCard({
                 </p>
             </div>
 
-            {/* Judul dan deskripsi */}
             <div className="mt-4 sm:mt-6 flex flex-col gap-2">
                 <h2 className="font-newsreader font-normal text-[20px] sm:text-[24px] uppercase leading-tight text-[var(--foreground)] group-hover:text-[var(--primary-text)] transition-colors">
                     {title}
@@ -108,7 +110,6 @@ export default function ForumPostCard({
                 </p>
             </div>
 
-            {/* Gambar lebar penuh */}
             {imageUrl && (
                 <img
                     src={imageUrl}
@@ -117,7 +118,6 @@ export default function ForumPostCard({
                 />
             )}
 
-            {/* Aksi: suka, komentar, repost, bagikan, sunting (post milik sendiri) */}
             {/* stopPropagation di level baris: klik aksi apa pun (termasuk isi dialog
                 yang dirender via portal) tidak boleh memicu navigasi klik kartu. */}
             <div

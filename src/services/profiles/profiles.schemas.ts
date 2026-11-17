@@ -63,6 +63,9 @@ export const updateProfileSchema = z.object({
 
 /**
  * Validasi payload pembaruan profil sebelum dikirim ke mock server / backend.
+ *
+ * @param payload Data pembaruan profil parsial dari client.
+ * @returns Objek hasil validasi beserta data terparse atau daftar pesan galat.
  */
 export function validateUpdateProfile(
   payload: UpdateProfilePayload

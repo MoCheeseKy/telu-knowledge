@@ -4,6 +4,9 @@ import WriterRecommendationCard from "./WriterRecommendationCard";
 import { WriterRecommendationsProps, dummyWriters } from "./writer-recommendations.types";
 import { cn } from "@/lib/utils";
 
+/**
+ * Bagian sidebar rekomendasi penulis unggulan beserta daftar kartunya.
+ */
 export default function WriterRecommendations({
     title = "TOP PENULIS",
     writers = dummyWriters,

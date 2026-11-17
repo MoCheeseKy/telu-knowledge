@@ -120,6 +120,9 @@ const defaultCommunities: DiscoverCommunityItem[] = [
     },
 ];
 
+/**
+ * Ikon kaca pembesar untuk kolom pencarian forum.
+ */
 function SearchIcon() {
     return (
         <svg
@@ -138,6 +141,9 @@ function SearchIcon() {
     );
 }
 
+/**
+ * Ikon tanda tambah di dalam lingkaran untuk tombol buat forum.
+ */
 function PlusIcon() {
     return (
         <svg
@@ -155,6 +161,9 @@ function PlusIcon() {
     );
 }
 
+/**
+ * Ikon pengguna untuk menampilkan jumlah anggota komunitas.
+ */
 function UsersIcon() {
     return (
         <svg
@@ -174,6 +183,9 @@ function UsersIcon() {
     );
 }
 
+/**
+ * Ikon balon pesan untuk menampilkan jumlah diskusi komunitas.
+ */
 function MessageIcon() {
     return (
         <svg
@@ -191,6 +203,9 @@ function MessageIcon() {
     );
 }
 
+/**
+ * Kartu komunitas yang menampilkan ringkasan informasi, statistik, dan tombol ikuti.
+ */
 function CommunityCard({
     community,
     followed,
@@ -269,6 +284,9 @@ function CommunityCard({
     );
 }
 
+/**
+ * Tampilan halaman Jelajah Forum untuk mencari, mengikuti, dan membuat komunitas baru.
+ */
 export default function DiscoverForumsView() {
     const { data: apiCommunities } = useCommunities();
     const [search, setSearch] = useState("");

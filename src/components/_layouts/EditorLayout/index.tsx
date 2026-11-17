@@ -23,6 +23,10 @@ export {
     type EditorStudioContextValue,
 };
 
+/**
+ * Layout utama untuk halaman editor artikel yang membungkus konten dengan
+ * EditorStudioProvider, header aksi editor, area konten utama, dan footer.
+ */
 export default function EditorLayout({
     children,
     className = "",

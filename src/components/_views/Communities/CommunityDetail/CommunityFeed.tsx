@@ -4,6 +4,7 @@ import CommunityPostDeleteButton from "./CommunityPostDeleteButton";
 import { MOCK_VIEWER_ID } from "@/services/communities/community-posts.types";
 import type { CommunityFeedProps } from "./community-detail.types";
 
+/** Daftar feed postingan pada halaman detail komunitas beserta aksi sunting/hapus untuk penulis. */
 export default function CommunityFeed({
   posts,
   communityId,
