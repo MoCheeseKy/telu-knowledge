@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import { ThumbsUp, MessageSquareMore, Repeat2, Bookmark, Share2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
 
 interface ForumDetailActionsProps {
+  postId?: string | number;
   initialScore: number;
   commentsCount: number;
   repostsCount: number;
@@ -16,6 +18,7 @@ const actionButtonClass =
   "h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4 transition-colors cursor-pointer";
 
 export default function ForumDetailActions({
+  postId,
   initialScore,
   commentsCount,
   repostsCount,
@@ -26,6 +29,7 @@ export default function ForumDetailActions({
   const [isReposted, setIsReposted] = useState(false);
   const [saved, setSaved] = useState(isSaved);
   const [copied, setCopied] = useState(false);
+  const { toast } = useToast();
 
   const handleToggleLike = () => {
     if (isLiked) {
@@ -48,11 +52,32 @@ export default function ForumDetailActions({
     }
   };
 
-  const handleShare = () => {
-    if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(window.location.href);
+  const handleShare = async () => {
+    if (typeof window === "undefined") return;
+
+    const shareUrl = postId
+      ? `${window.location.origin}/discussion-forums/${postId}`
+      : window.location.href.split("#")[0];
+
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = shareUrl;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
       setCopied(true);
+      toast.success("Tautan postingan forum berhasil disalin ke clipboard!");
       setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Gagal menyalin tautan ke clipboard.");
     }
   };
 
@@ -151,7 +176,7 @@ export default function ForumDetailActions({
           onClick={handleShare}
           className="h-7 w-7 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4 cursor-pointer relative"
           aria-label="Bagikan"
-          title="Salin tautan"
+          title={copied ? "Tautan disalin" : "Salin tautan"}
         >
           {copied ? (
             <Check className="text-[var(--success-text)]" />

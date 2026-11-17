@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function ArticleCard({
-    topic = "Software Engineering",
     publisher = "Rifky Muhammad Prayudhi",
     postDate = "12 Sep 2026",
     avatarUrl,
@@ -45,11 +44,6 @@ export default function ArticleCard({
                 )}
 
                 <div className="font-sans text-xs sm:text-sm leading-snug text-[var(--foreground)] min-w-0">
-                    <span>In </span>
-                    <span className="text-[var(--primary-text)] font-semibold">
-                        {topic ? topic : ""}
-                    </span>
-                    <span> by </span>
                     <span className="text-[var(--primary-text)] font-semibold">
                         {publisher ? publisher : ""}
                     </span>

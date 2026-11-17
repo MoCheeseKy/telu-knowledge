@@ -1,3 +1,5 @@
+import type { CommunityPostDto } from "@/services/community-posts/community-posts.types";
+
 export interface CommunityHighlight {
   id: string;
   title: string;
@@ -13,7 +15,10 @@ export interface CommunityRule {
 }
 
 export interface CommunityPost {
-  id: number;
+  /** ID postingan di mock server (CommunityPostDto.id). */
+  id: string | number;
+  /** Penulis postingan — dipakai untuk cek kepemilikan (tombol sunting/hapus). */
+  authorId: string;
   topic: string;
   publisher: string;
   postDate: string;
@@ -25,6 +30,44 @@ export interface CommunityPost {
   commentsCount: string | number;
   repostsCount: string | number;
   isLiked?: boolean;
+}
+
+const postDateFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+/**
+ * Mengubah CommunityPostDto (mock server) menjadi bentuk tampilan kartu feed.
+ * Deskripsi dipotong menjadi ringkasan maksimal 280 karakter.
+ */
+export function mapCommunityPostDto(
+  dto: CommunityPostDto,
+  topicName: string
+): CommunityPost {
+  const trimmed = dto.content.trim();
+
+  return {
+    id: dto.id,
+    authorId: dto.authorId,
+    topic: topicName,
+    publisher: dto.author.displayName,
+    postDate: postDateFormatter.format(new Date(dto.createdAt)),
+    title: dto.title,
+    description:
+      trimmed.length > 280 ? `${trimmed.slice(0, 280)}…` : trimmed,
+    ...(dto.coverImageUrl
+      ? {
+          imageUrl: dto.coverImageUrl,
+          imageAlt: dto.imageCaption ?? dto.title,
+        }
+      : {}),
+    likesCount: dto.likesCount,
+    commentsCount: dto.commentsCount,
+    repostsCount: dto.repostsCount,
+    isLiked: dto.isLiked,
+  };
 }
 
 export interface CommunityDetail {
@@ -41,7 +84,6 @@ export interface CommunityDetail {
   };
   rules: CommunityRule[];
   highlights: CommunityHighlight[];
-  posts: CommunityPost[];
 }
 
 export const sampleCommunity: CommunityDetail = {
@@ -108,35 +150,6 @@ export const sampleCommunity: CommunityDetail = {
       authorName: "Rifky M. Prayudhi",
       imageUrl: "/images/persona-c4.jpg",
       href: "/discussion-forums/4",
-    },
-  ],
-  posts: [
-    {
-      id: 1,
-      topic: "Rekomendasi Kuliner Telkom Community",
-      publisher: "Rifky Muhammad Prayudhi",
-      postDate: "12 September 2026",
-      title: "Game Persona 5 Rilis yang Baru?",
-      description:
-        "You're going to see these in someone's toolkit next year and wonder why you didn't hear about them first. Here's your head start.",
-      imageUrl: "/images/persona-c4.jpg",
-      likesCount: "16.2k",
-      commentsCount: "16.2k",
-      repostsCount: "16.2k",
-      isLiked: true,
-    },
-    {
-      id: 2,
-      topic: "Rekomendasi Kuliner Telkom Community",
-      publisher: "Rifky Muhammad Prayudhi",
-      postDate: "12 September 2026",
-      title: "Game Persona 5 Rilis yang Baru?",
-      description:
-        "You're going to see these in someone's toolkit next year and wonder why you didn't hear about them first. Here's your head start.",
-      likesCount: "16.2k",
-      commentsCount: "16.2k",
-      repostsCount: "16.2k",
-      isLiked: false,
     },
   ],
 };

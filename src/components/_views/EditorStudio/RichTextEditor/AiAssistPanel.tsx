@@ -46,11 +46,11 @@ const QUICK_ACTION_CHIPS: ReadonlyArray<{
   label: string;
   action: AiAssistAction;
 }> = [
-  { label: "Parafrase", action: "paraphrase" },
-  { label: "Perpendek", action: "shorten" },
-  { label: "Perpanjang", action: "expand" },
-  { label: "Perbaiki tata bahasa", action: "fix_grammar" },
-];
+    { label: "Parafrase", action: "paraphrase" },
+    { label: "Perpendek", action: "shorten" },
+    { label: "Perpanjang", action: "expand" },
+    { label: "Perbaiki tata bahasa", action: "fix_grammar" },
+  ];
 
 function isAbortError(error: unknown): boolean {
   if (!error) return false;

@@ -131,7 +131,7 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(
     const editorInstanceRef = useRef<Editor | null>(null);
     const uploadHandlerRef = useRef<
       (file: File, targetPos?: number) => Promise<void>
-    >(async () => {});
+    >(async () => { });
 
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [aiSession, setAiSession] = useState<AiSession | null>(null);
@@ -168,8 +168,8 @@ const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(
         const resolvedPos =
           typeof targetPos === "number"
             ? state.doc.resolve(
-                Math.min(Math.max(0, targetPos), state.doc.content.size)
-              )
+              Math.min(Math.max(0, targetPos), state.doc.content.size)
+            )
             : state.selection.$from;
 
         const isRootEmptyParagraph =

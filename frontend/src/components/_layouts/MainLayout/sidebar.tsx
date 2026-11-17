@@ -5,9 +5,11 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Home,
   MessageSquareMore,
+  Newspaper,
+  Compass,
+  FileText,
   Users,
   BarChart2,
-  Clipboard,
   User,
   Bookmark,
   Settings,
@@ -45,15 +47,15 @@ const navSections: NavSection[] = [
     items: [
       { label: "Beranda", href: "/home", icon: Home },
       { label: "Forum Diskusi", href: "/discussion-forums", icon: MessageSquareMore },
-      { label: "Cari Artikel", href: "/discovers-articles", icon: Users },
-      { label: "Cari Forum", href: "/discovers-forums", icon: Users },
+      { label: "Cari Artikel", href: "/discovers-articles", icon: Newspaper },
+      { label: "Cari Forum", href: "/discovers-forums", icon: Compass },
     ],
   },
   {
     title: "Kontribusi",
     items: [
       { label: "Statistik", href: "/statistics", icon: BarChart2 },
-      { label: "Artikel Saya", href: "/my-articles", icon: Clipboard },
+      { label: "Artikel Saya", href: "/my-articles", icon: FileText },
     ],
   },
   {

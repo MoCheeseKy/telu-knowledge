@@ -68,7 +68,6 @@ export default function ForgotPasswordView() {
 
   return (
     <div className="w-full flex flex-col justify-center">
-      {/* Judul & Deskripsi Halaman */}
       <div className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold text-[var(--primary-text)] tracking-tight">
           Lupa Password
@@ -127,7 +126,7 @@ export default function ForgotPasswordView() {
           </Button>
         </div>
       ) : (
-        /* Form Lupa Password */
+        /* Forgot Password */
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
           {forgotMutation.error && (
             <FormAlert
@@ -177,7 +176,6 @@ export default function ForgotPasswordView() {
         </form>
       )}
 
-      {/* Navigasi Kembali ke Login */}
       <div className="mt-8 text-center">
         <Link
           href="/login"

@@ -22,6 +22,8 @@ export default function MyArticleCard({
     imageUrl,
     status = "draft",
     className = "",
+    isDeleting = false,
+    isPublishing = false,
     onEdit,
     onDelete,
     onPublish,
@@ -41,6 +43,15 @@ export default function MyArticleCard({
         }
     };
 
+    const handleCardClick = () => {
+        if (id === undefined) return;
+        if (status === "published") {
+            router.push(`/discovers-articles/${id}/article-detail`);
+        } else {
+            router.push(`/editor-studio/${id}`);
+        }
+    };
+
     const handleConfirmDelete = () => {
         setIsDeleteDialogOpen(false);
         onDelete?.();
@@ -54,8 +65,10 @@ export default function MyArticleCard({
                     className
                 )}
             >
-                {/* 1. BAGIAN KIRI: Cover Image, Judul, dan Deskripsi */}
-                <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                <div
+                    onClick={handleCardClick}
+                    className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0 cursor-pointer"
+                >
                     {imageUrl ? (
                         <img
                             src={imageUrl}
@@ -67,7 +80,7 @@ export default function MyArticleCard({
                     )}
 
                     <div className="flex flex-col gap-1 min-w-0 flex-1">
-                        <h3 className="font-sans text-[15px] sm:text-[16px] font-bold text-[var(--foreground)] truncate">
+                        <h3 className="font-sans text-[15px] sm:text-[16px] font-bold text-[var(--foreground)] truncate group-hover:text-[var(--primary-text)] transition-colors">
                             {title}
                         </h3>
                         <p className="font-sans text-[13px] text-[var(--muted)] truncate">
@@ -76,12 +89,12 @@ export default function MyArticleCard({
                     </div>
                 </div>
 
-                {/* 2. BAGIAN KANAN: Aksi (Hapus, Edit, dan Publikasi untuk Draft) */}
                 <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                     <button
                         type="button"
                         onClick={() => setIsDeleteDialogOpen(true)}
-                        className="p-2 rounded-lg text-[var(--muted)] hover:text-[var(--failed)] hover:bg-[var(--failed)]/10 transition-colors cursor-pointer"
+                        disabled={isDeleting}
+                        className="p-2 rounded-lg text-[var(--muted)] hover:text-[var(--failed)] hover:bg-[var(--failed)]/10 transition-colors cursor-pointer disabled:opacity-50"
                         aria-label={`Hapus ${title}`}
                         title="Hapus"
                     >
@@ -102,10 +115,11 @@ export default function MyArticleCard({
                         <Button
                             type="button"
                             size="sm"
+                            disabled={isPublishing}
                             onClick={onPublish}
-                            className="h-8 px-3 sm:px-3.5 text-xs font-semibold rounded-lg bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white cursor-pointer ml-1"
+                            className="h-8 px-3 sm:px-3.5 text-xs font-semibold rounded-lg bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white cursor-pointer ml-1 disabled:opacity-50"
                         >
-                            Publikasi
+                            {isPublishing ? "Memproses..." : "Publikasi"}
                         </Button>
                     )}
                 </div>
@@ -130,6 +144,7 @@ export default function MyArticleCard({
                             type="button"
                             variant="secondary"
                             size="sm"
+                            disabled={isDeleting}
                             onClick={() => setIsDeleteDialogOpen(false)}
                             className="rounded-lg border border-[var(--dust)] bg-transparent text-[var(--foreground)] hover:bg-[var(--background-accent)] cursor-pointer"
                         >
@@ -139,10 +154,11 @@ export default function MyArticleCard({
                             type="button"
                             variant="destructive"
                             size="sm"
+                            disabled={isDeleting}
                             onClick={handleConfirmDelete}
                             className="rounded-lg bg-[var(--failed)] hover:opacity-90 text-white cursor-pointer"
                         >
-                            Hapus
+                            {isDeleting ? "Menghapus..." : "Hapus"}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

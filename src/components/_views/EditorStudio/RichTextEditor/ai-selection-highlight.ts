@@ -48,26 +48,26 @@ export const AiSelectionHighlight = Extension.create({
     return {
       setAiSelectionHighlight:
         (range: AiHighlightRange) =>
-        ({ tr, dispatch }) => {
-          if (dispatch) {
-            const meta: AiHighlightMeta = {
-              type: "set",
-              from: range.from,
-              to: range.to,
-            };
-            dispatch(tr.setMeta(aiSelectionHighlightPluginKey, meta));
-          }
-          return true;
-        },
+          ({ tr, dispatch }) => {
+            if (dispatch) {
+              const meta: AiHighlightMeta = {
+                type: "set",
+                from: range.from,
+                to: range.to,
+              };
+              dispatch(tr.setMeta(aiSelectionHighlightPluginKey, meta));
+            }
+            return true;
+          },
       clearAiSelectionHighlight:
         () =>
-        ({ tr, dispatch }) => {
-          if (dispatch) {
-            const meta: AiHighlightMeta = { type: "clear" };
-            dispatch(tr.setMeta(aiSelectionHighlightPluginKey, meta));
-          }
-          return true;
-        },
+          ({ tr, dispatch }) => {
+            if (dispatch) {
+              const meta: AiHighlightMeta = { type: "clear" };
+              dispatch(tr.setMeta(aiSelectionHighlightPluginKey, meta));
+            }
+            return true;
+          },
     };
   },
 

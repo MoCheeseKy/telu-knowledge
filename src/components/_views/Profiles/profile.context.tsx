@@ -1,57 +1,51 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
-import { UserProfile, defaultProfile } from "./profile.types";
+import React, { createContext, useContext, useMemo } from "react";
+import { useMyProfile, useUpdateMyProfile } from "@/services/profiles/profiles.queries";
+import type { UpdateProfilePayload } from "@/services/profiles/profiles.types";
+import {
+  UserProfile,
+  defaultProfile,
+  mapProfileDtoToUserProfile,
+} from "./profile.types";
 
 interface ProfileContextType {
   profile: UserProfile;
-  updateProfile: (updated: Partial<UserProfile>) => void;
-  resetProfile: () => void;
+  /**
+   * Menyimpan pembaruan profil secara persisten ke mock server
+   * (PATCH /proxy/profiles/me). Melempar error bila gagal — pemanggil
+   * (form) menampilkannya lewat FormAlert.
+   */
+  updateProfile: (payload: UpdateProfilePayload) => Promise<void>;
+  isLoading: boolean;
+  isError: boolean;
+  refetchProfile: () => void;
   isEditDialogOpen: boolean;
   setIsEditDialogOpen: (open: boolean) => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
-const STORAGE_KEY = "telu_user_profile";
-
-function getInitialProfile(): UserProfile {
-  if (typeof window !== "undefined") {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch {
-      // Ignore storage errors
-    }
-  }
-  return defaultProfile;
-}
-
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
-  const [profile, setProfile] = useState<UserProfile>(getInitialProfile);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  // Detail profil langsung dari mock server (GET /proxy/profiles/me).
+  // Tidak ada localStorage — perubahan data lewat mutasi + invalidasi query.
+  const { data, isLoading, isError, refetch } = useMyProfile();
+  const updateMutation = useUpdateMyProfile();
+  const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
 
-  const updateProfile = (updated: Partial<UserProfile>) => {
-    setProfile((prev) => {
-      const next = { ...prev, ...updated };
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch {
-        // Ignore storage errors
-      }
-      return next;
-    });
+  const profile = useMemo<UserProfile>(
+    () => (data ? mapProfileDtoToUserProfile(data) : defaultProfile),
+    [data]
+  );
+
+  const updateProfile = async (payload: UpdateProfilePayload): Promise<void> => {
+    // useUpdateMyProfile meng-update cache profileKeys.me dari respons server,
+    // sehingga seluruh tampilan profil sinkron seketika.
+    await updateMutation.mutateAsync(payload);
   };
 
-  const resetProfile = () => {
-    setProfile(defaultProfile);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // Ignore storage errors
-    }
+  const refetchProfile = () => {
+    void refetch();
   };
 
   return (
@@ -59,7 +53,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       value={{
         profile,
         updateProfile,
-        resetProfile,
+        isLoading,
+        isError,
+        refetchProfile,
         isEditDialogOpen,
         setIsEditDialogOpen,
       }}

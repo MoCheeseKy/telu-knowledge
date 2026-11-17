@@ -1,11 +1,18 @@
+import type {
+  CommunityPostDto,
+  ForumCommentDto,
+} from "@/services/community-posts/community-posts.types";
+
 export interface ForumComment {
   id: string | number;
+  authorId?: string;
   author: {
     name: string;
     avatarUrl?: string;
     initial: string;
     badge?: string;
     department?: string;
+    avatarColor?: string;
   };
   createdAt: string;
   content: string;
@@ -43,6 +50,125 @@ export interface ForumPostDetail {
   repostsCount: number;
   isSaved: boolean;
   comments: ForumComment[];
+}
+
+const detailDateFormatter = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+
+export function formatForumCommentDate(dateString?: string): string {
+  if (!dateString) return "";
+  try {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    return new Intl.DateTimeFormat("id-ID", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(d);
+  } catch {
+    return dateString;
+  }
+}
+
+export function buildForumCommentTree(dtos: ForumCommentDto[]): ForumComment[] {
+  const map = new Map<string, ForumComment>();
+  const rootComments: ForumComment[] = [];
+
+  for (const dto of dtos) {
+    const initial = (dto.author.displayName?.trim()?.[0] ?? "U").toUpperCase();
+    const generationLabel = dto.author.generation
+      ? `'${dto.author.generation.slice(-2)}`
+      : null;
+    const department =
+      [dto.author.major, generationLabel].filter(Boolean).join(" ") ||
+      dto.author.faculty ||
+      undefined;
+
+    const item: ForumComment = {
+      id: dto.id,
+      authorId: dto.authorId,
+      author: {
+        name: dto.author.displayName,
+        avatarUrl: dto.author.avatarUrl ?? undefined,
+        avatarColor: dto.author.avatarColor,
+        initial,
+        badge: dto.author.faculty ?? undefined,
+        department,
+      },
+      createdAt: formatForumCommentDate(dto.createdAt),
+      content: dto.content,
+      score: dto.score,
+      userVote: dto.userVote,
+      replies: [],
+    };
+    map.set(String(dto.id), item);
+  }
+
+  for (const dto of dtos) {
+    const item = map.get(String(dto.id))!;
+    if (dto.parentId && map.has(String(dto.parentId))) {
+      const parent = map.get(String(dto.parentId))!;
+      parent.replies = parent.replies || [];
+      parent.replies.push(item);
+    } else {
+      rootComments.push(item);
+    }
+  }
+
+  return rootComments;
+}
+
+/**
+ * Mengubah CommunityPostDto (mock server) menjadi ForumPostDetail.
+ * Cakupan integrasi: konten post saja (judul, penulis, tanggal, paragraf,
+ * cover, callout, tags). Field komunitas sidebar (slug, anggota, deskripsi,
+ * aturan) serta userVote/isSaved memakai nilai contoh — di luar cakupan.
+ */
+export function mapForumPostDtoToDetail(dto: CommunityPostDto): ForumPostDetail {
+  const { author } = dto;
+  const initial = (author.displayName?.trim()?.[0] ?? "T").toUpperCase();
+  const generationLabel = author.generation
+    ? `'${author.generation.slice(-2)}`
+    : null;
+
+  return {
+    ...sampleForumPost,
+    id: dto.id,
+    title: dto.title,
+    topic: dto.communityName ?? sampleForumPost.topic,
+    publisher: {
+      name: author.displayName,
+      avatarUrl: author.avatarUrl ?? undefined,
+      initial,
+      role: author.faculty ?? "Mahasiswa Telkom University",
+      department:
+        [author.major, generationLabel].filter(Boolean).join(" ") ||
+        "Telkom University",
+    },
+    postDate: detailDateFormatter.format(new Date(dto.createdAt)),
+    content: dto.content.trim().split(/\n{2,}/),
+    callout: dto.callout ?? undefined,
+    ...(dto.coverImageUrl
+      ? {
+          imageUrl: dto.coverImageUrl,
+          imageAlt: dto.imageCaption ?? dto.title,
+          imageCaption: dto.imageCaption ?? undefined,
+        }
+      : {}),
+    tags: dto.tags,
+    score: dto.score || dto.likesCount,
+    userVote: 0,
+    commentsCount: dto.commentsCount,
+    repostsCount: dto.repostsCount,
+    isSaved: false,
+    // Komentar di luar cakupan integrasi ini (lihat docs 05-detail-post.md)
+    comments: [],
+  };
 }
 
 export const sampleForumPost: ForumPostDetail = {

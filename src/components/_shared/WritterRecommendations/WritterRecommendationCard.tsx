@@ -10,11 +10,13 @@ export { dummyWriters };
 export default function WritterRecommendationCard({
     name = "mocheeseky",
     avatarUrl,
+    avatarColor,
     isFollowing: initialFollowing = false,
     onFollowToggle,
     className = "",
 }: WritterRecommendationCardProps) {
     const [following, setFollowing] = useState(initialFollowing);
+    const initial = (name || "U").charAt(0).toUpperCase();
 
     const handleFollow = () => {
         setFollowing(!following);
@@ -38,10 +40,13 @@ export default function WritterRecommendationCard({
                 ) : (
                     <div
                         aria-hidden="true"
-                        className="w-8 h-8 rounded-[8px] bg-[var(--primary)] shrink-0"
-                    />
+                        style={{ backgroundColor: avatarColor || "var(--primary)" }}
+                        className="w-8 h-8 rounded-[8px] text-white text-xs font-bold flex items-center justify-center shrink-0 select-none shadow-2xs"
+                    >
+                        {initial}
+                    </div>
                 )}
-                <span className="font-sans text-[16px] font-bold text-[var(--foreground)] truncate">
+                <span className="font-sans text-[15px] font-semibold text-[var(--foreground)] truncate">
                     {name}
                 </span>
             </div>

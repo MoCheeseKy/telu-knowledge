@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 export default interface ForumPostCardProps {
   id?: string | number;
   topic: string;
@@ -14,4 +16,8 @@ export default interface ForumPostCardProps {
   isLiked?: boolean;
   className?: string;
   onClick?: () => void;
+  /** Jika diisi, tombol "Sunting" tampil dan mengarah ke URL ini (hanya untuk post milik sendiri). */
+  editHref?: string;
+  /** Slot aksi tambahan di baris aksi (mis. tombol hapus). Hanya untuk post milik sendiri. */
+  deleteAction?: ReactNode;
 }

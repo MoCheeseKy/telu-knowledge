@@ -44,12 +44,12 @@ export default function DiscussionForumsView() {
                 </div>
 
                 <div className="flex flex-col gap-10">
-                    {dummyForumPosts.map(({ id, ...post }, index) => (
-                        <Fragment key={id}>
+                    {dummyForumPosts.map((post, index) => (
+                        <Fragment key={post.id}>
                             {index > 0 && (
                                 <div className="w-full border-t border-[var(--dust)]/40" />
                             )}
-                            <ForumPostCard {...post} />
+                            <ForumPostCard {...post} id={post.id} />
                         </Fragment>
                     ))}
                 </div>

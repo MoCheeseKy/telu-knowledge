@@ -21,6 +21,7 @@ export default function WritterRecommendations({
                         key={writer.id ?? `${writer.name}-${index}`}
                         name={writer.name}
                         avatarUrl={writer.avatarUrl}
+                        avatarColor={writer.avatarColor}
                         isFollowing={writer.isFollowing}
                     />
                 ))}

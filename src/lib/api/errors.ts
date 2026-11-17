@@ -1,5 +1,5 @@
 /**
- * Penanganan dan Representasi Error Terpadu untuk API & BFF Tel-U Knowledge.
+ * Penanganan dan Representasi Error untuk API & BFF Tel-U Knowledge.
  */
 
 export class ApiError extends Error {

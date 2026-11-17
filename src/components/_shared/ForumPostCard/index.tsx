@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import ForumPostCardProps from "./_types";
-import { ThumbsUp, MessageSquareMore, Repeat2, Share2 } from "lucide-react";
+import { ThumbsUp, MessageSquareMore, Repeat2, Share2, Pencil, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/components/ui/toast";
 
 const actionButtonClass =
     "h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4";
@@ -25,14 +27,47 @@ export default function ForumPostCard({
     isLiked = false,
     className = "",
     onClick,
+    editHref,
+    deleteAction,
 }: ForumPostCardProps) {
     const router = useRouter();
+    const { toast } = useToast();
+    const [copied, setCopied] = useState(false);
 
     const handleCardClick = () => {
         if (onClick) {
             onClick();
         } else {
             router.push(`/discussion-forums/${id}`);
+        }
+    };
+
+    const handleShare = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const shareUrl =
+            typeof window !== "undefined"
+                ? `${window.location.origin}/discussion-forums/${id}`
+                : `/discussion-forums/${id}`;
+
+        try {
+            if (navigator?.clipboard?.writeText) {
+                await navigator.clipboard.writeText(shareUrl);
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = shareUrl;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-9999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+            }
+            setCopied(true);
+            toast.success("Tautan postingan forum berhasil disalin ke clipboard!");
+            setTimeout(() => setCopied(false), 2000);
+        } catch {
+            toast.error("Gagal menyalin tautan ke clipboard.");
         }
     };
 
@@ -88,8 +123,30 @@ export default function ForumPostCard({
                 />
             )}
 
-            {/* Aksi: suka, komentar, repost, bagikan */}
-            <div className="mt-5 flex items-center gap-1 sm:gap-2">
+            {/* Aksi: suka, komentar, repost, bagikan, sunting (post milik sendiri) */}
+            {/* stopPropagation di level baris: klik aksi apa pun (termasuk isi dialog
+                yang dirender via portal) tidak boleh memicu navigasi klik kartu. */}
+            <div
+                className="mt-5 flex items-center gap-1 sm:gap-2"
+                onClick={(e) => e.stopPropagation()}
+            >
+                {editHref && (
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className={actionButtonClass}
+                        aria-label="Sunting postingan"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(editHref);
+                        }}
+                    >
+                        <Pencil />
+                        <span className="font-sans text-xs font-bold">Sunting</span>
+                    </Button>
+                )}
+
                 <Button
                     type="button"
                     variant="ghost"
@@ -140,19 +197,19 @@ export default function ForumPostCard({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4"
+                    className="h-7 w-7 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4 cursor-pointer relative"
                     aria-label="Bagikan"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        if (typeof window !== "undefined") {
-                            navigator.clipboard.writeText(
-                                `${window.location.origin}/discussion-forums/${id}`
-                            );
-                        }
-                    }}
+                    title={copied ? "Tautan disalin" : "Salin tautan"}
+                    onClick={handleShare}
                 >
-                    <Share2 />
+                    {copied ? (
+                        <Check className="text-[var(--success-text)]" />
+                    ) : (
+                        <Share2 />
+                    )}
                 </Button>
+
+                {deleteAction}
             </div>
         </article>
     );

@@ -1,15 +1,12 @@
 "use client";
 
-import { useState, useSyncExternalStore, type KeyboardEvent } from "react";
+import { useState, type KeyboardEvent } from "react";
 import CommunityBanner from "./CommunityBanner";
 import CommunityHighlights from "./CommunityHighlights";
 import CommunityFeed from "./CommunityFeed";
 import CommunitySidebar from "./CommunitySidebar";
-import {
-  getCommunityPostsSnapshot,
-  getEmptyCommunityPosts,
-  subscribeCommunityPosts,
-} from "../CommunityPostCreate/storage";
+import { useCommunityPosts } from "@/services/community-posts/community-posts.queries";
+import { mapCommunityPostDto } from "./types";
 import { cn } from "@/lib/utils";
 import type { CommunityDetail } from "./types";
 
@@ -29,13 +26,20 @@ export default function CommunityDetailView({
 }: CommunityDetailViewProps) {
   const [isJoined, setIsJoined] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("feed");
-  const savedPosts = useSyncExternalStore(
-    subscribeCommunityPosts,
-    () => getCommunityPostsSnapshot(community.id),
-    getEmptyCommunityPosts
-  );
 
-  const posts = [...savedPosts, ...community.posts];
+  // Feed komunitas langsung dari mock server (GET /proxy/communities/:id/posts).
+  // Mutasi create/update/delete meng-invalidate query key yang sama, sehingga
+  // feed otomatis me-refresh setelah aksi tanpa penanganan khusus.
+  const {
+    data: postDtos,
+    isLoading: isLoadingPosts,
+    isError: isErrorPosts,
+    refetch: refetchPosts,
+  } = useCommunityPosts(community.id);
+
+  const posts = (postDtos ?? []).map((dto) =>
+    mapCommunityPostDto(dto, community.name)
+  );
 
   const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
     const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
@@ -112,7 +116,35 @@ export default function CommunityDetailView({
         )}
       >
         <CommunityHighlights highlights={community.highlights} />
-        <CommunityFeed posts={posts} />
+        {isLoadingPosts ? (
+          <div
+            className="mt-5 flex flex-col gap-6"
+            aria-live="polite"
+            aria-busy="true"
+          >
+            <div className="h-32 w-full rounded-xl bg-[var(--dust)]/30 animate-pulse" />
+            <div className="h-32 w-full rounded-xl bg-[var(--dust)]/30 animate-pulse" />
+            <div className="h-32 w-full rounded-xl bg-[var(--dust)]/30 animate-pulse" />
+          </div>
+        ) : isErrorPosts ? (
+          <div className="mt-8 flex min-h-[200px] flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-[var(--dust)]/70 text-center">
+            <p className="font-sans text-sm font-semibold text-[var(--foreground)]">
+              Gagal memuat postingan
+            </p>
+            <p className="font-sans text-[13px] text-[var(--muted)]">
+              Pastikan mock server berjalan, lalu coba lagi.
+            </p>
+            <button
+              type="button"
+              onClick={() => void refetchPosts()}
+              className="mt-2 inline-flex h-9 items-center rounded-lg border border-[var(--dust)] px-4 font-sans text-[13px] font-semibold text-[var(--foreground)] transition-colors hover:bg-[var(--background-accent)] cursor-pointer"
+            >
+              Coba lagi
+            </button>
+          </div>
+        ) : (
+          <CommunityFeed posts={posts} communityId={community.id} />
+        )}
       </div>
 
       <div
