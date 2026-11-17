@@ -25,16 +25,12 @@ export interface UserProfile {
   showCommunities: boolean;
 }
 
-/**
- * Angka pengikut/mengikuti masih STATIS (contoh) — fitur follow belum
- * diintegrasikan dan sengaja tidak mengambil dari mock (di luar cakupan,
- * lihat docs/integrasi-profil/README.md). Sama perlakuannya dengan tab
- * Reposts/koleksi yang tetap memakai data contoh.
- */
-export const SAMPLE_FOLLOW_STATS = {
-  followersCount: 142,
-  followingCount: 89,
-} as const;
+export const SAMPLE_FOLLOW_STATS = (
+  dto: Pick<ProfileDto, "followersCount" | "followingCount">
+) => ({
+  followersCount: dto.followersCount ?? 0,
+  followingCount: dto.followingCount ?? 0,
+}) as const;
 
 /**
  * Mengubah ProfileDto (mock server) menjadi UserProfile tampilan.
@@ -44,6 +40,7 @@ export const SAMPLE_FOLLOW_STATS = {
 export function mapProfileDtoToUserProfile(dto: ProfileDto): UserProfile {
   const displayName = dto.displayName ?? "";
   const username = dto.username ?? "";
+  const followStats = SAMPLE_FOLLOW_STATS(dto);
 
   return {
     username,
@@ -57,9 +54,8 @@ export function mapProfileDtoToUserProfile(dto: ProfileDto): UserProfile {
     major: dto.major ?? "",
     studentId: "",
     generation: dto.generation ?? "",
-    // Pengikut/mengikuti TIDAK diintegrasikan (di luar cakupan) — statis
-    followersCount: SAMPLE_FOLLOW_STATS.followersCount,
-    followingCount: SAMPLE_FOLLOW_STATS.followingCount,
+    followersCount: followStats.followersCount,
+    followingCount: followStats.followingCount,
     website: dto.website ?? undefined,
     github: dto.github ?? undefined,
     linkedin: dto.linkedin ?? undefined,
