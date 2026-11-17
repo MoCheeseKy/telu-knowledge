@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronRight, Globe } from "lucide-react";
 import { useProfile } from "./profile.context";
 import EditProfileDialog from "./EditProfileDialog";
+import FollowListDialog, { FollowTab } from "./FollowListDialog";
 
 const communities = [
   { id: 1, name: "Game Dev +++", desc: "Cari Kulineran Telkom yang wa...", members: "128.000 Anggota" },
@@ -36,6 +37,11 @@ export default function ProfileSidebar() {
     2: true,
     3: true,
     4: true,
+  });
+
+  const [followDialog, setFollowDialog] = useState<{ open: boolean; tab: FollowTab }>({
+    open: false,
+    tab: "followers",
   });
 
   const toggleFollow = (id: number) => {
@@ -73,8 +79,21 @@ export default function ProfileSidebar() {
 
         {/* Followers / Following */}
         <p className="mb-3 text-xs text-[var(--muted)]">
-          <span className="font-semibold text-[var(--foreground)]">{profile.followersCount}</span> Pengikut ·{" "}
-          <span className="font-semibold text-[var(--foreground)]">{profile.followingCount}</span> Mengikuti
+          <button
+            type="button"
+            onClick={() => setFollowDialog({ open: true, tab: "followers" })}
+            className="hover:underline cursor-pointer"
+          >
+            <span className="font-semibold text-[var(--foreground)]">{profile.followersCount}</span> Pengikut
+          </button>{" "}
+          ·{" "}
+          <button
+            type="button"
+            onClick={() => setFollowDialog({ open: true, tab: "following" })}
+            className="hover:underline cursor-pointer"
+          >
+            <span className="font-semibold text-[var(--foreground)]">{profile.followingCount}</span> Mengikuti
+          </button>
         </p>
 
         {/* Bio */}
@@ -174,11 +193,10 @@ export default function ProfileSidebar() {
                     <button
                       type="button"
                       onClick={() => toggleFollow(item.id)}
-                      className={`shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded transition-colors cursor-pointer ${
-                        isFollowing
-                          ? "bg-[var(--background-accent)] text-[var(--foreground)] hover:bg-[var(--dust)]/50"
-                          : "bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
-                      }`}
+                      className={`shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded transition-colors cursor-pointer ${isFollowing
+                        ? "bg-[var(--background-accent)] text-[var(--foreground)] hover:bg-[var(--dust)]/50"
+                        : "bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
+                        }`}
                     >
                       {isFollowing ? "Mengikuti" : "+ Ikuti"}
                     </button>
@@ -202,6 +220,12 @@ export default function ProfileSidebar() {
       <EditProfileDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
+      />
+      <FollowListDialog
+        open={followDialog.open}
+        onOpenChange={(open) => setFollowDialog((s) => ({ ...s, open }))}
+        tab={followDialog.tab}
+        onTabChange={(tab) => setFollowDialog((s) => ({ ...s, tab }))}
       />
     </>
   );
