@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 export type RepostItem = {
-  id: number;
+  id: string | number;
   category: string;
   author: string;
   date: string;
