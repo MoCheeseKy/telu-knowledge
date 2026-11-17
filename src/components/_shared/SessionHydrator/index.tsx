@@ -3,12 +3,9 @@
 import React, { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { authKeys } from "@/services/auth/auth.queries";
-import type { AuthUser } from "@/services/auth/auth.types";
+import type { SessionHydratorProps } from "./session-hydrator.types";
 
-export interface SessionHydratorProps {
-  user: AuthUser | null;
-  children: React.ReactNode;
-}
+export type { SessionHydratorProps };
 
 /**
  * Client Component untuk mengisi cache authKeys.me dari data sesi server

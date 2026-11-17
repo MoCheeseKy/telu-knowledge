@@ -4,7 +4,7 @@ import { isIP } from "node:net";
 import { serverEnv } from "@/lib/env";
 import { toApiError } from "./errors";
 import { parseApiResponse } from "./parse-response";
-import type { ApiEnvelope } from "./types";
+import type { ApiEnvelope } from "./api.types";
 
 export interface ServerFetchOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";

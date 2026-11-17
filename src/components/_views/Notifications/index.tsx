@@ -13,23 +13,11 @@ import {
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-
-type NotificationType = "like" | "comment" | "mention" | "follow" | "forum";
-
-interface NotificationItem {
-    id: number;
-    type: NotificationType;
-    actor: string;
-    avatarUrl?: string;
-    message: string;
-    target?: string;
-    time: string;
-    isRead?: boolean;
-    href?: string;
-    imageUrl?: string;
-}
-
-type TabKey = "semua" | "belum_dibaca" | "komentar" | "forum";
+import type {
+    NotificationItem,
+    NotificationType,
+    NotificationTabKey as TabKey,
+} from "./notifications.types";
 
 // TODO: ganti dummy data ini dengan data dari API
 // imageUrl opsional: thumbnail post/artikel di sisi kanan (seperti Reddit)

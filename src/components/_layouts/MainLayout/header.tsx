@@ -4,10 +4,7 @@ import Link from "next/link";
 import { PanelLeft, Pencil, User } from "lucide-react";
 import Wrapper from "@/components/_shared/Wrapper";
 import { useMe } from "@/services/auth/auth.queries";
-
-interface MainHeaderProps {
-    onOpenSidebar: () => void;
-}
+import type { MainHeaderProps } from "./main-layout.types";
 
 export default function MainHeader({ onOpenSidebar }: MainHeaderProps) {
     const { data: user } = useMe();

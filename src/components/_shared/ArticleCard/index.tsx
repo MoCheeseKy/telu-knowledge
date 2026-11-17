@@ -1,6 +1,6 @@
 "use client";
 
-import ArticleCardProps from "./_types";
+import ArticleCardProps from "./article-card.types";
 import { ThumbsUp, MessageSquareMore, Repeat2, Bookmark, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

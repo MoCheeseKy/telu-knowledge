@@ -1,11 +1,8 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import type { FieldErrorProps } from "./field-error.types";
 
-export interface FieldErrorProps {
-  message?: string;
-  id?: string;
-  className?: string;
-}
+export type { FieldErrorProps };
 
 export default function FieldError({ message, id, className }: FieldErrorProps) {
   if (!message) return null;

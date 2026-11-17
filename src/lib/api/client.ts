@@ -1,6 +1,6 @@
 import { toApiError } from "./errors";
 import { parseApiResponse } from "./parse-response";
-import type { ApiEnvelope } from "./types";
+import type { ApiEnvelope } from "./api.types";
 
 export type DataSource = "backend" | "mock";
 

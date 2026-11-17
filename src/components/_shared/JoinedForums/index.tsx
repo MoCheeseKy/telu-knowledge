@@ -1,8 +1,8 @@
 "use client";
 
-import JoinedForumsProps from "./_types";
+import JoinedForumsProps from "./joined-forums.types";
 import ActiveForumRecommendations from "@/components/_shared/ActiveForumRecommendations";
-import { useJoinedForums } from "@/services/forum/forum.queries";
+import { useJoinedForums } from "@/services/communities/forum.queries";
 
 const statusClass = "font-sans text-[14px] text-[var(--muted)]";
 

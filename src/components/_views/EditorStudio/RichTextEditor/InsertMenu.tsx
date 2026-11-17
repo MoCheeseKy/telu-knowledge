@@ -7,21 +7,14 @@ import {
 } from "react";
 import type { Editor } from "@tiptap/react";
 import { FloatingMenu } from "@tiptap/react/menus";
-import { ImagePlus, Plus, type LucideIcon } from "lucide-react";
+import { ImagePlus, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type {
+  InsertMenuAction,
+  InsertMenuProps,
+} from "./rich-text-editor.types";
 
-export interface InsertMenuAction {
-  id: string;
-  label: string;
-  icon: LucideIcon;
-  run: () => void;
-}
-
-export interface InsertMenuProps {
-  editor: Editor;
-  onSelectImage: () => void;
-  disabled?: boolean;
-}
+export type { InsertMenuAction, InsertMenuProps };
 
 export const UPLOAD_PLACEHOLDER_TEXT = "Mengunggah…";
 

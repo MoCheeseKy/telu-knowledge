@@ -1,6 +1,6 @@
 "use client";
 
-import EditorLayoutProps from "./_types";
+import EditorLayoutProps from "./editor-layout.types";
 import EditorHeader from "./header";
 import EditorFooter from "./footer";
 import {

@@ -2,7 +2,7 @@
 
 import { Plus } from "lucide-react";
 import MyArticleListCard from "./MyArticleListCard";
-import { dummyMyLists, MyArticleListProps } from "./_types";
+import { dummyMyLists, MyArticleListProps } from "./my-article-list.types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

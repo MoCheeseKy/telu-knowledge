@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2 } from "lucide-react";
-import { MyArticleCardProps } from "./_types";
+import { MyArticleCardProps } from "./my-article-card.types";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -46,7 +46,7 @@ export default function MyArticleCard({
     const handleCardClick = () => {
         if (id === undefined) return;
         if (status === "published") {
-            router.push(`/discovers-articles/${id}/article-detail`);
+            router.push(`/discover-articles/${id}`);
         } else {
             router.push(`/editor-studio/${id}`);
         }

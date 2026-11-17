@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api/client";
-import type { ApiEnvelope } from "@/lib/api/types";
+import type { ApiEnvelope } from "@/lib/api/api.types";
 import type {
   CommunityRecommendation,
   TopicRecommendation,

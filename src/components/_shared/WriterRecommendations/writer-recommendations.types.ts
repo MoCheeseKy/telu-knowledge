@@ -1,0 +1,30 @@
+export interface WriterItem {
+    id?: string | number;
+    name: string;
+    avatarUrl?: string;
+    avatarColor?: string;
+    followersCount?: number;
+    isFollowing?: boolean;
+    username?: string;
+}
+
+export const dummyWriters: WriterItem[] = [
+    { id: 1, name: "mocheeseky", isFollowing: false },
+    { id: 2, name: "mocheeseky", isFollowing: false },
+    { id: 3, name: "mocheeseky", isFollowing: false },
+];
+
+export interface WriterRecommendationCardProps {
+    name?: string;
+    avatarUrl?: string;
+    avatarColor?: string;
+    isFollowing?: boolean;
+    onFollowToggle?: () => void;
+    className?: string;
+}
+
+export interface WriterRecommendationsProps {
+    title?: string;
+    writers?: WriterItem[];
+    className?: string;
+}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Lock } from "lucide-react";
-import { MyArticleListCardProps, dummyMyLists } from "./_types";
+import { MyArticleListCardProps, dummyMyLists } from "./my-article-list.types";
 import { cn } from "@/lib/utils";
 
 export { dummyMyLists };

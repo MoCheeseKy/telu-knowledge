@@ -3,17 +3,12 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type {
+  CommunityRuleItem,
+  CommunityRulesListProps,
+} from "./community-rules-list.types";
 
-export interface CommunityRuleItem {
-  id: number;
-  title: string;
-  description: string;
-}
-
-interface CommunityRulesListProps {
-  rules: CommunityRuleItem[];
-  className?: string;
-}
+export type { CommunityRuleItem, CommunityRulesListProps };
 
 export default function CommunityRulesList({
   rules,
