@@ -730,10 +730,10 @@ const handleToggleFollow = (req, res) => {
   const { id } = req.params;
   const db = router.db.getState();
   const profile = (db.profiles || []).find((p) => p.id === id || p.username === id);
-  if (!profile) {
-    return res.status(404).json({
-      statusCode: 404,
-      message: ['Profil tidak ditemukan'],
+  if (profile.id === MOCK_ME_ID) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: ['Tidak dapat mengikuti diri sendiri.'],
       isError: true,
       data: null,
     });

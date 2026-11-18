@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   Dialog,
   DialogContent,
@@ -11,11 +10,17 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useMyFollowers, useMyFollowing } from "@/services/profiles/profiles.queries";
 import type { FollowUserDto } from "@/services/profiles/profiles.types";
-import type { FollowListDialogProps, FollowTab } from "./profile.types";
+import { useToggleProfileFollow } from "@/services/articles/articles.queries";
 
-export type { FollowTab };
+export type FollowTab = "followers" | "following";
 
-/** Daftar pengguna (pengikut atau mengikuti) beserta status loading, error, dan kosong. */
+interface FollowListDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  tab: FollowTab;
+  onTabChange: (tab: FollowTab) => void;
+}
+
 function FollowList({
   users,
   isLoading,
@@ -29,6 +34,8 @@ function FollowList({
   emptyText: string;
   onRetry: () => void;
 }) {
+  // Hook harus dipanggil di dalam komponen
+  const toggleFollow = useToggleProfileFollow();
   const statusClass = "py-8 text-center font-sans text-[13px] text-[var(--muted)]";
 
   if (isLoading) return <p className={statusClass}>Memuat...</p>;
@@ -68,11 +75,19 @@ function FollowList({
             )}
             {u.bio && <p className="truncate text-[11px] text-[var(--muted)]">{u.bio}</p>}
           </div>
-          {u.isFollowing && (
-            <span className="shrink-0 rounded border border-[var(--dust)] px-2 py-0.5 text-[11px] font-semibold text-[var(--foreground)]">
-              Mengikuti
-            </span>
-          )}
+
+          <button
+            type="button"
+            disabled={toggleFollow.isPending}
+            onClick={() => toggleFollow.mutate(u.id)}
+            className={`shrink-0 rounded px-2.5 py-1 text-[11px] font-semibold transition-colors cursor-pointer disabled:opacity-50 ${
+              u.isFollowing
+                ? "border border-[var(--dust)] text-[var(--foreground)] hover:bg-[var(--background-accent)]"
+                : "bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
+            }`}
+          >
+            {u.isFollowing ? "Mengikuti" : "+ Ikuti"}
+          </button>
         </li>
       ))}
     </ul>
