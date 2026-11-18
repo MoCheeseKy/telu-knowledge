@@ -100,6 +100,7 @@ export function useToggleProfileFollow() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["article-detail"] });
       queryClient.invalidateQueries({ queryKey: ["recommendations", "writers"] });
+      queryClient.invalidateQueries({ queryKey: ["profiles"] });
     },
   });
 }
