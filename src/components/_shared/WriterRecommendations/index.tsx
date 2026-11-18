@@ -1,8 +1,8 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
-import WriterRecommendationCard from "./WritterRecommendationCard";
-import { WritterRecommendationsProps, dummyWriters } from "./_types";
+import WriterRecommendationCard from "./WriterRecommendationCard";
+import { WriterRecommendationsProps, dummyWriters } from "./writer-recommendations.types";
 import { useToggleProfileFollow } from "@/services/articles/articles.queries";
 import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ export default function WriterRecommendations({
     title = "TOP PENULIS",
     writers = dummyWriters,
     className = "",
-}: WritterRecommendationsProps) {
+}: WriterRecommendationsProps) {
     const queryClient = useQueryClient();
     const { toast } = useToast();
     const toggleFollow = useToggleProfileFollow();
