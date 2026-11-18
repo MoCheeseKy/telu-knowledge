@@ -2,15 +2,25 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import ForumPostCardProps from "./_types";
+import ForumPostCardProps from "./forum-post-card.types";
 import { ThumbsUp, MessageSquareMore, Repeat2, Share2, Pencil, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { copyTextToClipboard } from "@/lib/clipboard";
+import { getErrorMessage } from "@/lib/api/error-messages";
 import { useToast } from "@/components/ui/toast";
+import {
+    useForumPostRepostStatus,
+    useToggleForumPostRepost,
+} from "@/services/communities/community-posts.queries";
 
 const actionButtonClass =
     "h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4";
 
+/**
+ * Kartu postingan forum diskusi beserta aksi suka, komentar, repost, bagikan,
+ * serta aksi sunting/hapus untuk pemilik postingan.
+ */
 export default function ForumPostCard({
     id = 1,
     topic,
@@ -49,24 +59,12 @@ export default function ForumPostCard({
                 ? `${window.location.origin}/discussion-forums/${id}`
                 : `/discussion-forums/${id}`;
 
-        try {
-            if (navigator?.clipboard?.writeText) {
-                await navigator.clipboard.writeText(shareUrl);
-            } else {
-                const textArea = document.createElement("textarea");
-                textArea.value = shareUrl;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-9999px";
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textArea);
-            }
+        const copiedOk = await copyTextToClipboard(shareUrl);
+        if (copiedOk) {
             setCopied(true);
             toast.success("Tautan postingan forum berhasil disalin ke clipboard!");
             setTimeout(() => setCopied(false), 2000);
-        } catch {
+        } else {
             toast.error("Gagal menyalin tautan ke clipboard.");
         }
     };
@@ -79,7 +77,6 @@ export default function ForumPostCard({
                 className
             )}
         >
-            {/* Meta: From {forum} by {penulis}, {tanggal} */}
             <div className="flex items-center gap-2">
                 {avatarUrl ? (
                     <img
@@ -104,7 +101,6 @@ export default function ForumPostCard({
                 </p>
             </div>
 
-            {/* Judul dan deskripsi */}
             <div className="mt-4 sm:mt-6 flex flex-col gap-2">
                 <h2 className="font-newsreader font-normal text-[20px] sm:text-[24px] uppercase leading-tight text-[var(--foreground)] group-hover:text-[var(--primary-text)] transition-colors">
                     {title}
@@ -114,7 +110,6 @@ export default function ForumPostCard({
                 </p>
             </div>
 
-            {/* Gambar lebar penuh */}
             {imageUrl && (
                 <img
                     src={imageUrl}
@@ -123,7 +118,6 @@ export default function ForumPostCard({
                 />
             )}
 
-            {/* Aksi: suka, komentar, repost, bagikan, sunting (post milik sendiri) */}
             {/* stopPropagation di level baris: klik aksi apa pun (termasuk isi dialog
                 yang dirender via portal) tidak boleh memicu navigasi klik kartu. */}
             <div
@@ -181,17 +175,10 @@ export default function ForumPostCard({
                     <span className="font-sans text-xs font-bold">{commentsCount}</span>
                 </Button>
 
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className={actionButtonClass}
-                    aria-label="Repost"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <Repeat2 className="text-[var(--primary-text)]" />
-                    <span className="font-sans text-xs font-bold">{repostsCount}</span>
-                </Button>
+                <RepostButton
+                    postId={String(id)}
+                    initialCount={repostsCount}
+                />
 
                 <Button
                     type="button"
@@ -212,5 +199,65 @@ export default function ForumPostCard({
                 {deleteAction}
             </div>
         </article>
+    );
+}
+
+/**
+ * Tombol repost dengan status per-viewer.
+ *
+ * - Saat belum repost: icon Repeat2 outline, angka = repostsCount.
+ * - Saat sudah repost: icon Repeat2 solid (fill), angka + icon berwarna
+ *   --primary-text, tombol disabled selama mutasi berjalan.
+ * - Perubahan state & count instan lewat optimistic update di hook
+ *   useToggleForumPostRepost; status dari server diambil via
+ *   useForumPostRepostStatus sebagai sumber kebenaran.
+ */
+function RepostButton({
+    postId,
+    initialCount,
+}: {
+    postId: string;
+    initialCount: string | number;
+}) {
+    const { toast } = useToast();
+    const { data: status } = useForumPostRepostStatus(postId);
+    const { mutate, isPending } = useToggleForumPostRepost(postId);
+
+    const isReposted = status?.isReposted ?? false;
+    const count = status?.repostsCount ?? initialCount;
+
+    return (
+        <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={cn(
+                actionButtonClass,
+                isReposted && "text-[var(--primary-text)]"
+            )}
+            aria-label={isReposted ? "Batalkan repost" : "Repost"}
+            aria-pressed={isReposted}
+            disabled={isPending}
+            onClick={(e) => {
+                e.stopPropagation();
+                mutate(undefined, {
+                    onError: (err) => {
+                        toast.error(
+                            getErrorMessage(err, "Gagal mengubah status repost.")
+                        );
+                    },
+                });
+            }}
+        >
+            <Repeat2
+                className={cn(
+                    "transition-colors",
+                    isReposted
+                        ? "fill-[var(--primary-text)] text-[var(--primary-text)]"
+                        : "text-[var(--primary-text)]"
+                )}
+            />
+            <span className="font-sans text-xs font-bold">{count}</span>
+        </Button>
     );
 }

@@ -12,6 +12,9 @@ import { PROXY_ALLOWED_AUTH_PATHS } from "@/lib/auth/paths";
 import { serverEnv } from "@/lib/env";
 import type { BackendLoginData } from "@/services/auth/auth.types";
 
+/**
+ * Konteks parameter dinamis untuk catch-all route proxy.
+ */
 interface RouteContext {
   params: Promise<{
     path: string[];
@@ -20,6 +23,12 @@ interface RouteContext {
 
 const SEGMENT_REGEX = /^[A-Za-z0-9_-]+$/;
 
+/**
+ * Memeriksa secara rekursif apakah objek atau array mengandung key token sensitif.
+ *
+ * @param target - Nilai payload JSON yang akan diperiksa.
+ * @returns `true` jika ditemukan key `access_token` atau `refresh_token`.
+ */
 function containsTokenKey(target: unknown): boolean {
   if (!target || typeof target !== "object") {
     return false;
@@ -38,12 +47,18 @@ function containsTokenKey(target: unknown): boolean {
   return false;
 }
 
+/**
+ * Menangani penerusan request dari klien ke backend API atau mock server secara aman.
+ * Mengelola validasi path, auto-refresh token pada respons 401, dan pencegahan kebocoran token.
+ *
+ * @param request - Request HTTP masuk dari browser.
+ * @param context - Konteks route yang berisi segmen path target.
+ * @returns Respons hasil penerusan dari backend atau respons error terstandar.
+ */
 async function handleProxy(request: Request, context: RouteContext) {
-  // 1. Validasi Same-Origin untuk metode mutasi
   const originError = assertSameOrigin(request);
   if (originError) return originError;
 
-  // 2. Validasi segmen path (hanya alfanumerik, dash, underscore, tanpa "..")
   const { path } = await context.params;
   if (
     !Array.isArray(path) ||
@@ -61,7 +76,6 @@ async function handleProxy(request: Request, context: RouteContext) {
     );
   }
 
-  // 3. Blokir semua path yang diawali segmen auth KECUALI tepat auth/me (case-insensitive)
   const firstSegment = path[0]?.toLowerCase();
   const joinedPath = path.join("/").toLowerCase();
   if (firstSegment === "auth" && !PROXY_ALLOWED_AUTH_PATHS.includes(joinedPath)) {
@@ -76,7 +90,6 @@ async function handleProxy(request: Request, context: RouteContext) {
     );
   }
 
-  // 4. Bangun target URL (mendukung Data Source Switching via header x-data-source)
   const isMockSource = request.headers.get("x-data-source") === "mock";
   const baseUrl = isMockSource
     ? serverEnv.MOCK_API_BASE_URL
@@ -85,7 +98,7 @@ async function handleProxy(request: Request, context: RouteContext) {
   const reqUrl = new URL(request.url);
   const targetUrl = `${baseUrl}/api/${path.join("/")}${reqUrl.search}`;
 
-  // 5. Baca body request jika bukan metode GET / HEAD (disimpan sebagai ArrayBuffer agar bisa diulang jika 401)
+  // Simpan body sebagai ArrayBuffer agar tetap bisa dikirim ulang saat retry 401
   let bodyBuffer: ArrayBuffer | undefined;
   if (request.method !== "GET" && request.method !== "HEAD") {
     try {
@@ -166,7 +179,6 @@ async function handleProxy(request: Request, context: RouteContext) {
         await setAuthCookies(refreshRes.data);
         accessToken = refreshRes.data.access_token;
 
-        // Ulangi request backend satu kali dengan access token baru
         backendResponse = await executeBackendFetch(accessToken);
       } catch {
         await clearAuthCookies();
@@ -182,20 +194,16 @@ async function handleProxy(request: Request, context: RouteContext) {
       }
     }
 
-    // Jika respons akhir adalah 401, bersihkan cookie auth
     if (backendResponse.status === 401) {
       await clearAuthCookies();
     }
 
-    // Teruskan status dan body backend apa adanya
     const responseData = await backendResponse.arrayBuffer();
 
-    // Lapisan pertahanan tambahan: jika respons backend ber-content-type JSON
-    // dan (setelah di-parse, batas 1 MB) mengandung key access_token atau refresh_token pada data,
-    // kembalikan 502 envelope generik dan catat peringatan di log server (tanpa mencetak nilai token).
+    // Cegah kebocoran token ke browser dengan memblokir payload JSON (maks. 1 MB) yang mengandung key token
     const respContentType = backendResponse.headers.get("content-type");
     const isJson = respContentType?.toLowerCase().includes("application/json");
-    const MAX_PARSE_SIZE = 1024 * 1024; // 1 MB
+    const MAX_PARSE_SIZE = 1024 * 1024;
 
     if (isJson && responseData.byteLength <= MAX_PARSE_SIZE) {
       try {
@@ -248,22 +256,57 @@ async function handleProxy(request: Request, context: RouteContext) {
   }
 }
 
+/**
+ * Route handler BFF proxy untuk metode GET.
+ *
+ * @param request - Request HTTP masuk.
+ * @param context - Konteks parameter route dinamis.
+ * @returns Respons dari backend atau mock API.
+ */
 export async function GET(request: Request, context: RouteContext) {
   return handleProxy(request, context);
 }
 
+/**
+ * Route handler BFF proxy untuk metode POST.
+ *
+ * @param request - Request HTTP masuk.
+ * @param context - Konteks parameter route dinamis.
+ * @returns Respons dari backend atau mock API.
+ */
 export async function POST(request: Request, context: RouteContext) {
   return handleProxy(request, context);
 }
 
+/**
+ * Route handler BFF proxy untuk metode PUT.
+ *
+ * @param request - Request HTTP masuk.
+ * @param context - Konteks parameter route dinamis.
+ * @returns Respons dari backend atau mock API.
+ */
 export async function PUT(request: Request, context: RouteContext) {
   return handleProxy(request, context);
 }
 
+/**
+ * Route handler BFF proxy untuk metode PATCH.
+ *
+ * @param request - Request HTTP masuk.
+ * @param context - Konteks parameter route dinamis.
+ * @returns Respons dari backend atau mock API.
+ */
 export async function PATCH(request: Request, context: RouteContext) {
   return handleProxy(request, context);
 }
 
+/**
+ * Route handler BFF proxy untuk metode DELETE.
+ *
+ * @param request - Request HTTP masuk.
+ * @param context - Konteks parameter route dinamis.
+ * @returns Respons dari backend atau mock API.
+ */
 export async function DELETE(request: Request, context: RouteContext) {
   return handleProxy(request, context);
 }

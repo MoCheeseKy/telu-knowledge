@@ -2,7 +2,11 @@
 
 import React, { useState } from "react";
 import { Check } from "lucide-react";
-import { UserProfile, mapUserProfileToUpdatePayload } from "./profile.types";
+import {
+  EditProfileFormProps,
+  UserProfile,
+  mapUserProfileToUpdatePayload,
+} from "./profile.types";
 import { validateUpdateProfile } from "@/services/profiles/profiles.schemas";
 import type { UpdateProfilePayload } from "@/services/profiles/profiles.types";
 import { getErrorMessages } from "@/lib/api/error-messages";
@@ -14,12 +18,10 @@ import DeleteAccountSection from "./DeleteAccountSection";
 
 const MAX_AVATAR_SIZE_BYTES = 4 * 1024 * 1024;
 
-interface EditProfileFormProps {
-  initialData: UserProfile;
-  onSave: (payload: UpdateProfilePayload) => void | Promise<void>;
-  onCancel?: () => void;
-}
-
+/**
+ * Formulir penyuntingan profil pengguna beserta unggah foto (Data URL),
+ * validasi skema, tautan portofolio, preferensi privasi, dan zona hapus akun.
+ */
 export default function EditProfileForm({
   initialData,
   onSave,
@@ -103,7 +105,6 @@ export default function EditProfileForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      {/* 1. Foto Profil */}
       <div className="flex items-center gap-5">
         {avatarPreview ? (
           <img
@@ -153,7 +154,6 @@ export default function EditProfileForm({
         </div>
       </div>
 
-      {/* 2. Nama Lengkap & Username */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-semibold text-[var(--foreground)]">
@@ -187,7 +187,6 @@ export default function EditProfileForm({
         </div>
       </div>
 
-      {/* 3. Bio */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between">
           <label className="text-xs font-semibold text-[var(--foreground)]">
@@ -208,7 +207,6 @@ export default function EditProfileForm({
         />
       </div>
 
-      {/* 4. Program Studi & Fakultas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="flex flex-col gap-1.5">
           <label className="text-xs font-semibold text-[var(--foreground)]">
@@ -237,7 +235,6 @@ export default function EditProfileForm({
         </div>
       </div>
 
-      {/* 5. Tautan Eksternal */}
       <div className="flex flex-col gap-3 pt-4 border-t border-[var(--dust)]/40">
         <h3 className="font-sans text-[13px] font-bold uppercase text-[var(--primary-text)] tracking-wider">
           Tautan Eksternal & Portofolio
@@ -279,7 +276,6 @@ export default function EditProfileForm({
         </div>
       </div>
 
-      {/* 6. Privasi */}
       <div className="pt-4 border-t border-[var(--dust)]/40">
         <Checkbox
           checked={formData.showCommunities}
@@ -291,7 +287,6 @@ export default function EditProfileForm({
         />
       </div>
 
-      {/* Feedback banner */}
       {savedSuccess && (
         <div className="p-3 bg-[var(--success-soft)] border border-[var(--success)]/30 rounded-lg flex items-center gap-2 text-xs font-semibold text-[var(--success-text)]">
           <Check className="w-4 h-4 text-[var(--success)]" />
@@ -299,7 +294,6 @@ export default function EditProfileForm({
         </div>
       )}
 
-      {/* 7. Tombol Aksi */}
       <div className="flex flex-col gap-3 pt-4 border-t border-[var(--dust)]/40">
         {submitError && <FormAlert messages={submitError} />}
 
@@ -327,7 +321,6 @@ export default function EditProfileForm({
         </div>
       </div>
 
-      {/* 8. Zona Berbahaya: Hapus Akun (soft delete — konten tetap tersimpan) */}
       <DeleteAccountSection />
     </form>
   );

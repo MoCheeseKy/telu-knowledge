@@ -5,6 +5,9 @@ import { getAccessToken } from "./cookies";
 import { serverFetch } from "@/lib/api/server";
 import type { AuthUser } from "@/services/auth/auth.types";
 
+/**
+ * Data sesi pengguna terautentikasi pada render sisi server.
+ */
 export interface SessionData {
   user: AuthUser;
 }
@@ -12,7 +15,8 @@ export interface SessionData {
 /**
  * Mengambil data user yang sedang login dari backend (GET /auth/me).
  * Dibungkus React cache() agar di-memoize dan hanya dipanggil maksimal 1 kali per request render server.
- * Mengembalikan { user } jika terotentikasi, atau null jika tidak ada token / token tidak valid.
+ *
+ * @returns Objek `{ user }` jika terotentikasi, atau `null` jika tidak ada token atau token tidak valid.
  */
 export const getSession = cache(async (): Promise<SessionData | null> => {
   const accessToken = await getAccessToken();

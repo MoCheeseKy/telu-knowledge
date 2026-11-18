@@ -18,6 +18,9 @@ import { getErrorMessages } from "@/lib/api/error-messages";
 
 type ViewStatus = "checking" | "ready" | "invalid" | "success";
 
+/**
+ * Tampilan halaman atur ulang kata sandi yang memvalidasi token pemulihan dari hash URL.
+ */
 export default function ResetPasswordView() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -104,7 +107,6 @@ export default function ResetPasswordView() {
 
   return (
     <div className="w-full flex flex-col justify-center">
-      {/* Judul & Deskripsi Halaman */}
       <div className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold text-[var(--primary-text)] tracking-tight">
           Reset Password
@@ -195,7 +197,6 @@ export default function ResetPasswordView() {
             </FormAlert>
           )}
 
-          {/* Password Baru */}
           <div className="space-y-1.5">
             <label
               htmlFor="password"
@@ -234,7 +235,6 @@ export default function ResetPasswordView() {
             <FieldError message={errors.password?.message} />
           </div>
 
-          {/* Konfirmasi Password Baru */}
           <div className="space-y-1.5">
             <label
               htmlFor="confirmPassword"
@@ -274,7 +274,6 @@ export default function ResetPasswordView() {
             <FieldError message={errors.confirmPassword?.message} />
           </div>
 
-          {/* Tombol Simpan */}
           <Button
             type="submit"
             disabled={resetPasswordMutation.isPending}
@@ -291,7 +290,6 @@ export default function ResetPasswordView() {
             )}
           </Button>
 
-          {/* Navigasi Kembali ke Login */}
           <div className="mt-8 text-center">
             <p className="text-sm text-[var(--muted)]">
               Ingat kata sandi Anda?{" "}

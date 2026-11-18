@@ -1,9 +1,12 @@
 "use client";
 
 import ActiveForumRecommendationCard from "./ActiveForumRecommendationCard";
-import { ActiveForumRecommendationsProps, dummyForums } from "./_types";
+import { ActiveForumRecommendationsProps, dummyForums } from "./active-forum-recommendations.types";
 import { cn } from "@/lib/utils";
 
+/**
+ * Seksi daftar rekomendasi forum atau komunitas aktif.
+ */
 export default function ActiveForumRecommendations({
     title = "KOMUNITAS AKTIF",
     forums = dummyForums,

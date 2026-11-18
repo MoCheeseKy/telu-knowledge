@@ -4,6 +4,7 @@ interface EditorStudioEditPageProps {
   params: Promise<{ id: string }>;
 }
 
+/** Halaman studio editor untuk menyunting artikel yang sudah ada berdasarkan ID rute. */
 export default async function EditorStudioEditPage({
   params,
 }: EditorStudioEditPageProps) {

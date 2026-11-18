@@ -12,15 +12,13 @@ import {
 } from "@/lib/auth/cookie-options";
 import { serverEnv } from "@/lib/env";
 
+/**
+ * Konfigurasi matcher proxy Next.js.
+ * Mengecualikan route API BFF (`api/*`), aset internal Next.js (`_next/static`, `_next/image`),
+ * aset publik (`images/*`, `favicon.ico`), serta file berekstensi statis.
+ */
 export const config = {
   matcher: [
-    /*
-     * Mengecualikan:
-     * - api/* (Route Handler BFF)
-     * - _next/static, _next/image (aset Next.js)
-     * - images/*, favicon.ico (aset publik statis)
-     * - file berekstensi (misal .svg, .png, .jpg, .css, .js)
-     */
     "/((?!api|_next/static|_next/image|images|favicon\\.ico|.*\\.[\\w]+$).*)",
   ],
 };
@@ -28,6 +26,9 @@ export const config = {
 /**
  * Proxy request handler di Next.js 16 (pengganti middleware.ts, berjalan di Node.js runtime).
  * Mengatur proteksi route publik/privat dan auto-refresh token.
+ *
+ * @param request - Request HTTP masuk yang diproses proxy Next.js.
+ * @returns Respons lanjut atau redirect sesuai status autentikasi pengguna.
  */
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -43,7 +44,6 @@ export async function proxy(request: NextRequest) {
   let newExpiresIn: number | undefined;
   let shouldClearCookies = false;
 
-  // 1. Jika access_token kedaluwarsa tetapi refresh_token masih ada: refresh langsung ke backend
   if (!accessToken && refreshToken) {
     try {
       const refreshRes = await fetch(
@@ -80,7 +80,6 @@ export async function proxy(request: NextRequest) {
 
   const isPublic = isPublicPath(pathname);
 
-  // Helper untuk menyematkan cookie baru atau menghapus cookie lama pada respons
   const applyAuthCookiesToResponse = (response: NextResponse) => {
     if (shouldClearCookies) {
       response.cookies.delete(AUTH_COOKIE_ACCESS);
@@ -107,7 +106,6 @@ export async function proxy(request: NextRequest) {
     }
   };
 
-  // 2. Jika sudah terotentikasi dan mengakses halaman login atau register -> redirect ke /home
   if (isAuthenticated && (pathname === "/login" || pathname === "/register")) {
     const homeUrl = new URL("/home", serverEnv.APP_ORIGIN);
     const redirectResponse = NextResponse.redirect(homeUrl);
@@ -115,7 +113,6 @@ export async function proxy(request: NextRequest) {
     return redirectResponse;
   }
 
-  // 3. Jika belum login dan mengakses halaman privat -> redirect ke /login?next=<path+query>
   if (!isAuthenticated && !isPublic) {
     const loginUrl = new URL("/login", serverEnv.APP_ORIGIN);
     const validatedNext = safeNextPath(pathname + search, "/home");
@@ -130,10 +127,10 @@ export async function proxy(request: NextRequest) {
     return redirectResponse;
   }
 
-  // 4. Request diizinkan berlanjut: teruskan cookie baru dan x-pathname ke downstream request headers
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-pathname", pathname + search);
 
+  // Teruskan cookie hasil refresh ke header request agar Server Component downstream langsung membacanya
   if (newAccessToken) {
     request.cookies.set(AUTH_COOKIE_ACCESS, newAccessToken);
     if (newRefreshToken) {

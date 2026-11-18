@@ -94,13 +94,13 @@ function FollowList({
   );
 }
 
+/** Dialog modal yang menampilkan daftar pengikut dan pengguna yang diikuti dalam dua tab. */
 export default function FollowListDialog({
   open,
   onOpenChange,
   tab,
   onTabChange,
 }: FollowListDialogProps) {
-  // Query hanya jalan saat dialog terbuka dan tab-nya aktif
   const followers = useMyFollowers(open && tab === "followers");
   const following = useMyFollowing(open && tab === "following");
 

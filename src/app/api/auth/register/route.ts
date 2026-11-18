@@ -5,6 +5,12 @@ import { toApiError } from "@/lib/api/errors";
 import { registerSchema } from "@/services/auth/auth.schemas";
 import type { RegisterResponseData } from "@/services/auth/auth.types";
 
+/**
+ * Route handler BFF untuk mendaftarkan akun pengguna baru ke backend.
+ *
+ * @param request - Request HTTP berisi payload registrasi pengguna.
+ * @returns Respons JSON hasil registrasi dari backend.
+ */
 export async function POST(request: Request) {
   const originError = assertSameOrigin(request);
   if (originError) return originError;

@@ -20,11 +20,13 @@ const newsreader = Newsreader({
   weight: ["400", "500", "600", "700"],
 });
 
+/** Metadata default aplikasi Tel-U Knowledge. */
 export const metadata: Metadata = {
   title: "Tel-U Knowledge",
   description: "Platform Berbagi Pengetahuan & Diskusi Civitas Akademika Telkom University",
 };
 
+/** Layout root aplikasi yang mengonfigurasi font, QueryProvider, dan ToastProvider. */
 export default function RootLayout({
   children,
 }: {

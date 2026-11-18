@@ -23,6 +23,9 @@ import {
   isEmailNotVerifiedError,
 } from "@/lib/api/error-messages";
 
+/**
+ * Tampilan halaman login akun SSO Telkom University beserta fitur kirim ulang email verifikasi.
+ */
 export default function LoginView() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -85,14 +88,12 @@ export default function LoginView() {
 
   return (
     <div className="w-full flex flex-col justify-center">
-      {/* Judul Halaman */}
       <div className="mb-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-[var(--primary-text)] tracking-tight">
           Login
         </h1>
       </div>
 
-      {/* Alert Notifikasi / Error */}
       <div className="space-y-3 mb-6">
         {resendSuccessMessage && (
           <FormAlert variant="success" messages={resendSuccessMessage} />
@@ -137,9 +138,7 @@ export default function LoginView() {
         )}
       </div>
 
-      {/* Form Login */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate>
-        {/* Email SSO */}
         <div className="space-y-1.5">
           <label
             htmlFor="email"
@@ -160,7 +159,6 @@ export default function LoginView() {
           <FieldError message={errors.email?.message} />
         </div>
 
-        {/* Password */}
         <div className="space-y-1.5">
           <label
             htmlFor="password"
@@ -199,7 +197,6 @@ export default function LoginView() {
           <FieldError message={errors.password?.message} />
         </div>
 
-        {/* Remember me & Lupa Password */}
         <div className="flex items-center justify-between pt-1">
           <Controller
             control={control}
@@ -221,7 +218,6 @@ export default function LoginView() {
           </Link>
         </div>
 
-        {/* Tombol Sign In */}
         <Button
           type="submit"
           disabled={isPending}
@@ -239,7 +235,6 @@ export default function LoginView() {
         </Button>
       </form>
 
-      {/* Navigasi ke Halaman Register */}
       <div className="mt-8 text-center">
         <p className="text-sm text-[var(--muted)]">
           Belum memiliki akun?{" "}

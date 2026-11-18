@@ -6,6 +6,9 @@ import type {
   WriterRecommendation,
 } from "./recommendations.types";
 
+/**
+ * Daftar query key TanStack Query untuk data rekomendasi.
+ */
 export const recommendationKeys = {
   all: ["recommendations"] as const,
   topics: () => [...recommendationKeys.all, "topics"] as const,
@@ -13,6 +16,9 @@ export const recommendationKeys = {
   communities: () => [...recommendationKeys.all, "communities"] as const,
 };
 
+/**
+ * Hook query rekomendasi topik populer dengan staleTime 5 menit.
+ */
 export function useTopicRecommendations() {
   return useQuery<TopicRecommendation[]>({
     queryKey: recommendationKeys.topics(),
@@ -24,6 +30,9 @@ export function useTopicRecommendations() {
   });
 }
 
+/**
+ * Hook query rekomendasi penulis terpopuler dengan staleTime 5 menit.
+ */
 export function useWriterRecommendations() {
   return useQuery<WriterRecommendation[]>({
     queryKey: recommendationKeys.writers(),
@@ -35,6 +44,9 @@ export function useWriterRecommendations() {
   });
 }
 
+/**
+ * Hook query rekomendasi komunitas aktif dengan staleTime 5 menit.
+ */
 export function useCommunityRecommendations() {
   return useQuery<CommunityRecommendation[]>({
     queryKey: recommendationKeys.communities(),

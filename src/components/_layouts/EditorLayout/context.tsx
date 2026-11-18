@@ -9,32 +9,30 @@ import {
     useState,
     type ReactNode,
 } from "react";
+import type {
+    EditorSaveStatus,
+    EditorStudioActions,
+    EditorStudioContextValue,
+} from "./editor-layout.types";
 
-export type EditorSaveStatus = "idle" | "saving" | "saved" | "error";
+export type {
+    EditorSaveStatus,
+    EditorStudioActions,
+    EditorStudioContextValue,
+};
 
-export interface EditorStudioActions {
-    saveDraft?: () => void | Promise<void>;
-    publish?: () => void | Promise<void>;
-    unpublish?: () => void | Promise<void>;
-    retrySave?: () => void | Promise<void>;
-}
-
-export interface EditorStudioContextValue {
-    saveStatus: EditorSaveStatus;
-    setSaveStatus: (status: EditorSaveStatus) => void;
-    articleStatus: "draft" | "published";
-    setArticleStatus: (status: "draft" | "published") => void;
-    registerActions: (actions: EditorStudioActions) => () => void;
-    saveDraft: () => void;
-    publish: () => void;
-    unpublish: () => void;
-    retrySave: () => void;
-}
-
+/**
+ * Context untuk berbagi status penyimpanan, status artikel, dan aksi editor
+ * antara halaman editor dan header EditorLayout.
+ */
 export const EditorStudioContext = createContext<EditorStudioContextValue | null>(
     null
 );
 
+/**
+ * Provider yang mengelola state status penyimpanan, status publikasi artikel,
+ * serta registrasi aksi editor studio untuk komponen turunannya.
+ */
 export function EditorStudioProvider({ children }: { children: ReactNode }) {
     const [saveStatus, setSaveStatus] = useState<EditorSaveStatus>("idle");
     const [articleStatus, setArticleStatus] = useState<"draft" | "published">("draft");
@@ -91,6 +89,11 @@ export function EditorStudioProvider({ children }: { children: ReactNode }) {
     );
 }
 
+/**
+ * Hook untuk mengakses state dan aksi EditorStudioContext di dalam EditorLayout.
+ *
+ * @returns Nilai context EditorStudio yang berisi status simpan, status artikel, dan handler aksi editor.
+ */
 export function useEditorStudio(): EditorStudioContextValue {
     const context = useContext(EditorStudioContext);
     if (!context) {

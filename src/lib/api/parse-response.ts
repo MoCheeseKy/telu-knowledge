@@ -1,14 +1,16 @@
 import { ApiError } from "./errors";
-import type { ApiEnvelope, ApiErrorEnvelope } from "./types";
+import type { ApiEnvelope, ApiErrorEnvelope } from "./api.types";
 
 /**
  * Helper bersama untuk mem-parse Response fetch menjadi ApiEnvelope<T>.
  * Aman digunakan baik di sisi Browser (client.ts) maupun Server (server.ts).
+ *
+ * @param response - Objek `Response` hasil pemanggilan `fetch`.
+ * @returns Promise berisi {@link ApiEnvelope} ter-parse saat status 2xx.
  */
 export async function parseApiResponse<T>(
   response: Response
 ): Promise<ApiEnvelope<T>> {
-  // Respons sukses HTTP 2xx
   if (response.ok) {
     if (response.status === 204) {
       return {
@@ -30,7 +32,6 @@ export async function parseApiResponse<T>(
     }
   }
 
-  // Respons error HTTP 4xx / 5xx
   let errorBody: ApiErrorEnvelope | null = null;
   try {
     errorBody = (await response.json()) as ApiErrorEnvelope;

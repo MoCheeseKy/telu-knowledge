@@ -22,22 +22,7 @@ import {
 } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 import { useMe, useLogout } from "@/services/auth/auth.queries";
-
-interface MainSidebarProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-interface NavItem {
-  label: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-interface NavSection {
-  title: string;
-  items: NavItem[];
-}
+import type { MainSidebarProps, NavSection } from "./main-layout.types";
 
 const navSections: NavSection[] = [
   {
@@ -45,8 +30,8 @@ const navSections: NavSection[] = [
     items: [
       { label: "Beranda", href: "/home", icon: Home },
       { label: "Forum Diskusi", href: "/discussion-forums", icon: MessageSquareMore },
-      { label: "Cari Artikel", href: "/discovers-articles", icon: Newspaper },
-      { label: "Cari Forum", href: "/discovers-forums", icon: Compass },
+      { label: "Cari Artikel", href: "/discover-articles", icon: Newspaper },
+      { label: "Cari Forum", href: "/discover-forums", icon: Compass },
     ],
   },
   {
@@ -60,11 +45,15 @@ const navSections: NavSection[] = [
     title: "Akun",
     items: [
       { label: "Profil", href: "/profile", icon: User },
-      { label: "Tersimpan", href: "/librarys", icon: Bookmark },
+      { label: "Tersimpan", href: "/libraries", icon: Bookmark },
     ],
   },
 ];
 
+/**
+ * Sidebar drawer navigasi utama yang menampilkan daftar menu terkelompok,
+ * informasi akun yang sedang masuk, dan aksi keluar.
+ */
 export default function MainSidebar({ isOpen, onOpenChange }: MainSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -151,7 +140,6 @@ export default function MainSidebar({ isOpen, onOpenChange }: MainSidebarProps) 
             </nav>
           </div>
 
-          {/* User Info & Logout Button */}
           <div className="mt-8 pt-4 border-t border-[var(--dust)]">
             {user?.email && (
               <div className="px-3.5 pb-3">

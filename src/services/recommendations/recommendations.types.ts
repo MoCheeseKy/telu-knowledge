@@ -1,3 +1,6 @@
+/**
+ * Data rekomendasi topik populer beserta jumlah konten terkait dan tautannya.
+ */
 export interface TopicRecommendation {
   id: string;
   title: string;
@@ -5,6 +8,9 @@ export interface TopicRecommendation {
   href: string;
 }
 
+/**
+ * Data rekomendasi penulis beserta informasi profil ringkas dan status mengikuti.
+ */
 export interface WriterRecommendation {
   id: string;
   name: string;
@@ -16,6 +22,9 @@ export interface WriterRecommendation {
   isFollowing: boolean;
 }
 
+/**
+ * Data rekomendasi komunitas aktif beserta deskripsi, jumlah anggota aktif, dan status mengikuti.
+ */
 export interface CommunityRecommendation {
   id: string;
   title: string;
