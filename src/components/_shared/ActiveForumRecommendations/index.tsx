@@ -28,7 +28,7 @@ export default function ActiveForumRecommendations({
             {
                 onError: () => {
                     toast.error("Gagal memperbarui keanggotaan forum.");
-                    setResetKey((k) => k + 1); // remount kartu agar kembali ke status server
+                    setResetKey((k) => k + 1);
                 },
             }
         );

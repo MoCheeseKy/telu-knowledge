@@ -90,6 +90,10 @@ const handleArticleFeed = (req, res) => {
       (b) => b.article_id === article.id && b.user_id === MOCK_ME_ID
     );
 
+    const isReposted = (db.article_reposts || []).some(
+      (r) => r.article_id === article.id && r.user_id === MOCK_ME_ID
+    );
+
     return {
       id: article.id,
       title: article.title,
@@ -119,6 +123,7 @@ const handleArticleFeed = (req, res) => {
       },
       isLiked,
       isBookmarked,
+      isReposted,
     };
   });
 
