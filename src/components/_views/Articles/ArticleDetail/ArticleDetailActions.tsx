@@ -39,7 +39,7 @@ export default function ArticleDetailActions({
   const [bookmarksCount, setBookmarksCount] = useState(
     article.stats.bookmarksCount
   );
-  const [isReposted, setIsReposted] = useState(false);
+  const [isReposted, setIsReposted] = useState(Boolean(article.isReposted));
   const [repostsCount, setRepostsCount] = useState(article.stats.repostsCount);
   const [copied, setCopied] = useState(false);
 

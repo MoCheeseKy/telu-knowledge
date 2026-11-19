@@ -16,6 +16,7 @@ export default interface ArticleCardProps {
   repostsCount?: string | number;
   isLiked?: boolean;
   isBookmarked?: boolean;
+  isReposted?: boolean;
   className?: string;
   onClick?: () => void;
 }

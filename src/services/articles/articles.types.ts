@@ -113,6 +113,7 @@ export interface ArticleFeedItem {
   stats: ArticleFeedStats;
   isLiked: boolean;
   isBookmarked: boolean;
+  isReposted?: boolean;
 }
 
 /** Parameter query untuk mengambil daftar feed artikel publik. */
@@ -182,6 +183,7 @@ export interface ArticleDetailData {
   stats: ArticleFeedStats;
   isLiked: boolean;
   isBookmarked: boolean;
+  isReposted?: boolean;
   comments: ArticleComment[];
 }
 
