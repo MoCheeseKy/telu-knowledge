@@ -7,7 +7,7 @@ import { ThumbsUp, MessageSquareMore, Repeat2, Bookmark, Share2 } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type ArticleCardProps from "./article-card.types";
-import { useToggleArticleLike } from "@/services/articles/articles.queries";
+import { useToggleArticleLike, useToggleArticleBookmark } from "@/services/articles/articles.queries";
 /**
  * Kartu artikel yang menampilkan info penulis, judul, ringkasan, gambar, dan metrik interaksi.
  */
@@ -24,7 +24,7 @@ export default function ArticleCard({
     commentsCount = "16,2k",
     repostsCount = "16,2k",
     isLiked = false,
-    isBookmarked = true,
+    isBookmarked = false,
     isReposted = false,
     className = "",
     onClick,
@@ -113,23 +113,10 @@ export default function ArticleCard({
                         initialCount={repostsCount}
                     />
 
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 hover:bg-[var(--background-accent)] rounded-md [&_svg]:size-3.5"
-                        aria-label="Simpan Artikel"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <Bookmark
-                            className={cn(
-                                "transition-colors",
-                                isBookmarked
-                                    ? "fill-[var(--primary-text)] text-[var(--primary-text)]"
-                                    : "text-[var(--foreground)]"
-                            )}
-                        />
-                    </Button>
+                    <BookmarkButton
+                        articleId={id !== undefined ? String(id) : undefined}
+                        initialBookmarked={isBookmarked}
+                    />
 
                     <Button
                         type="button"
@@ -275,6 +262,63 @@ function LikeButton({
                 )}
             />
             <span className="font-sans text-sm font-bold">{shownCount}</span>
+        </Button>
+    );
+}
+
+/**
+ * Tombol simpan artikel. Ikon berubah instan, status disinkronkan dari respons
+ * server. Bila gagal, tampilan kembali ke status awal.
+ */
+function BookmarkButton({
+    articleId,
+    initialBookmarked,
+}: {
+    articleId?: string;
+    initialBookmarked: boolean;
+}) {
+    const { toast } = useToast();
+    const { mutate, isPending } = useToggleArticleBookmark();
+    const [override, setOverride] = useState<boolean | null>(null);
+
+    const bookmarked = override ?? initialBookmarked;
+
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!articleId || isPending) return;
+        setOverride(!bookmarked);
+
+        mutate(articleId, {
+            onSuccess: (res) => setOverride(res.data.isBookmarked),
+            onError: (err) => {
+                setOverride(null);
+                toast.error(getErrorMessage(err, "Gagal memperbarui simpanan artikel."));
+            },
+        });
+    };
+
+    return (
+        <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn(
+                "h-7 w-7 hover:bg-[var(--background-accent)] rounded-md [&_svg]:size-3.5",
+                bookmarked ? "text-[var(--primary-text)]" : "text-[var(--foreground)]"
+            )}
+            aria-label={bookmarked ? "Batal simpan artikel" : "Simpan Artikel"}
+            aria-pressed={bookmarked}
+            disabled={isPending}
+            onClick={handleClick}
+        >
+            <Bookmark
+                className={cn(
+                    "transition-colors",
+                    bookmarked
+                        ? "fill-[var(--primary-text)] text-[var(--primary-text)]"
+                        : "text-[var(--foreground)]"
+                )}
+            />
         </Button>
     );
 }
