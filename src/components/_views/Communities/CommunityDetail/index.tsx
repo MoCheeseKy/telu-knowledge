@@ -7,6 +7,8 @@ import CommunityFeed from "./CommunityFeed";
 import CommunitySidebar from "./CommunitySidebar";
 import { useCommunityPosts } from "@/services/communities/community-posts.queries";
 import { mapCommunityPostDto } from "./community-detail.types";
+import { useToggleJoinForum, useJoinedForumIds } from "@/services/communities/forum.queries";
+import { useToast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import type {
   CommunityDetail,
@@ -24,7 +26,18 @@ type TabId = (typeof tabs)[number]["id"];
 export default function CommunityDetailView({
   community,
 }: CommunityDetailViewProps) {
-  const [isJoined, setIsJoined] = useState(false);
+  const joinedIds = useJoinedForumIds();
+  const toggleJoin = useToggleJoinForum();
+  const { toast } = useToast();
+  const isJoined = joinedIds.has(community.id);
+
+  const handleToggleJoin = () => {
+    if (toggleJoin.isPending) return;
+    toggleJoin.mutate(
+      { forumId: community.id, join: !isJoined },
+      { onError: () => toast.error("Gagal memperbarui keanggotaan komunitas.") }
+    );
+  };
   const [activeTab, setActiveTab] = useState<TabId>("feed");
 
   // Feed komunitas langsung dari mock server (GET /proxy/communities/:id/posts).
@@ -69,7 +82,7 @@ export default function CommunityDetailView({
         <CommunityBanner
           community={community}
           isJoined={isJoined}
-          onToggleJoin={() => setIsJoined((current) => !current)}
+          onToggleJoin={handleToggleJoin}
         />
       </div>
 

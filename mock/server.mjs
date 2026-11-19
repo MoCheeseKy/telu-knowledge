@@ -2056,7 +2056,85 @@ server.get('/profiles/me/followers', buildFollowListHandler('followers'));
 server.get('/api/profiles/me/following', buildFollowListHandler('following'));
 server.get('/profiles/me/following', buildFollowListHandler('following'));
 
-// Mount router pada /api dan /
+// 14. Gabung / Keluar Komunitas
+const findCommunity = (db, id) =>
+  (db.communities || []).find((c) => c.id === id || c.slug === id);
+
+const notFoundCommunity = (res) =>
+  res.status(404).json({
+    statusCode: 404,
+    message: ['Komunitas tidak ditemukan'],
+    isError: true,
+    data: null,
+  });
+
+const handleJoinCommunity = (req, res) => {
+  const db = router.db.getState();
+  const community = findCommunity(db, req.params.id);
+  if (!community) return notFoundCommunity(res);
+
+  if (!db.community_members) db.community_members = [];
+  const already = db.community_members.some(
+    (m) => m.community_id === community.id && m.user_id === MOCK_ME_ID
+  );
+
+  if (!already) {
+    db.community_members.push({
+      id: crypto.randomUUID(),
+      community_id: community.id,
+      user_id: MOCK_ME_ID,
+      role: 'member',
+      joined_at: new Date().toISOString(),
+    });
+    community.member_count = (community.member_count || 0) + 1;
+    router.db.write();
+  }
+
+  return res.json({
+    statusCode: 200,
+    message: [already ? 'Kamu sudah bergabung' : `Bergabung ke ${community.name}`],
+    data: { isJoined: true, memberCount: community.member_count || 0 },
+    isError: false,
+  });
+};
+
+const handleLeaveCommunity = (req, res) => {
+  const db = router.db.getState();
+  const community = findCommunity(db, req.params.id);
+  if (!community) return notFoundCommunity(res);
+
+  const members = db.community_members || [];
+  const index = members.findIndex(
+    (m) => m.community_id === community.id && m.user_id === MOCK_ME_ID
+  );
+
+  if (index >= 0) {
+    if (['owner', 'creator'].includes(members[index].role)) {
+      return res.status(400).json({
+        statusCode: 400,
+        message: ['Pemilik komunitas tidak dapat keluar dari komunitasnya.'],
+        isError: true,
+        data: null,
+      });
+    }
+    members.splice(index, 1);
+    community.member_count = Math.max(0, (community.member_count || 0) - 1);
+    router.db.write();
+  }
+
+  return res.json({
+    statusCode: 200,
+    message: [`Keluar dari ${community.name}`],
+    data: { isJoined: false, memberCount: community.member_count || 0 },
+    isError: false,
+  });
+};
+
+server.post('/api/communities/:id/join', handleJoinCommunity);
+server.post('/communities/:id/join', handleJoinCommunity);
+server.delete('/api/communities/:id/join', handleLeaveCommunity);
+server.delete('/communities/:id/join', handleLeaveCommunity);
+
 server.use('/api', router);
 server.use(router);
 
