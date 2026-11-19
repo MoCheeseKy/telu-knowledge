@@ -49,7 +49,6 @@ export interface CreateCommunityPostPayload {
   imageCaption?: string | null;
 }
 
-/** Variabel mutasi untuk membuat postingan komunitas. */
 export interface CreateCommunityPostVariables {
   communityId: string;
   payload: CreateCommunityPostPayload;
@@ -61,30 +60,32 @@ export interface CreateCommunityPostVariables {
  */
 export type UpdateCommunityPostPayload = Partial<CreateCommunityPostPayload>;
 
-/** Variabel mutasi untuk memperbarui postingan komunitas. */
 export interface UpdateCommunityPostVariables {
   communityId: string;
   postId: string;
   payload: UpdateCommunityPostPayload;
 }
 
-/** Variabel mutasi untuk menghapus postingan komunitas. */
 export interface DeleteCommunityPostVariables {
   communityId: string;
   postId: string;
 }
 
-/** Status dan jumlah repost satu postingan forum. */
 export interface RepostStatusDto {
   isReposted: boolean;
   repostsCount: number;
 }
 
-/** Item postingan forum yang di-repost oleh pengguna. */
 export interface UserRepostItemDto {
   repostId: string;
   repostedAt: string;
   post: CommunityPostDto;
+}
+
+export interface PostLikeStatusDto {
+  isLiked: boolean;
+  likesCount: number;
+  score: number;
 }
 
 /** Informasi penulis komentar postingan forum (mock server: forum_comments). */
