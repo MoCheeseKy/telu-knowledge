@@ -9,3 +9,8 @@ export interface JoinedForum {
   role: "owner" | "moderator" | "member";
   joinedAt: string;
 }
+
+export interface JoinForumResult {
+  isJoined: boolean;
+  memberCount: number;
+}
