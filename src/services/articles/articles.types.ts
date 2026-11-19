@@ -1,25 +1,33 @@
 import type { components, operations } from "@/lib/api/schema";
 
 /**
- * Tipe data artikel yang diturunkan langsung dari OpenAPI schema.d.ts
- * sebagai satu-satunya sumber kebenaran (Single Source of Truth).
+ * Tipe data artikel lengkap yang diturunkan dari OpenAPI schema (`ArticleDto`).
  */
 export type Article = components["schemas"]["ArticleDto"];
+
+/** Ringkasan data artikel untuk tampilan daftar (`ArticleSummaryDto`). */
 export type ArticleSummary = components["schemas"]["ArticleSummaryDto"];
+
+/** Informasi penulis artikel dari OpenAPI schema (`ArticleAuthorDto`). */
 export type ArticleAuthor = components["schemas"]["ArticleAuthorDto"];
+
+/** Status publikasi artikel (`draft` atau `published`). */
 export type ArticleStatus = Article["status"];
+
+/** Struktur respons daftar artikel milik pengguna (`MyArticlesListDataDto`). */
 export type MyArticlesListData = components["schemas"]["MyArticlesListDataDto"];
+
+/** Data hasil unggah gambar artikel (`UploadedArticleImageDataDto`). */
 export type UploadedArticleImageData =
   components["schemas"]["UploadedArticleImageDataDto"];
 
-/**
- * Struktur dokumen JSON Tiptap untuk editor artikel.
- */
+/** Representasi mark/formatting pada node teks Tiptap. */
 export interface TiptapMark {
   type: string;
   attrs?: Record<string, unknown>;
 }
 
+/** Representasi satu node dalam struktur dokumen JSON Tiptap. */
 export interface TiptapNode {
   type: string;
   attrs?: Record<string, unknown>;
@@ -28,6 +36,7 @@ export interface TiptapNode {
   text?: string;
 }
 
+/** Struktur root dokumen JSON Tiptap untuk editor artikel. */
 export interface TiptapDoc {
   type: "doc";
   content?: TiptapNode[];
@@ -37,6 +46,7 @@ export interface TiptapDoc {
 type RawCreateArticleDto = components["schemas"]["CreateArticleDto"];
 type RawUpdateArticleDto = components["schemas"]["UpdateArticleDto"];
 
+/** Payload untuk membuat draft artikel baru. */
 export type CreateArticlePayload = Omit<
   RawCreateArticleDto,
   "subtitle" | "coverImageUrl" | "content"
@@ -46,6 +56,7 @@ export type CreateArticlePayload = Omit<
   content?: TiptapDoc | Record<string, unknown>;
 };
 
+/** Payload untuk memperbarui sebagian data artikel. */
 export type UpdateArticlePayload = Omit<
   RawUpdateArticleDto,
   "subtitle" | "coverImageUrl" | "content"
@@ -55,15 +66,18 @@ export type UpdateArticlePayload = Omit<
   content?: TiptapDoc | Record<string, unknown>;
 };
 
+/** Variabel mutasi untuk memperbarui artikel berdasarkan ID. */
 export interface UpdateArticleVariables {
   id: string;
   payload: UpdateArticlePayload;
 }
 
+/** Parameter query untuk mengambil daftar artikel milik sendiri. */
 export type ListMyArticlesParams = NonNullable<
   operations["ArticlesController_getMyArticles"]["parameters"]["query"]
 >;
 
+/** Informasi ringkas penulis pada item feed artikel. */
 export interface ArticleFeedAuthor {
   id: string;
   displayName: string;
@@ -72,6 +86,7 @@ export interface ArticleFeedAuthor {
   avatarColor?: string;
 }
 
+/** Statistik interaksi artikel (suka, komentar, repost, dan bookmark). */
 export interface ArticleFeedStats {
   likesCount: number;
   commentsCount: number;
@@ -79,6 +94,7 @@ export interface ArticleFeedStats {
   bookmarksCount: number;
 }
 
+/** Item artikel publik pada halaman feed Home dan Discover. */
 export interface ArticleFeedItem {
   id: string;
   title: string;
@@ -97,14 +113,17 @@ export interface ArticleFeedItem {
   stats: ArticleFeedStats;
   isLiked: boolean;
   isBookmarked: boolean;
+  isReposted?: boolean;
 }
 
+/** Parameter query untuk mengambil daftar feed artikel publik. */
 export interface ListArticleFeedParams {
   topic?: string;
   limit?: number;
   source?: "backend" | "mock";
 }
 
+/** Informasi penulis pada komentar artikel. */
 export interface ArticleCommentAuthor {
   id: string;
   displayName: string;
@@ -115,6 +134,7 @@ export interface ArticleCommentAuthor {
   major?: string | null;
 }
 
+/** Data komentar atau balasan pada artikel. */
 export interface ArticleComment {
   id: string;
   articleId: string;
@@ -126,6 +146,7 @@ export interface ArticleComment {
   author: ArticleCommentAuthor;
 }
 
+/** Informasi lengkap penulis pada halaman detail artikel. */
 export interface ArticleDetailAuthor {
   id: string;
   displayName: string;
@@ -142,6 +163,7 @@ export interface ArticleDetailAuthor {
   isFollowing: boolean;
 }
 
+/** Data detail artikel publik beserta konten, statistik, dan daftar komentarnya. */
 export interface ArticleDetailData {
   id: string;
   title: string;
@@ -161,19 +183,23 @@ export interface ArticleDetailData {
   stats: ArticleFeedStats;
   isLiked: boolean;
   isBookmarked: boolean;
+  isReposted?: boolean;
   comments: ArticleComment[];
 }
 
+/** Hasil respons API setelah melakukan toggle suka pada artikel. */
 export interface ToggleLikeResult {
   isLiked: boolean;
   likesCount: number;
 }
 
+/** Hasil respons API setelah melakukan toggle bookmark pada artikel. */
 export interface ToggleBookmarkResult {
   isBookmarked: boolean;
   bookmarksCount: number;
 }
 
+/** Payload untuk menambahkan komentar atau balasan baru pada artikel. */
 export interface CreateCommentPayload {
   content: string;
   parent_id?: string | null;

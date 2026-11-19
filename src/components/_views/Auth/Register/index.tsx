@@ -18,6 +18,9 @@ import {
 } from "@/services/auth/auth.schemas";
 import { getErrorMessages } from "@/lib/api/error-messages";
 
+/**
+ * Tampilan halaman pendaftaran akun baru menggunakan email SSO Telkom University dan konfirmasi verifikasi.
+ */
 export default function RegisterView() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -77,7 +80,6 @@ export default function RegisterView() {
 
   const isPending = registerMutation.isPending;
 
-  // State sukses: Ganti tampilan dengan instruksi cek email
   if (registeredEmail) {
     return (
       <div className="w-full flex flex-col justify-center animate-in fade-in-50 duration-300">
@@ -147,7 +149,6 @@ export default function RegisterView() {
 
   return (
     <div className="w-full flex flex-col justify-center">
-      {/* Judul & Deskripsi Halaman */}
       <div className="mb-6">
         <h1 className="text-3xl sm:text-4xl font-bold text-[var(--primary-text)] tracking-tight">
           Register
@@ -157,7 +158,6 @@ export default function RegisterView() {
         </p>
       </div>
 
-      {/* Alert Error Server */}
       {registerMutation.error && (
         <div className="mb-5">
           <FormAlert
@@ -167,9 +167,7 @@ export default function RegisterView() {
         </div>
       )}
 
-      {/* Form Register */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-        {/* Email SSO */}
         <div className="space-y-1.5">
           <label
             htmlFor="email"
@@ -193,7 +191,6 @@ export default function RegisterView() {
           <FieldError message={errors.email?.message} />
         </div>
 
-        {/* Password */}
         <div className="space-y-1.5">
           <label
             htmlFor="password"
@@ -232,7 +229,6 @@ export default function RegisterView() {
           <FieldError message={errors.password?.message} />
         </div>
 
-        {/* Konfirmasi Password */}
         <div className="space-y-1.5">
           <label
             htmlFor="confirmPassword"
@@ -272,7 +268,6 @@ export default function RegisterView() {
           <FieldError message={errors.confirmPassword?.message} />
         </div>
 
-        {/* Persetujuan Ketentuan */}
         <div className="pt-1 space-y-1">
           <Controller
             control={control}
@@ -300,7 +295,6 @@ export default function RegisterView() {
           <FieldError message={errors.agreed?.message} />
         </div>
 
-        {/* Tombol Register */}
         <Button
           type="submit"
           disabled={isPending}
@@ -318,7 +312,6 @@ export default function RegisterView() {
         </Button>
       </form>
 
-      {/* Navigasi ke Halaman Login */}
       <div className="mt-8 text-center">
         <p className="text-sm text-[var(--muted)]">
           Sudah memiliki akun?{" "}

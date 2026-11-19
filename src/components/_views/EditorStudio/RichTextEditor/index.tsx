@@ -27,6 +27,9 @@ import { editorExtensions } from "./extensions";
 import FloatingToolbar from "./FloatingToolbar";
 import InsertMenu, { UPLOAD_PLACEHOLDER_TEXT } from "./InsertMenu";
 
+/**
+ * Konten JSON Tiptap default untuk dokumen artikel baru yang kosong.
+ */
 export const DEFAULT_INITIAL_CONTENT: JSONContent = {
   type: "doc",
   content: [
@@ -48,6 +51,9 @@ const ACCEPTED_IMAGE_INPUT = "image/png,image/jpeg,image/webp,image/gif";
 
 /**
  * Memvalidasi ukuran dan tipe file gambar di sisi klien sebelum diunggah.
+ *
+ * @param file - File gambar yang dipilih, ditempel, atau dijatuhkan pengguna.
+ * @returns Pesan kesalahan jika tidak valid, atau `null` apabila lolos validasi.
  */
 export function validateArticleImageFile(file: File): string | null {
   if (!file || file.size === 0) {
@@ -68,6 +74,13 @@ export function validateArticleImageFile(file: File): string | null {
   return null;
 }
 
+/**
+ * Mencari posisi node paragraf placeholder unggahan gambar di dalam dokumen ProseMirror.
+ *
+ * @param doc - Node akar dokumen ProseMirror saat ini.
+ * @param hintPos - Perkiraan posisi yang telah dipetakan dari transaksi sebelumnya.
+ * @returns Posisi dan ukuran node placeholder, atau `null` jika tidak ditemukan.
+ */
 function findPlaceholderRange(
   doc: PmNode,
   hintPos: number
@@ -99,21 +112,17 @@ function findPlaceholderRange(
   return found;
 }
 
-export interface RichTextEditorProps {
-  initialContent?: JSONContent;
-  onUpdate?: (json: JSONContent) => void;
-  onEditorReady?: (editor: Editor | null) => void;
-  onRequestAiHelp?: () => void;
-  className?: string;
-  ariaLabel?: string;
-}
+import type {
+  RichTextEditorHandle,
+  RichTextEditorProps,
+} from "./rich-text-editor.types";
 
-export interface RichTextEditorHandle {
-  focusStart: () => void;
-  setContent: (content: JSONContent) => void;
-  getEditor: () => Editor | null;
-}
+export type { RichTextEditorHandle, RichTextEditorProps };
 
+/**
+ * Editor teks kaya berbasis Tiptap dengan dukungan unggah gambar (pilih file, drag-and-drop,
+ * tempel clipboard), toolbar pemformatan mengambang, menu sisipan blok, dan panel Bantuan AI.
+ */
 const RichTextEditor = forwardRef<RichTextEditorHandle, RichTextEditorProps>(
   function RichTextEditor(
     {

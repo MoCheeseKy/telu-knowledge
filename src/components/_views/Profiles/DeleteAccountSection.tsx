@@ -78,7 +78,6 @@ export default function DeleteAccountSection() {
 
   return (
     <>
-      {/* Zona Berbahaya */}
       <section className="rounded-xl border border-[var(--failed)]/40 bg-[var(--failed-soft)]/30 p-5">
         <h2 className="flex items-center gap-2 font-sans text-[13px] font-bold uppercase tracking-wider text-[var(--failed)]">
           <AlertTriangle className="h-4 w-4" />
@@ -108,7 +107,6 @@ export default function DeleteAccountSection() {
         </Button>
       </section>
 
-      {/* Dialog konfirmasi */}
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent
           className="max-w-md"

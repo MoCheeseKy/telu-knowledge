@@ -2,12 +2,14 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import SessionHydrator from "@/components/_shared/SessionHydrator";
 import { getSession } from "@/lib/auth/session";
+import type { AuthenticatedShellProps } from "./authenticated-shell.types";
 
-export interface AuthenticatedShellProps {
-  children: React.ReactNode;
-  fallbackPath?: string;
-}
+export type { AuthenticatedShellProps };
 
+/**
+ * Server Component pembungkus halaman terautentikasi yang memvalidasi sesi
+ * dan melakukan hidrasi data pengguna ke client.
+ */
 export default async function AuthenticatedShell({
   children,
   fallbackPath = "/home",

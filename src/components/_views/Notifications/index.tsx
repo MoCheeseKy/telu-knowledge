@@ -13,26 +13,13 @@ import {
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-
-type NotificationType = "like" | "comment" | "mention" | "follow" | "forum";
-
-interface NotificationItem {
-    id: number;
-    type: NotificationType;
-    actor: string;
-    avatarUrl?: string;
-    message: string;
-    target?: string;
-    time: string;
-    isRead?: boolean;
-    href?: string;
-    imageUrl?: string;
-}
-
-type TabKey = "semua" | "belum_dibaca" | "komentar" | "forum";
+import type {
+    NotificationItem,
+    NotificationType,
+    NotificationTabKey as TabKey,
+} from "./notifications.types";
 
 // TODO: ganti dummy data ini dengan data dari API
-// imageUrl opsional: thumbnail post/artikel di sisi kanan (seperti Reddit)
 const dummyNotifications: NotificationItem[] = [
     { id: 1, type: "comment", actor: "Rifky Muhammad Prayudhi", message: "Mengomentari artikelmu:", target: "Apakah C4 akan menggantikan Diagram Conventional saat ini?", time: "5 menit lalu", isRead: false, href: "/home", imageUrl: "/images/persona-c4.jpg" },
     { id: 2, type: "like", actor: "Aruna Jannu", message: "Menyukai postinganmu di", target: "Kuliner Telkom", time: "1 jam lalu", isRead: false, href: "/discussion-forums" },
@@ -51,6 +38,7 @@ const typeIcon: Record<NotificationType, React.ComponentType<{ className?: strin
     forum: Users,
 };
 
+/** Baris tunggal item notifikasi beserta indikator belum dibaca, avatar/ikon, dan thumbnail opsional. */
 function NotificationRow({
     type,
     actor,
@@ -83,7 +71,6 @@ function NotificationRow({
                 />
             )}
 
-            {/* Avatar bulat: foto, atau ikon tipe notifikasi */}
             {avatarUrl ? (
                 <img
                     src={avatarUrl}
@@ -99,7 +86,6 @@ function NotificationRow({
                 </div>
             )}
 
-            {/* Teks: nama (16px semibold) > pesan (14px regular) > waktu (12px muted) */}
             <div className="flex flex-col gap-1 min-w-0 flex-1">
                 <span className="font-sans text-[16px] font-semibold leading-tight text-[var(--foreground)] truncate">
                     {actor}
@@ -123,7 +109,6 @@ function NotificationRow({
                 </span>
             </div>
 
-            {/* Thumbnail di kanan */}
             {imageUrl && (
                 <img
                     src={imageUrl}
@@ -149,6 +134,7 @@ const filters: Record<TabKey, (n: NotificationItem) => boolean> = {
     forum: (n: NotificationItem) => n.type === "forum",
 };
 
+/** Halaman notifikasi dengan filter tab dan aksi tandai semua sudah dibaca. */
 export default function NotificationsView() {
     const [notifications, setNotifications] = useState(dummyNotifications);
 
@@ -169,7 +155,6 @@ export default function NotificationsView() {
             </h1>
 
             <Tabs defaultValue="semua" className="w-full">
-                {/* Tabs di kiri, aksi di kanan: satu baris */}
                 <div className="flex items-center justify-between gap-3 border-b border-[var(--dust)]/60">
                     <TabsList
                         variant="line"

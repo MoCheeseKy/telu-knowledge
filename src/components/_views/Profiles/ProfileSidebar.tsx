@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronRight, Globe } from "lucide-react";
 import { useProfile } from "./profile.context";
 import EditProfileDialog from "./EditProfileDialog";
+import FollowListDialog, { FollowTab } from "./FollowListDialog";
 
 const communities = [
   { id: 1, name: "Game Dev +++", desc: "Cari Kulineran Telkom yang wa...", members: "128.000 Anggota" },
@@ -13,6 +14,7 @@ const communities = [
   { id: 4, name: "Desain Grafis", desc: "Komunitas desain & multimedia...", members: "64.000 Anggota" },
 ];
 
+/** Ikon SVG GitHub untuk tautan eksternal profil. */
 function GithubIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -21,6 +23,7 @@ function GithubIcon({ className }: { className?: string }) {
   );
 }
 
+/** Ikon SVG LinkedIn untuk tautan eksternal profil. */
 function LinkedinIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -29,6 +32,10 @@ function LinkedinIcon({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Sidebar profil pengguna yang menampilkan avatar, identitas, statistik koneksi,
+ * info akademik, tautan eksternal, aksi ubah profil, dan daftar komunitas aktif.
+ */
 export default function ProfileSidebar() {
   const { profile, isEditDialogOpen, setIsEditDialogOpen } = useProfile();
   const [followingStates, setFollowingStates] = useState<Record<number, boolean>>({
@@ -38,6 +45,11 @@ export default function ProfileSidebar() {
     4: true,
   });
 
+  const [followDialog, setFollowDialog] = useState<{ open: boolean; tab: FollowTab }>({
+    open: false,
+    tab: "followers",
+  });
+
   const toggleFollow = (id: number) => {
     setFollowingStates((prev) => ({ ...prev, [id]: !prev[id] }));
   };
@@ -45,7 +57,6 @@ export default function ProfileSidebar() {
   return (
     <>
       <aside className="w-full lg:w-72 lg:shrink-0 lg:border-l lg:border-[var(--dust)]/60 lg:pl-8">
-        {/* Avatar */}
         <div className="mb-4 relative">
           {profile.avatarUrl ? (
             <img
@@ -63,7 +74,6 @@ export default function ProfileSidebar() {
           )}
         </div>
 
-        {/* Identity */}
         <h2 className="font-semibold text-base text-[var(--foreground)] leading-tight">
           {profile.fullName || profile.username}
         </h2>
@@ -71,18 +81,28 @@ export default function ProfileSidebar() {
           @{profile.username}
         </p>
 
-        {/* Followers / Following */}
         <p className="mb-3 text-xs text-[var(--muted)]">
-          <span className="font-semibold text-[var(--foreground)]">{profile.followersCount}</span> Pengikut ·{" "}
-          <span className="font-semibold text-[var(--foreground)]">{profile.followingCount}</span> Mengikuti
+          <button
+            type="button"
+            onClick={() => setFollowDialog({ open: true, tab: "followers" })}
+            className="hover:underline cursor-pointer"
+          >
+            <span className="font-semibold text-[var(--foreground)]">{profile.followersCount}</span> Pengikut
+          </button>{" "}
+          ·{" "}
+          <button
+            type="button"
+            onClick={() => setFollowDialog({ open: true, tab: "following" })}
+            className="hover:underline cursor-pointer"
+          >
+            <span className="font-semibold text-[var(--foreground)]">{profile.followingCount}</span> Mengikuti
+          </button>
         </p>
 
-        {/* Bio */}
         <p className="mb-4 text-xs text-[var(--foreground)]/80 leading-relaxed">
           {profile.bio}
         </p>
 
-        {/* Akademik Info jika diisi */}
         {(profile.faculty || profile.major) && (
           <div className="mb-4 p-2.5 rounded-lg bg-[var(--background-accent)]/60 text-[11px] text-[var(--muted)] flex flex-col gap-1 border border-[var(--dust)]/40">
             {profile.major && <span className="font-medium text-[var(--foreground)]">{profile.major}</span>}
@@ -91,7 +111,6 @@ export default function ProfileSidebar() {
           </div>
         )}
 
-        {/* Social / External links */}
         {(profile.website || profile.github || profile.linkedin) && (
           <div className="mb-4 flex items-center gap-2 text-[var(--muted)]">
             {profile.website && (
@@ -130,7 +149,6 @@ export default function ProfileSidebar() {
           </div>
         )}
 
-        {/* Action Link: Edit profile */}
         <div className="flex items-center gap-2 mb-6">
           <button
             type="button"
@@ -149,7 +167,6 @@ export default function ProfileSidebar() {
           </Link>
         </div>
 
-        {/* Komunitas Aktif */}
         {profile.showCommunities && (
           <div className="border-t border-[var(--dust)] pt-6">
             <h3 className="mb-4 text-xs font-bold text-[var(--primary-text)] uppercase tracking-wider">
@@ -174,11 +191,10 @@ export default function ProfileSidebar() {
                     <button
                       type="button"
                       onClick={() => toggleFollow(item.id)}
-                      className={`shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded transition-colors cursor-pointer ${
-                        isFollowing
-                          ? "bg-[var(--background-accent)] text-[var(--foreground)] hover:bg-[var(--dust)]/50"
-                          : "bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
-                      }`}
+                      className={`shrink-0 text-[11px] font-semibold px-2 py-0.5 rounded transition-colors cursor-pointer ${isFollowing
+                        ? "bg-[var(--background-accent)] text-[var(--foreground)] hover:bg-[var(--dust)]/50"
+                        : "bg-[var(--primary)] text-white hover:bg-[var(--primary-hover)]"
+                        }`}
                     >
                       {isFollowing ? "Mengikuti" : "+ Ikuti"}
                     </button>
@@ -188,7 +204,7 @@ export default function ProfileSidebar() {
             </div>
 
             <Link
-              href="/discovers-forums"
+              href="/discover-forums"
               className="mt-6 flex items-center gap-1 text-xs text-[var(--muted)] hover:text-[var(--foreground)] transition-colors group cursor-pointer"
             >
               <span>Lihat semua komunitas yang diikuti</span>
@@ -198,10 +214,15 @@ export default function ProfileSidebar() {
         )}
       </aside>
 
-      {/* Edit Profile Dialog Modal */}
       <EditProfileDialog
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
+      />
+      <FollowListDialog
+        open={followDialog.open}
+        onOpenChange={(open) => setFollowDialog((s) => ({ ...s, open }))}
+        tab={followDialog.tab}
+        onTabChange={(tab) => setFollowDialog((s) => ({ ...s, tab }))}
       />
     </>
   );

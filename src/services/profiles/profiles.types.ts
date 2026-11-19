@@ -1,8 +1,7 @@
 /**
- * Kontrak data profil pengguna (mock server: profiles).
- * Ditulis manual karena endpoint mock belum tercakup OpenAPI schema backend.
+ * Kontrak data profil pengguna (mock server: profiles, karena endpoint belum
+ * tercakup OpenAPI schema backend).
  */
-
 export interface ProfileDto {
   id: string;
   username: string | null;
@@ -25,6 +24,24 @@ export interface ProfileDto {
   createdAt: string;
 }
 
+/**
+ * Kontrak data ringkas pengguna pada daftar pengikut atau yang diikuti.
+ */
+export interface FollowUserDto {
+  id: string;
+  displayName: string;
+  username: string | null;
+  avatarUrl: string | null;
+  avatarColor: string;
+  bio: string;
+  /** Apakah viewer (akun mock) mengikuti orang ini. */
+  isFollowing: boolean;
+  followedAt: string;
+}
+
+/**
+ * Bentuk data respons endpoint profil milik sendiri.
+ */
 export interface MyProfileData {
   profile: ProfileDto;
 }

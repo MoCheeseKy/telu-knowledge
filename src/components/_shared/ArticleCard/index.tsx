@@ -1,11 +1,18 @@
 "use client";
-
-import ArticleCardProps from "./_types";
+import { useState } from "react";
+import { useToast } from "@/components/ui/toast";
+import { useToggleArticleRepost } from "@/services/articles/article-reposts.queries";
+import { getErrorMessage } from "@/lib/api/error-messages";
 import { ThumbsUp, MessageSquareMore, Repeat2, Bookmark, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
+import type ArticleCardProps from "./article-card.types";
+import { useToggleArticleLike } from "@/services/articles/articles.queries";
+/**
+ * Kartu artikel yang menampilkan info penulis, judul, ringkasan, gambar, dan metrik interaksi.
+ */
 export default function ArticleCard({
+    id,
     publisher = "Rifky Muhammad Prayudhi",
     postDate = "12 Sep 2026",
     avatarUrl,
@@ -16,8 +23,9 @@ export default function ArticleCard({
     likesCount = "16,2k",
     commentsCount = "16,2k",
     repostsCount = "16,2k",
-    isLiked = true,
+    isLiked = false,
     isBookmarked = true,
+    isReposted = false,
     className = "",
     onClick,
 }: ArticleCardProps) {
@@ -77,26 +85,11 @@ export default function ArticleCard({
 
             <div className="mt-4 flex items-center justify-between w-full sm:max-w-[487px]">
                 <div className="flex items-center gap-1 sm:gap-2">
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-3.5"
-                        aria-label="Suka"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <ThumbsUp
-                            className={cn(
-                                "transition-colors",
-                                isLiked
-                                    ? "fill-[var(--primary-text)] text-[var(--primary-text)]"
-                                    : "text-[var(--foreground)]"
-                            )}
-                        />
-                        <span className="font-sans text-sm font-bold">
-                            {likesCount ? likesCount : 0}
-                        </span>
-                    </Button>
+                    <LikeButton
+                        articleId={id !== undefined ? String(id) : undefined}
+                        initialLiked={isLiked}
+                        initialCount={likesCount ? likesCount : 0}
+                    />
 
                     <Button
                         type="button"
@@ -114,19 +107,11 @@ export default function ArticleCard({
                 </div>
 
                 <div className="flex items-center gap-1 sm:gap-2">
-                    <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-3.5"
-                        aria-label="Repost"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <Repeat2 className="text-[var(--primary-text)]" />
-                        <span className="font-sans text-sm font-bold">
-                            {repostsCount ? repostsCount : 0}
-                        </span>
-                    </Button>
+                    <RepostButton
+                        articleId={id ? String(id) : undefined}
+                        initialReposted={isReposted}
+                        initialCount={repostsCount}
+                    />
 
                     <Button
                         type="button"
@@ -159,5 +144,137 @@ export default function ArticleCard({
                 </div>
             </div>
         </article>
+    );
+}
+
+/**
+ * Tombol repost artikel. Ikon berubah instan, angka disinkronkan dari respons
+ * server. Bila gagal, tampilan kembali ke status awal.
+ */
+function RepostButton({
+    articleId,
+    initialReposted,
+    initialCount,
+}: {
+    articleId?: string;
+    initialReposted: boolean;
+    initialCount: string | number;
+}) {
+    const { toast } = useToast();
+    const { mutate, isPending } = useToggleArticleRepost();
+    const [override, setOverride] = useState<{ reposted: boolean; count?: number } | null>(null);
+
+    const reposted = override?.reposted ?? initialReposted;
+    const shownCount =
+        override?.count !== undefined
+            ? override.count.toLocaleString("id-ID")
+            : initialCount;
+
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!articleId || isPending) return;
+        setOverride({ reposted: !reposted });
+
+        mutate(articleId, {
+            onSuccess: (res) =>
+                setOverride({ reposted: res.data.isReposted, count: res.data.repostsCount }),
+            onError: (err) => {
+                setOverride(null);
+                toast.error(getErrorMessage(err, "Gagal memperbarui repost artikel."));
+            },
+        });
+    };
+
+    return (
+        <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={cn(
+                "h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md [&_svg]:size-3.5",
+                reposted
+                    ? "text-[var(--primary-text)]"
+                    : "text-[var(--foreground)]"
+            )}
+            aria-label={reposted ? "Batalkan repost" : "Repost"}
+            aria-pressed={reposted}
+            disabled={isPending}
+            onClick={handleClick}
+        >
+            <Repeat2
+                className={cn(
+                    "transition-colors",
+                    reposted
+                        ? "text-[var(--primary-text)]"
+                        : "text-[var(--foreground)]"
+                )}
+            />
+            <span className="font-sans text-sm font-bold">{shownCount}</span>
+        </Button>
+    );
+}
+
+/**
+ * Tombol suka artikel. Ikon berubah instan, angka disinkronkan dari respons
+ * server. Bila gagal, tampilan kembali ke status awal.
+ */
+function LikeButton({
+    articleId,
+    initialLiked,
+    initialCount,
+}: {
+    articleId?: string;
+    initialLiked: boolean;
+    initialCount: string | number;
+}) {
+    const { toast } = useToast();
+    const { mutate, isPending } = useToggleArticleLike();
+    const [override, setOverride] = useState<{ liked: boolean; count?: number } | null>(null);
+
+    const liked = override?.liked ?? initialLiked;
+    const shownCount =
+        override?.count !== undefined
+            ? override.count.toLocaleString("id-ID")
+            : initialCount;
+
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (!articleId || isPending) return;
+        setOverride({ liked: !liked });
+
+        mutate(articleId, {
+            onSuccess: (res) =>
+                setOverride({ liked: res.data.isLiked, count: res.data.likesCount }),
+            onError: (err) => {
+                setOverride(null);
+                toast.error(getErrorMessage(err, "Gagal memperbarui suka artikel."));
+            },
+        });
+    };
+
+    return (
+        <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={cn(
+                "h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md [&_svg]:size-3.5",
+                liked ? "text-[var(--primary-text)]" : "text-[var(--foreground)]"
+            )}
+            aria-label={liked ? "Batal suka" : "Suka"}
+            aria-pressed={liked}
+            disabled={isPending}
+            onClick={handleClick}
+        >
+            <ThumbsUp
+                className={cn(
+                    "transition-colors",
+                    liked
+                        ? "fill-[var(--primary-text)] text-[var(--primary-text)]"
+                        : "text-[var(--foreground)]"
+                )}
+            />
+            <span className="font-sans text-sm font-bold">{shownCount}</span>
+        </Button>
     );
 }

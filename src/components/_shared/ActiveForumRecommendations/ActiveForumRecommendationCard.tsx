@@ -2,12 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ActiveForumRecommendationCardProps, dummyForums } from "./_types";
+import { ActiveForumRecommendationCardProps, dummyForums } from "./active-forum-recommendations.types";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export { dummyForums };
 
+/**
+ * Kartu rekomendasi forum/komunitas aktif beserta tombol aksi ikuti.
+ */
 export default function ActiveForumRecommendationCard({
     title = "Kuliner Telkom",
     description = "Cari Kulineran Telkom yang wa...",

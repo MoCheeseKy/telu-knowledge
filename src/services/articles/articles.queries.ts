@@ -13,6 +13,7 @@ import type {
   UpdateArticleVariables,
 } from "./articles.types";
 
+/** Factory query key React Query untuk fitur artikel. */
 export const articleKeys = {
   all: ["articles"] as const,
   lists: () => [...articleKeys.all, "list"] as const,
@@ -100,6 +101,7 @@ export function useToggleProfileFollow() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["article-detail"] });
       queryClient.invalidateQueries({ queryKey: ["recommendations", "writers"] });
+      queryClient.invalidateQueries({ queryKey: ["profiles"] });
     },
   });
 }
@@ -130,6 +132,7 @@ export function useMyArticles(params?: ListMyArticlesParams) {
   });
 }
 
+/** Alias untuk `useMyArticles`. */
 export const useListMyArticles = useMyArticles;
 
 /**

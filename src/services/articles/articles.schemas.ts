@@ -26,12 +26,14 @@ export function hasNonEmptyTiptapText(node: unknown): boolean {
   return false;
 }
 
+/** Skema validasi Zod untuk judul artikel (1-150 karakter). */
 export const articleTitleSchema = z
   .string({ message: "Judul artikel wajib diisi (minimal 1 karakter)" })
   .trim()
   .min(1, "Judul artikel wajib diisi (minimal 1 karakter)")
   .max(150, "Judul artikel maksimal 150 karakter");
 
+/** Skema validasi Zod untuk subjudul artikel (opsional, maksimal 300 karakter). */
 export const articleSubtitleSchema = z
   .string({ message: "Subjudul artikel harus berupa teks" })
   .trim()
@@ -39,6 +41,7 @@ export const articleSubtitleSchema = z
   .nullable()
   .optional();
 
+/** Skema validasi Zod untuk memastikan konten dokumen Tiptap valid dan tidak kosong saat publikasi. */
 export const tiptapContentForPublishSchema = z
   .record(z.string(), z.unknown(), {
     message: "Konten artikel harus berupa dokumen JSON Tiptap yang valid",
@@ -60,5 +63,6 @@ export const publishArticleSchema = z.object({
   content: tiptapContentForPublishSchema,
 });
 
+/** Tipe input hasil inferensi dari `publishArticleSchema`. */
 export type PublishArticleInput = z.infer<typeof publishArticleSchema>;
 

@@ -3,6 +3,7 @@ import type {
   UpdateProfilePayload,
 } from "@/services/profiles/profiles.types";
 
+/** Model profil pengguna untuk tampilan UI halaman profil dan formulir edit. */
 export interface UserProfile {
   username: string;
   fullName: string;
@@ -25,25 +26,71 @@ export interface UserProfile {
   showCommunities: boolean;
 }
 
+/** Nilai dan aksi yang disediakan oleh `ProfileContext`. */
+export interface ProfileContextType {
+  profile: UserProfile;
+  /**
+   * Menyimpan pembaruan profil secara persisten ke mock server
+   * (PATCH /proxy/profiles/me). Melempar error bila gagal — pemanggil
+   * (form) menampilkannya lewat FormAlert.
+   */
+  updateProfile: (payload: UpdateProfilePayload) => Promise<void>;
+  isLoading: boolean;
+  isError: boolean;
+  refetchProfile: () => void;
+  isEditDialogOpen: boolean;
+  setIsEditDialogOpen: (open: boolean) => void;
+}
+
+/** Props untuk komponen modal `EditProfileDialog`. */
+export interface EditProfileDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+/** Props untuk komponen formulir `EditProfileForm`. */
+export interface EditProfileFormProps {
+  initialData: UserProfile;
+  onSave: (payload: UpdateProfilePayload) => void | Promise<void>;
+  onCancel?: () => void;
+}
+
+/** Jenis tab aktif pada dialog daftar koneksi pengguna. */
+export type FollowTab = "followers" | "following";
+
+/** Props untuk komponen modal `FollowListDialog`. */
+export interface FollowListDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  tab: FollowTab;
+  onTabChange: (tab: FollowTab) => void;
+}
+
 /**
- * Angka pengikut/mengikuti masih STATIS (contoh) — fitur follow belum
- * diintegrasikan dan sengaja tidak mengambil dari mock (di luar cakupan,
- * lihat docs/integrasi-profil/README.md). Sama perlakuannya dengan tab
- * Reposts/koleksi yang tetap memakai data contoh.
+ * Mengekstrak statistik pengikut dan mengikuti dengan nilai bawaan `0`.
+ *
+ * @param dto - Subset DTO profil yang memuat jumlah pengikut dan mengikuti.
+ * @returns Objek dengan properti `followersCount` dan `followingCount`.
  */
-export const SAMPLE_FOLLOW_STATS = {
-  followersCount: 142,
-  followingCount: 89,
-} as const;
+export const SAMPLE_FOLLOW_STATS = (
+  dto: Pick<ProfileDto, "followersCount" | "followingCount">
+) => ({
+  followersCount: dto.followersCount ?? 0,
+  followingCount: dto.followingCount ?? 0,
+}) as const;
 
 /**
  * Mengubah ProfileDto (mock server) menjadi UserProfile tampilan.
  * Field yang tidak tersedia/di luar cakupan integrasi diberi nilai
  * kosong/netral atau tetap statis (contoh).
+ *
+ * @param dto - Data profil mentah dari respons API.
+ * @returns Objek `UserProfile` siap pakai untuk komponen UI.
  */
 export function mapProfileDtoToUserProfile(dto: ProfileDto): UserProfile {
   const displayName = dto.displayName ?? "";
   const username = dto.username ?? "";
+  const followStats = SAMPLE_FOLLOW_STATS(dto);
 
   return {
     username,
@@ -57,9 +104,8 @@ export function mapProfileDtoToUserProfile(dto: ProfileDto): UserProfile {
     major: dto.major ?? "",
     studentId: "",
     generation: dto.generation ?? "",
-    // Pengikut/mengikuti TIDAK diintegrasikan (di luar cakupan) — statis
-    followersCount: SAMPLE_FOLLOW_STATS.followersCount,
-    followingCount: SAMPLE_FOLLOW_STATS.followingCount,
+    followersCount: followStats.followersCount,
+    followingCount: followStats.followingCount,
     website: dto.website ?? undefined,
     github: dto.github ?? undefined,
     linkedin: dto.linkedin ?? undefined,
@@ -72,6 +118,9 @@ export function mapProfileDtoToUserProfile(dto: ProfileDto): UserProfile {
  * Mengubah UserProfile tampilan menjadi UpdateProfilePayload (DTO PATCH).
  * Hanya field yang ada pada `input` yang disertakan; string kosong pada field
  * nullable dikirim `null` (berarti dikosongkan).
+ *
+ * @param input - Perubahan sebagian field `UserProfile` dari formulir.
+ * @returns Payload PATCH untuk endpoint pembaruan profil.
  */
 export function mapUserProfileToUpdatePayload(
   input: Partial<UserProfile>
@@ -99,6 +148,7 @@ export function mapUserProfileToUpdatePayload(
   return payload;
 }
 
+/** Data profil fallback bawaan sebelum data dari server dimuat. */
 export const defaultProfile: UserProfile = {
   username: "sofiamnhrk",
   fullName: "Sofia Manar",

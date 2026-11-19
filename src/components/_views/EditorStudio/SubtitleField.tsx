@@ -10,17 +10,14 @@ import {
   type KeyboardEvent,
 } from "react";
 import { cn } from "@/lib/utils";
+import type { SubtitleFieldProps } from "./editor-studio.types";
 
-export interface SubtitleFieldProps {
-  value: string;
-  onChange: (value: string) => void;
-  onEnterPress?: () => void;
-  placeholder?: string;
-  maxLength?: number;
-  disabled?: boolean;
-  className?: string;
-}
+export type { SubtitleFieldProps };
 
+/**
+ * Input textarea auto-resize satu baris/multi-baris untuk subjudul atau ringkasan artikel
+ * yang menormalisasi karakter baris baru dan membatasi panjang teks.
+ */
 const SubtitleField = forwardRef<HTMLTextAreaElement, SubtitleFieldProps>(
   function SubtitleField(
     {

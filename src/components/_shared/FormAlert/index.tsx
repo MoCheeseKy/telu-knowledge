@@ -1,14 +1,13 @@
 import React from "react";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { FormAlertProps } from "./form-alert.types";
 
-export interface FormAlertProps {
-  variant?: "error" | "success";
-  messages?: string | string[];
-  children?: React.ReactNode;
-  className?: string;
-}
+export type { FormAlertProps };
 
+/**
+ * Banner alert untuk menampilkan pesan error atau sukses pada formulir.
+ */
 export default function FormAlert({
   variant = "error",
   messages,

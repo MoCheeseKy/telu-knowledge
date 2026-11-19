@@ -1,6 +1,6 @@
 import { apiFetch } from "@/lib/api/client";
-import type { ApiEnvelope } from "@/lib/api/types";
-import type { MyProfileData, UpdateProfilePayload } from "./profiles.types";
+import type { ApiEnvelope } from "@/lib/api/api.types";
+import type { FollowUserDto, MyProfileData, UpdateProfilePayload } from "./profiles.types";
 
 /**
  * Mengambil detail profil milik sendiri (GET /proxy/profiles/me).
@@ -41,8 +41,33 @@ export async function deleteMyAccount(): Promise<ApiEnvelope<null>> {
   });
 }
 
+/**
+ * Mengambil daftar pengikut profil milik sendiri (GET /proxy/profiles/me/followers).
+ */
+export async function getMyFollowers(): Promise<ApiEnvelope<FollowUserDto[]>> {
+  return apiFetch<FollowUserDto[]>("/proxy/profiles/me/followers", {
+    method: "GET",
+    source: "mock",
+  });
+}
+
+/**
+ * Mengambil daftar akun yang diikuti oleh profil milik sendiri (GET /proxy/profiles/me/following).
+ */
+export async function getMyFollowing(): Promise<ApiEnvelope<FollowUserDto[]>> {
+  return apiFetch<FollowUserDto[]>("/proxy/profiles/me/following", {
+    method: "GET",
+    source: "mock",
+  });
+}
+
+/**
+ * Kumpulan fungsi klien API untuk fitur profil pengguna.
+ */
 export const profilesApi = {
   getMyProfile,
   updateMyProfile,
   deleteMyAccount,
+  getMyFollowers,
+  getMyFollowing,
 };

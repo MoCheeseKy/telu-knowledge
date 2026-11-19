@@ -7,11 +7,13 @@ import { serverEnv } from "@/lib/env";
  * Memvalidasi apakah request mutasi (POST, PUT, PATCH, DELETE) berasal dari same-origin (APP_ORIGIN).
  * Mengembalikan NextResponse 403 dengan format envelope error jika origin tidak valid/hilang.
  * Mengembalikan null jika request valid dan aman untuk diproses.
+ *
+ * @param request - Objek HTTP Request masuk pada route handler.
+ * @returns `NextResponse` 403 jika origin tidak sah, atau `null` jika valid.
  */
 export function assertSameOrigin(request: Request): NextResponse | null {
   const method = request.method.toUpperCase();
 
-  // Method aman (GET / HEAD) tidak memerlukan validasi Origin
   if (method === "GET" || method === "HEAD") {
     return null;
   }
