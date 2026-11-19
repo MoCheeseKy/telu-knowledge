@@ -58,6 +58,7 @@ export function useArticleDetail(id?: string | null) {
       return res.data;
     },
     enabled: Boolean(id),
+    staleTime: 0, 
   });
 }
 

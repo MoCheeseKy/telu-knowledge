@@ -697,33 +697,100 @@ const handleToggleRepost = (req, res) => {
   if (!db.article_reposts) db.article_reposts = [];
   const existingIndex = db.article_reposts.findIndex((r) => r.article_id === article.id && r.user_id === MOCK_ME_ID);
 
-  let stats = (db.article_stats || []).find((s) => s.article_id === article.id);
-  if (!stats) {
-    stats = { article_id: article.id, likes_count: 0, comments_count: 0, reposts_count: 0, bookmarks_count: 0 };
-    if (!db.article_stats) db.article_stats = [];
-    db.article_stats.push(stats);
-  }
-
   let isReposted;
   if (existingIndex >= 0) {
     db.article_reposts.splice(existingIndex, 1);
-    stats.reposts_count = Math.max(0, (stats.reposts_count || 1) - 1);
     isReposted = false;
   } else {
     db.article_reposts.push({ id: crypto.randomUUID(), article_id: article.id, user_id: MOCK_ME_ID, created_at: new Date().toISOString() });
-    stats.reposts_count = (stats.reposts_count || 0) + 1;
     isReposted = true;
   }
+
+  // Hitung ulang total repost dari database agar tidak bug (minus/plus ngawur)
+  const totalReposts = db.article_reposts.filter((r) => r.article_id === article.id).length;
+  
+  let stats = (db.article_stats || []).find((s) => s.article_id === article.id);
+  if (stats) stats.reposts_count = totalReposts;
+
   router.db.write();
   return res.json({
     statusCode: 200,
     message: [isReposted ? 'Artikel berhasil dibagikan ulang' : 'Repost artikel dibatalkan'],
-    data: { isReposted, repostsCount: stats.reposts_count },
+    data: { isReposted, repostsCount: totalReposts },
     isError: false,
   });
 };
 server.post('/api/articles/:id/repost', handleToggleRepost);
 server.post('/articles/:id/repost', handleToggleRepost);
+
+// 5.2. Endpoint Daftar Repost per Profil (GET /profiles/:id/reposts)
+const handleListProfileReposts = (req, res) => {
+  const { id } = req.params;
+  const db = router.db.getState();
+
+  // 1. Cari semua repost milik user ini
+  const userReposts = (db.article_reposts || [])
+    .filter((r) => r.user_id === id)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  // 2. Ambil data artikel dan gabungkan (join)
+  const items = userReposts.map((repost) => {
+    const article = (db.articles || []).find((a) => a.id === repost.article_id);
+    if (!article) return null; // Abaikan jika artikel sudah dihapus
+
+    const author = (db.profiles || []).find((p) => p.id === article.author_id);
+    const relTopic = (db.article_topics || []).find((at) => at.article_id === article.id);
+    const mainTopic = relTopic ? (db.topics || []).find((t) => t.id === relTopic.topic_id) : null;
+    const stats = (db.article_stats || []).find((s) => s.article_id === article.id);
+
+    // Cek apakah user yang sedang login sudah me-like atau bookmark artikel ini
+    const isLiked = (db.article_likes || []).some((l) => l.article_id === article.id && l.user_id === MOCK_ME_ID);
+    const isBookmarked = (db.article_bookmarks || []).some((b) => b.article_id === article.id && b.user_id === MOCK_ME_ID);
+
+    return {
+      id: article.id,
+      title: article.title,
+      subtitle: article.subtitle,
+      coverImageUrl: article.cover_image_url,
+      excerpt: article.excerpt,
+      readingTimeMinutes: article.reading_time_minutes,
+      status: article.status,
+      slug: article.slug,
+      publishedAt: article.published_at,
+      createdAt: article.created_at,
+      updatedAt: article.updated_at,
+      topic: mainTopic ? mainTopic.name : 'Umum',
+      topicSlug: mainTopic ? mainTopic.slug : null,
+      author: {
+        id: author ? author.id : article.author_id,
+        displayName: author ? author.display_name : 'Civitas Tel-U',
+        avatarUrl: author ? author.avatar_url : null,
+        username: author ? author.username : null,
+        avatarColor: author ? author.avatar_color : '#E53E3E',
+      },
+      stats: {
+        likesCount: stats ? stats.likes_count : 0,
+        commentsCount: stats ? stats.comments_count : 0,
+        repostsCount: stats ? stats.reposts_count : 0,
+        bookmarksCount: stats ? stats.bookmarks_count : 0,
+      },
+      isLiked,
+      isBookmarked,
+      repostedAt: repost.created_at, // Tambahan khusus untuk item repost
+    };
+  }).filter(Boolean); // Bersihkan nilai null
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar repost berhasil diambil'],
+    data: { items },
+    isError: false,
+  });
+};
+
+// Daftarkan route-nya
+server.get('/api/profiles/:id/reposts', handleListProfileReposts);
+server.get('/profiles/:id/reposts', handleListProfileReposts);
 
 // 6. Endpoint Toggle Follow Penulis
 const handleToggleFollow = (req, res) => {

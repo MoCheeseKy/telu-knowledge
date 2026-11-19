@@ -14,9 +14,10 @@ export function useProfileReposts(profileId?: string | null) {
     queryFn: async () => {
       if (!profileId) throw new Error("ID profil wajib diisi");
       const res = await articleRepostsApi.listProfileReposts(profileId);
-      return res.data;
+      return (res.data as any)?.items || res.data || []; 
     },
     enabled: Boolean(profileId),
+    staleTime: 0,
   });
 }
 

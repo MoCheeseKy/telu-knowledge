@@ -5,51 +5,30 @@ import RepostCard, { RepostItem } from "./RepostCard";
 import ProfileSidebar from "./ProfileSidebar";
 import HomeTab from "./HomeTab";
 import { ProfileProvider, useProfile } from "./profile.context";
-
-const reposts: RepostItem[] = [
-  {
-    id: 1,
-    category: "Software Engineering",
-    author: "Rifky Muhammad Prayudhi",
-    date: "12 September 2026",
-    title: "Apakah C4 akan menggantikan Diagram Conventional saat ini?",
-    description:
-      "You're going to see these in someone's toolkit next year and wonder why you didn't hear about them first. Here's your head start.",
-    likes: "16,2k",
-    comments: "16,2k",
-    reposts: "16,2k",
-    image: "/images/repost-cover.png",
-  },
-  {
-    id: 2,
-    category: "Software Engineering",
-    author: "Rifky Muhammad Prayudhi",
-    date: "12 September 2026",
-    title: "Apakah C4 akan menggantikan Diagram Conventional saat ini?",
-    description:
-      "You're going to see these in someone's toolkit next year and wonder why you didn't hear about them first. Here's your head start.",
-    likes: "16,2k",
-    comments: "16,2k",
-    reposts: "16,2k",
-    image: "/images/repost-cover.png",
-  },
-  {
-    id: 3,
-    category: "Software Engineering",
-    author: "Rifky Muhammad Prayudhi",
-    date: "12 September 2026",
-    title: "Apakah C4 akan menggantikan Diagram Conventional saat ini?",
-    description:
-      "You're going to see these in someone's toolkit next year and wonder why you didn't hear about them first. Here's your head start.",
-    likes: "16,2k",
-    comments: "16,2k",
-    reposts: "16,2k",
-    image: "/images/repost-cover.png",
-  },
-];
+import { useProfileReposts } from "@/services/article-reposts/article-reposts.queries";
+import { useMe } from "@/services/auth/auth.queries";
 
 function ProfilesContent() {
   const { profile, isLoading, isError, refetchProfile } = useProfile();
+  const { data: user } = useMe(); 
+  
+  // 1. Fetch data using the authenticated user's ID
+  // const { data: apiReposts, isLoading: isLoadingReposts } = useProfileReposts(user?.id || null);
+  const { data: apiReposts, isLoading: isLoadingReposts } = useProfileReposts("10000000-0000-4000-8000-000000000001");
+
+  // 2. Move the mapping INSIDE the component so it can access apiReposts
+  const reposts = apiReposts?.map((item) => ({
+    id: item.id,
+    category: item.topic,
+    author: item.author.displayName,
+    date: new Date(item.publishedAt || item.createdAt).toLocaleDateString("id-ID"),
+    title: item.title,
+    description: item.excerpt,
+    likes: item.stats.likesCount.toString(),
+    comments: item.stats.commentsCount.toString(),
+    reposts: item.stats.repostsCount.toString(),
+    image: item.coverImageUrl || "/images/repost-cover.png",
+  })) || [];
 
   if (isLoading) {
     return (
@@ -117,9 +96,15 @@ function ProfilesContent() {
 
           <TabsContent value="reposts">
             <div className="flex flex-col gap-6 py-6">
-              {reposts.map((item) => (
-                <RepostCard key={item.id} item={item} />
-              ))}
+              {isLoadingReposts ? (
+                <p className="text-center text-sm text-[var(--muted)]">Memuat reposts...</p>
+              ) : reposts.length === 0 ? (
+                <p className="text-center text-sm text-[var(--muted)]">Belum ada artikel yang di-repost.</p>
+              ) : (
+                reposts.map((item) => (
+                  <RepostCard key={item.id} item={item} />
+                ))
+              )}
             </div>
           </TabsContent>
         </Tabs>
