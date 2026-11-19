@@ -11,6 +11,8 @@ import { getErrorMessage } from "@/lib/api/error-messages";
 import {
   useForumPostDetail,
   useToggleForumPostLike,
+  useForumPostRepostStatus,
+  useToggleForumPostRepost,
 } from "@/services/communities/community-posts.queries";
 
 const actionButtonClass =
@@ -32,12 +34,17 @@ export default function ForumDetailActions({
 
   const isLiked = likeOverride?.liked ?? Boolean(postDetail?.isLiked);
   const likesCount = likeOverride?.count ?? initialScore;
-  const [isReposted, setIsReposted] = useState(false);
+  const repostPostId = postId ? String(postId) : "";
+  const { data: repostStatus } = useForumPostRepostStatus(repostPostId || undefined);
+  const toggleRepost = useToggleForumPostRepost(repostPostId);
+
+  const isReposted = repostStatus?.isReposted ?? false;
+  const shownRepostsCount = repostStatus?.repostsCount ?? repostsCount;
   const [saved, setSaved] = useState(isSaved);
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
-    const handleToggleLike = () => {
+  const handleToggleLike = () => {
     if (!postId || toggleLike.isPending) return;
     const nextLiked = !isLiked;
     setLikeOverride({ liked: nextLiked, count: Math.max(0, likesCount + (nextLiked ? 1 : -1)) });
@@ -51,9 +58,14 @@ export default function ForumDetailActions({
       },
     });
   };
-  
-  const handleToggleRepost = () => {
-    setIsReposted(!isReposted);
+
+    const handleToggleRepost = () => {
+    if (!repostPostId || toggleRepost.isPending) return;
+    toggleRepost.mutate(undefined, {
+      onError: (err) => {
+        toast.error(getErrorMessage(err, "Gagal mengubah status repost."));
+      },
+    });
   };
 
   const handleScrollToComments = () => {
@@ -126,8 +138,10 @@ export default function ForumDetailActions({
           variant="ghost"
           size="sm"
           className={actionButtonClass}
-          aria-label="Repost"
+          aria-label={isReposted ? "Batalkan repost" : "Repost"}
           onClick={handleToggleRepost}
+          aria-pressed={isReposted}
+          disabled={toggleRepost.isPending}
         >
           <Repeat2
             className={cn(
@@ -141,7 +155,7 @@ export default function ForumDetailActions({
               isReposted && "text-[var(--primary-text)]"
             )}
           >
-            {repostsCount + (isReposted ? 1 : 0)}
+            {shownRepostsCount}
           </span>
         </Button>
       </div>
