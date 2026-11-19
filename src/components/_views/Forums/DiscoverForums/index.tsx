@@ -3,6 +3,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useCommunities } from "@/services/communities/community-posts.queries";
 import CreateCommunityDialog from "@/components/_views/Forums/MyForums/CreateCommunityDialog";
+import { useJoinedForumIds, useToggleJoinForum } from "@/services/communities/forum.queries";
+import { useToast } from "@/components/ui/toast";
 import type {
     CommunityCardProps,
     DiscoverCommunityItem,
@@ -290,7 +292,18 @@ function CommunityCard({
 export default function DiscoverForumsView() {
     const { data: apiCommunities } = useCommunities();
     const [search, setSearch] = useState("");
-    const [followedCommunities, setFollowedCommunities] = useState<(string | number)[]>([]);
+    const joinedIds = useJoinedForumIds();
+    const toggleJoin = useToggleJoinForum();
+    const { toast } = useToast();
+
+    const handleFollow = (id: string | number) => {
+        if (toggleJoin.isPending) return;
+        const forumId = String(id);
+        toggleJoin.mutate(
+            { forumId, join: !joinedIds.has(forumId) },
+            { onError: () => toast.error("Gagal memperbarui keanggotaan forum.") }
+        );
+    };
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
     const communities: DiscoverCommunityItem[] = useMemo(() => {
@@ -315,14 +328,6 @@ export default function DiscoverForumsView() {
             community.name.toLowerCase().includes(search.toLowerCase())
         );
     }, [communities, search]);
-
-    const handleFollow = (id: string | number) => {
-        setFollowedCommunities((previous) =>
-            previous.includes(id)
-                ? previous.filter((item) => item !== id)
-                : [...previous, id]
-        );
-    };
 
     return (
         <div className="w-full py-2 text-[#202020]">
@@ -358,7 +363,7 @@ export default function DiscoverForumsView() {
                             <CommunityCard
                                 key={community.id}
                                 community={community}
-                                followed={followedCommunities.includes(community.id)}
+                                followed={joinedIds.has(String(community.id))}
                                 onFollow={() => handleFollow(community.id)}
                             />
                         ))}
@@ -391,7 +396,7 @@ export default function DiscoverForumsView() {
             <CreateCommunityDialog
                 open={isCreateModalOpen}
                 onOpenChange={setIsCreateModalOpen}
-                onCreate={() => {}}
+                onCreate={() => { }}
             />
         </div>
     );
