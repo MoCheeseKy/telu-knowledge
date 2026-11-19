@@ -39,9 +39,6 @@ const AVATAR_COLORS = [
   "bg-[#E11D48]",
 ];
 
-/**
- * Dialog formulir untuk membuat forum komunitas baru lengkap dengan ikon, foto profil, kategori, dan aturan.
- */
 export default function CreateCommunityDialog({
   open,
   onOpenChange,

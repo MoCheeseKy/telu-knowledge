@@ -10,9 +10,6 @@ import { MOCK_VIEWER_ID } from "@/services/communities/community-posts.types";
 import { formatDate } from "@/lib/formatters";
 import { getErrorMessage } from "@/lib/api/error-messages";
 
-/**
- * Tampilan halaman daftar forum diskusi beserta sidebar rekomendasi komunitas aktif.
- */
 export default function DiscussionForumsView() {
   const {
     data: posts,

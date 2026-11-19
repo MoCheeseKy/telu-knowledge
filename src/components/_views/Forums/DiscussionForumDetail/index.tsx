@@ -18,9 +18,6 @@ import {
   type ForumPostDetail,
 } from "./discussion-forum-detail.types";
 
-/**
- * Tampilan halaman detail postingan forum diskusi beserta utas komentar dan sidebar komunitas.
- */
 export default function DiscussionForumDetailView({
   postId,
   initialPost = sampleForumPost,

@@ -16,7 +16,6 @@ import type {
   CommunityItemDto,
 } from "./community-posts.types";
 
-/** Factory query key React Query untuk postingan, komentar, dan repost komunitas/forum. */
 export const communityPostKeys = {
   all: ["community-posts"] as const,
   lists: () => [...communityPostKeys.all, "list"] as const,
@@ -32,12 +31,6 @@ export const communityPostKeys = {
     [...communityPostKeys.all, "user-reposts", userId] as const,
 };
 
-/**
- * Hook query detail postingan by ID (GET /proxy/forum-posts/:postId) — tanpa
- * communityId, dipakai halaman /discussion-forums/[id]. Konten post saja.
- * Memakai query key `communityPostKeys.detail(id)` yang sama dengan detail
- * per komunitas (bentuk datanya identik), sehingga cache dapat dipakai bersama.
- */
 export function useForumPostDetail(postId?: string | null) {
   return useQuery<CommunityPostDto>({
     queryKey: communityPostKeys.detail(postId ?? ""),
@@ -52,13 +45,6 @@ export function useForumPostDetail(postId?: string | null) {
   });
 }
 
-/**
- * Hook query daftar postingan komunitas, terbaru di atas
- * (GET /proxy/communities/:id/posts).
- * Query key memakai `communityPostKeys.list(communityId)` yang sama dengan
- * target invalidasi mutasi create/update/delete — sehingga feed otomatis
- * me-refresh setelah aksi apa pun tanpa penanganan khusus di komponen.
- */
 export function useCommunityPosts(communityId?: string | null) {
   return useQuery<CommunityPostDto[]>({
     queryKey: communityPostKeys.list(communityId ?? ""),
@@ -73,9 +59,6 @@ export function useCommunityPosts(communityId?: string | null) {
   });
 }
 
-/**
- * Hook query detail postingan komunitas (GET /proxy/communities/:id/posts/:postId).
- */
 export function useCommunityPost(
   communityId?: string | null,
   postId?: string | null
@@ -93,10 +76,6 @@ export function useCommunityPost(
   });
 }
 
-/**
- * Hook mutasi penyuntingan postingan milik sendiri
- * (PATCH /proxy/communities/:id/posts/:postId).
- */
 export function useUpdateCommunityPost() {
   const queryClient = useQueryClient();
 
@@ -118,13 +97,6 @@ export function useUpdateCommunityPost() {
   });
 }
 
-/**
- * Hook mutasi penghapusan postingan milik sendiri
- * (DELETE /proxy/communities/:id/posts/:postId).
- * Server ikut menghapus baris repost (cascade), jadi cache user-reposts
- * juga harus di-refresh supaya tab Reposts di profil tidak menampilkan
- * post yang sudah dihapus.
- */
 export function useDeleteCommunityPost() {
   const queryClient = useQueryClient();
 
@@ -141,10 +113,6 @@ export function useDeleteCommunityPost() {
   });
 }
 
-/**
- * Hook mutasi pembuatan postingan baru pada komunitas
- * (POST /proxy/communities/:id/posts).
- */
 export function useCreateCommunityPost() {
   const queryClient = useQueryClient();
 
@@ -163,9 +131,6 @@ export function useCreateCommunityPost() {
   });
 }
 
-/**
- * Hook query seluruh postingan forum (feed utama /discussion-forums).
- */
 export function useAllForumPosts() {
   return useQuery<CommunityPostDto[]>({
     queryKey: communityPostKeys.lists(),
@@ -176,9 +141,6 @@ export function useAllForumPosts() {
   });
 }
 
-/**
- * Hook mutasi penghapusan postingan forum by ID saja (tanpa perlu tahu communityId).
- */
 export function useDeleteForumPost() {
   const queryClient = useQueryClient();
 
@@ -193,9 +155,6 @@ export function useDeleteForumPost() {
   });
 }
 
-/**
- * Hook mutasi pembaruan postingan forum by ID saja.
- */
 export function useUpdateForumPost() {
   const queryClient = useQueryClient();
 
@@ -217,9 +176,6 @@ export function useUpdateForumPost() {
   });
 }
 
-/**
- * Hook mutasi pembuatan komunitas baru (POST /proxy/communities).
- */
 export function useCreateCommunity() {
   const queryClient = useQueryClient();
 
@@ -238,9 +194,6 @@ export function useCreateCommunity() {
   });
 }
 
-/**
- * Hook query daftar seluruh komunitas (GET /proxy/communities).
- */
 export function useCommunities() {
   return useQuery<CommunityItemDto[]>({
     queryKey: ["communities"],
@@ -251,9 +204,6 @@ export function useCommunities() {
   });
 }
 
-/**
- * Hook query daftar komentar postingan forum (GET /proxy/forum-posts/:postId/comments).
- */
 export function useForumPostComments(postId?: string | null) {
   return useQuery<ForumCommentDto[]>({
     queryKey: communityPostKeys.comments(postId ?? ""),
@@ -268,10 +218,6 @@ export function useForumPostComments(postId?: string | null) {
   });
 }
 
-/**
- * Hook mutasi penambahan komentar atau balasan pada postingan forum
- * (POST /proxy/forum-posts/:postId/comments).
- */
 export function useCreateForumComment() {
   const queryClient = useQueryClient();
 
@@ -290,10 +236,6 @@ export function useCreateForumComment() {
   });
 }
 
-/**
- * Hook mutasi pembaruan isi komentar pada postingan forum
- * (PATCH /proxy/forum-posts/:postId/comments/:commentId).
- */
 export function useUpdateForumComment() {
   const queryClient = useQueryClient();
 
@@ -309,10 +251,6 @@ export function useUpdateForumComment() {
   });
 }
 
-/**
- * Hook mutasi penghapusan komentar pada postingan forum
- * (DELETE /proxy/forum-posts/:postId/comments/:commentId).
- */
 export function useDeleteForumComment() {
   const queryClient = useQueryClient();
 
@@ -331,10 +269,6 @@ export function useDeleteForumComment() {
   });
 }
 
-/**
- * Hook query status repost satu postingan
- * (GET /proxy/forum-posts/:postId/repost/status).
- */
 export function useForumPostRepostStatus(postId?: string | null) {
   return useQuery<RepostStatusDto>({
     queryKey: communityPostKeys.repostStatus(postId ?? ""),
@@ -349,13 +283,6 @@ export function useForumPostRepostStatus(postId?: string | null) {
   });
 }
 
-/**
- * Hook mutasi toggle repost
- * (POST /proxy/forum-posts/:postId/repost).
- * Optimistic update: count & isReposted berubah instan, lalu di-sync dengan
- * respons server. Setelah sukses, daftar user-reposts di-invalidate agar tab
- * Reposts di profil otomatis refetch.
- */
 export function useToggleForumPostRepost(postId: string) {
   const queryClient = useQueryClient();
 
@@ -404,7 +331,6 @@ export function useToggleForumPostRepost(postId: string) {
       void queryClient.invalidateQueries({
         queryKey: communityPostKeys.lists(),
       });
-      // Invalidate seluruh user karena ringan untuk mock
       void queryClient.invalidateQueries({
         queryKey: [...communityPostKeys.all, "user-reposts"],
       });
@@ -412,10 +338,6 @@ export function useToggleForumPostRepost(postId: string) {
   });
 }
 
-/**
- * Hook query daftar repost milik user
- * (GET /proxy/profiles/:userId/reposts). Pakai userId="me" untuk viewer.
- */
 export function useUserReposts(userId?: string | null) {
   return useQuery<UserRepostItemDto[]>({
     queryKey: communityPostKeys.userReposts(userId ?? ""),

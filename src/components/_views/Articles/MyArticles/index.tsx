@@ -13,7 +13,6 @@ import {
   useDeleteArticle,
 } from "@/services/articles/articles.queries";
 
-/** Skeleton placeholder untuk satu baris kartu artikel pada halaman Artikel Saya. */
 function MyArticleCardSkeleton() {
   return (
     <div className="flex items-center justify-between py-4 border-b border-[var(--dust)]/40 gap-4 animate-pulse">
@@ -32,9 +31,6 @@ function MyArticleCardSkeleton() {
   );
 }
 
-/**
- * Tampilan halaman Artikel Saya dengan tab draft dan diterbitkan serta aksi publikasi dan hapus.
- */
 export default function MyArticlesView() {
   const [activeTab, setActiveTab] = useState<string>("draft");
   const [deletingId, setDeletingId] = useState<string | null>(null);

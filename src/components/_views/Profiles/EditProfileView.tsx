@@ -7,7 +7,6 @@ import { ArrowLeft } from "lucide-react";
 import EditProfileForm from "./EditProfileForm";
 import { ProfileProvider, useProfile } from "./profile.context";
 
-/** Konten halaman penuh Ubah Profil dengan state loading, error, dan formulir profil. */
 function EditProfileContent() {
   const router = useRouter();
   const {
@@ -94,7 +93,6 @@ function EditProfileContent() {
   );
 }
 
-/** Halaman penuh Ubah Profil yang membungkus konten dengan `ProfileProvider`. */
 export default function EditProfileView() {
   return (
     <ProfileProvider>

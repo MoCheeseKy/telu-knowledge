@@ -14,13 +14,6 @@ import type {
   PostLikeStatusDto,
 } from "./community-posts.types";
 
-/**
- * Membuat postingan baru pada suatu komunitas (POST /proxy/communities/:communityId/posts).
- *
- * @param communityId - ID komunitas target.
- * @param payload - Data postingan baru.
- * @returns Envelope berisi data postingan yang baru dibuat.
- */
 export async function createCommunityPost(
   communityId: string,
   payload: CreateCommunityPostPayload
@@ -35,12 +28,6 @@ export async function createCommunityPost(
   );
 }
 
-/**
- * Mengambil daftar postingan dalam suatu komunitas (GET /proxy/communities/:communityId/posts).
- *
- * @param communityId - ID komunitas target.
- * @returns Envelope berisi daftar postingan komunitas.
- */
 export async function listCommunityPosts(
   communityId: string
 ): Promise<ApiEnvelope<CommunityPostDto[]>> {
@@ -53,12 +40,6 @@ export async function listCommunityPosts(
   );
 }
 
-/**
- * Mengambil detail postingan forum berdasarkan ID (GET /proxy/forum-posts/:postId).
- *
- * @param postId - ID postingan forum.
- * @returns Envelope berisi detail postingan.
- */
 export async function getForumPostDetail(
   postId: string
 ): Promise<ApiEnvelope<CommunityPostDto>> {
@@ -71,13 +52,6 @@ export async function getForumPostDetail(
   );
 }
 
-/**
- * Mengambil detail postingan dalam suatu komunitas (GET /proxy/communities/:communityId/posts/:postId).
- *
- * @param communityId - ID komunitas target.
- * @param postId - ID postingan target.
- * @returns Envelope berisi detail postingan komunitas.
- */
 export async function getCommunityPost(
   communityId: string,
   postId: string
@@ -93,14 +67,6 @@ export async function getCommunityPost(
   );
 }
 
-/**
- * Memperbarui postingan milik sendiri dalam suatu komunitas (PATCH /proxy/communities/:communityId/posts/:postId).
- *
- * @param communityId - ID komunitas target.
- * @param postId - ID postingan yang diperbarui.
- * @param payload - Perubahan data postingan.
- * @returns Envelope berisi data postingan yang telah diperbarui.
- */
 export async function updateCommunityPost(
   communityId: string,
   postId: string,
@@ -118,13 +84,6 @@ export async function updateCommunityPost(
   );
 }
 
-/**
- * Menghapus postingan milik sendiri dalam suatu komunitas (DELETE /proxy/communities/:communityId/posts/:postId).
- *
- * @param communityId - ID komunitas target.
- * @param postId - ID postingan yang dihapus.
- * @returns Envelope konfirmasi penghapusan.
- */
 export async function deleteCommunityPost(
   communityId: string,
   postId: string
@@ -140,9 +99,6 @@ export async function deleteCommunityPost(
   );
 }
 
-/**
- * Mengambil seluruh daftar postingan forum (GET /proxy/forum-posts).
- */
 export async function listAllForumPosts(): Promise<
   ApiEnvelope<CommunityPostDto[]>
 > {
@@ -152,9 +108,6 @@ export async function listAllForumPosts(): Promise<
   });
 }
 
-/**
- * Menghapus postingan forum berdasarkan ID (DELETE /proxy/forum-posts/:postId).
- */
 export async function deleteForumPost(
   postId: string
 ): Promise<ApiEnvelope<null>> {
@@ -167,9 +120,6 @@ export async function deleteForumPost(
   );
 }
 
-/**
- * Memperbarui postingan forum berdasarkan ID (PATCH /proxy/forum-posts/:postId).
- */
 export async function updateForumPost(
   postId: string,
   payload: UpdateCommunityPostPayload
@@ -184,9 +134,6 @@ export async function updateForumPost(
   );
 }
 
-/**
- * Mengambil daftar komentar pada postingan forum (GET /proxy/forum-posts/:postId/comments).
- */
 export async function getForumPostComments(
   postId: string
 ): Promise<ApiEnvelope<ForumCommentDto[]>> {
@@ -199,9 +146,6 @@ export async function getForumPostComments(
   );
 }
 
-/**
- * Membuat komentar atau balasan baru pada postingan forum (POST /proxy/forum-posts/:postId/comments).
- */
 export async function createForumComment(
   postId: string,
   payload: CreateForumCommentPayload
@@ -216,9 +160,6 @@ export async function createForumComment(
   );
 }
 
-/**
- * Memperbarui isi komentar milik sendiri (PATCH /proxy/forum-posts/:postId/comments/:commentId).
- */
 export async function updateForumComment(
   postId: string,
   commentId: string,
@@ -236,9 +177,6 @@ export async function updateForumComment(
   );
 }
 
-/**
- * Menghapus komentar milik sendiri (DELETE /proxy/forum-posts/:postId/comments/:commentId).
- */
 export async function deleteForumComment(
   postId: string,
   commentId: string
@@ -254,9 +192,6 @@ export async function deleteForumComment(
   );
 }
 
-/**
- * Toggle repost postingan forum (POST /proxy/forum-posts/:postId/repost).
- */
 export async function toggleForumPostRepost(
   postId: string
 ): Promise<ApiEnvelope<RepostStatusDto>> {
@@ -266,9 +201,6 @@ export async function toggleForumPostRepost(
   );
 }
 
-/**
- * Ambil status repost postingan (GET /proxy/forum-posts/:postId/repost/status).
- */
 export async function getForumPostRepostStatus(
   postId: string
 ): Promise<ApiEnvelope<RepostStatusDto>> {
@@ -278,10 +210,6 @@ export async function getForumPostRepostStatus(
   );
 }
 
-/**
- * Ambil daftar repost milik user (GET /proxy/profiles/:userId/reposts).
- * Gunakan userId="me" untuk user yang sedang login.
- */
 export async function listUserReposts(
   userId: string
 ): Promise<ApiEnvelope<UserRepostItemDto[]>> {
@@ -291,9 +219,6 @@ export async function listUserReposts(
   );
 }
 
-/**
- * Membuat komunitas/forum baru (POST /proxy/communities).
- */
 export async function createCommunity(
   payload: CreateCommunityPayload
 ): Promise<ApiEnvelope<CommunityItemDto>> {
@@ -304,9 +229,6 @@ export async function createCommunity(
   });
 }
 
-/**
- * Mengambil daftar seluruh komunitas/forum (GET /proxy/communities).
- */
 export async function listCommunities(): Promise<
   ApiEnvelope<CommunityItemDto[]>
 > {
@@ -325,7 +247,6 @@ export async function toggleForumPostLike(
   );
 }
 
-/** Kumpulan service API untuk postingan, komentar, repost, dan daftar komunitas/forum. */
 export const communityPostsApi = {
   createCommunityPost,
   listCommunityPosts,

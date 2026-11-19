@@ -4,7 +4,6 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-/** Menghasilkan metadata halaman detail diskusi forum berdasarkan ID diskusi. */
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
   return {
@@ -13,7 +12,6 @@ export async function generateMetadata({ params }: PageProps) {
   };
 }
 
-/** Halaman detail utas diskusi pada forum mahasiswa. */
 export default async function DiscussionForumDetailPage({ params }: PageProps) {
   const { id } = await params;
   return <DiscussionForumDetailView postId={id} />;

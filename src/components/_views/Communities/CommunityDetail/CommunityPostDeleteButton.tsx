@@ -19,7 +19,6 @@ import { getErrorMessages } from "@/lib/api/error-messages";
 import { cn } from "@/lib/utils";
 import type { CommunityPostDeleteButtonProps } from "./community-detail.types";
 
-/** Tombol dan dialog konfirmasi untuk menghapus postingan komunitas. */
 export default function CommunityPostDeleteButton({
   communityId,
   postId,
@@ -34,7 +33,6 @@ export default function CommunityPostDeleteButton({
   const [errorMessage, setErrorMessage] = useState<string[] | null>(null);
 
   const handleTriggerClick = (event: MouseEvent<HTMLButtonElement>) => {
-    // Cegah kartu yang bisa diklik ikut menanggapi klik tombol hapus
     event.stopPropagation();
     setErrorMessage(null);
     setOpen(true);
@@ -48,7 +46,6 @@ export default function CommunityPostDeleteButton({
       { communityId, postId },
       {
         onSuccess: () => {
-          // Feed me-refresh sendiri via invalidasi query communityPostKeys.list
           setOpen(false);
           toast.success("Postingan berhasil dihapus.");
           if (redirectHref) {
@@ -85,8 +82,6 @@ export default function CommunityPostDeleteButton({
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        {/* Klik di dalam dialog (portal) harus dihenti di sini agar tidak
-            menggelembung ke kontainer kartu yang bisa diklik di belakangnya. */}
         <DialogContent
           className="max-w-md"
           onClick={(e) => e.stopPropagation()}

@@ -24,9 +24,6 @@ import {
   MyForumPostItem,
 } from "./my-forums.types";
 
-/**
- * Tampilan halaman Forum Saya untuk melihat, membuat, mengelola komunitas, dan mengatur postingan pribadi.
- */
 export default function MyForumsView() {
   const { toast } = useToast();
   const searchParams = useSearchParams();
