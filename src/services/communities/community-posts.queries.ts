@@ -429,3 +429,15 @@ export function useUserReposts(userId?: string | null) {
     enabled: Boolean(userId),
   });
 }
+
+export function useToggleForumPostLike() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (postId: string) => communityPostsApi.toggleForumPostLike(postId),
+    retry: false,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: communityPostKeys.all });
+    },
+  });
+}

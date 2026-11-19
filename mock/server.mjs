@@ -2135,9 +2135,6 @@ server.post('/communities/:id/join', handleJoinCommunity);
 server.delete('/api/communities/:id/join', handleLeaveCommunity);
 server.delete('/communities/:id/join', handleLeaveCommunity);
 
-server.use('/api', router);
-server.use(router);
-
 server.listen(PORT, () => {
   console.log(`\n======================================================`);
   console.log(`🚀 Tel-U Knowledge Mock Server (json-server 0.17.4)`);
@@ -2145,3 +2142,65 @@ server.listen(PORT, () => {
   console.log(`📁 Seed: ${seedFile}`);
   console.log(`======================================================\n`);
 });
+
+// 15. Endpoint Toggle Suka Postingan Forum
+// POST /forum-posts/:postId/like
+// Response: { isLiked, likesCount, score }
+const handleToggleForumPostLike = (req, res) => {
+  const db = router.db.getState();
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (!db.forum_post_votes) db.forum_post_votes = [];
+
+  const existing = db.forum_post_votes.find(
+    (v) => v.post_id === post.id && v.user_id === MOCK_ME_ID
+  );
+
+  let isLiked;
+  if (existing && existing.vote_value > 0) {
+    // Batal suka
+    db.forum_post_votes.splice(db.forum_post_votes.indexOf(existing), 1);
+    post.likes_count = Math.max(0, (post.likes_count || 0) - 1);
+    post.score = (post.score || 0) - 1;
+    isLiked = false;
+  } else {
+    if (existing) {
+      existing.vote_value = 1;
+    } else {
+      db.forum_post_votes.push({
+        id: crypto.randomUUID(),
+        post_id: post.id,
+        user_id: MOCK_ME_ID,
+        vote_value: 1,
+        created_at: new Date().toISOString(),
+      });
+    }
+    post.likes_count = (post.likes_count || 0) + 1;
+    post.score = (post.score || 0) + 1;
+    isLiked = true;
+  }
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: [isLiked ? 'Menyukai postingan' : 'Batal menyukai postingan'],
+    data: { isLiked, likesCount: post.likes_count, score: post.score },
+    isError: false,
+  });
+};
+
+server.post('/api/forum-posts/:postId/like', handleToggleForumPostLike);
+server.post('/forum-posts/:postId/like', handleToggleForumPostLike);
+
+server.use('/api', router);
+server.use(router);
