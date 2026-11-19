@@ -102,6 +102,7 @@ export default function HomeView() {
                   repostsCount={formatCounter(article.stats.repostsCount)}
                   isLiked={article.isLiked}
                   isBookmarked={article.isBookmarked}
+                  isReposted={article.isReposted}
                   onClick={() =>
                     router.push(
                       `/discover-articles/${article.id}`
@@ -124,3 +125,4 @@ export default function HomeView() {
     </div>
   );
 }
+

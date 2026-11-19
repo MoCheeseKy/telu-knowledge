@@ -3,6 +3,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { forumApi } from "./forum.api";
 import type { JoinedForum } from "./forum.types";
 
+export { useToggleArticleRepost } from "@/services/articles/article-reposts.queries";
+
 export const forumKeys = {
   all: ["forum"] as const,
   joined: () => [...forumKeys.all, "joined"] as const,
