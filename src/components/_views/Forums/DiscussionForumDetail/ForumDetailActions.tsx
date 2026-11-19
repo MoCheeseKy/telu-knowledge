@@ -7,6 +7,11 @@ import { cn } from "@/lib/utils";
 import { copyTextToClipboard } from "@/lib/clipboard";
 import { useToast } from "@/components/ui/toast";
 import type { ForumDetailActionsProps } from "./discussion-forum-detail.types";
+import { getErrorMessage } from "@/lib/api/error-messages";
+import {
+  useForumPostDetail,
+  useToggleForumPostLike,
+} from "@/services/communities/community-posts.queries";
 
 const actionButtonClass =
   "h-7 px-2 py-1 gap-1.5 hover:bg-[var(--background-accent)] rounded-md text-[var(--foreground)] [&_svg]:size-4 transition-colors cursor-pointer";
@@ -21,23 +26,32 @@ export default function ForumDetailActions({
   repostsCount,
   isSaved = false,
 }: ForumDetailActionsProps) {
-  const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState(initialScore);
+  const { data: postDetail } = useForumPostDetail(postId ? String(postId) : undefined);
+  const toggleLike = useToggleForumPostLike();
+  const [likeOverride, setLikeOverride] = useState<{ liked: boolean; count: number } | null>(null);
+
+  const isLiked = likeOverride?.liked ?? Boolean(postDetail?.isLiked);
+  const likesCount = likeOverride?.count ?? initialScore;
   const [isReposted, setIsReposted] = useState(false);
   const [saved, setSaved] = useState(isSaved);
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
-  const handleToggleLike = () => {
-    if (isLiked) {
-      setIsLiked(false);
-      setLikesCount((prev) => prev - 1);
-    } else {
-      setIsLiked(true);
-      setLikesCount((prev) => prev + 1);
-    }
-  };
+    const handleToggleLike = () => {
+    if (!postId || toggleLike.isPending) return;
+    const nextLiked = !isLiked;
+    setLikeOverride({ liked: nextLiked, count: Math.max(0, likesCount + (nextLiked ? 1 : -1)) });
 
+    toggleLike.mutate(String(postId), {
+      onSuccess: (res) =>
+        setLikeOverride({ liked: res.data.isLiked, count: res.data.score }),
+      onError: (err) => {
+        setLikeOverride(null);
+        toast.error(getErrorMessage(err, "Gagal memperbarui suka."));
+      },
+    });
+  };
+  
   const handleToggleRepost = () => {
     setIsReposted(!isReposted);
   };

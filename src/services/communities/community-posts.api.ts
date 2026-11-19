@@ -11,6 +11,7 @@ import type {
   UserRepostItemDto,
   CreateCommunityPayload,
   CommunityItemDto,
+  PostLikeStatusDto,
 } from "./community-posts.types";
 
 /**
@@ -315,6 +316,15 @@ export async function listCommunities(): Promise<
   });
 }
 
+export async function toggleForumPostLike(
+  postId: string
+): Promise<ApiEnvelope<PostLikeStatusDto>> {
+  return apiFetch<PostLikeStatusDto>(
+    `/proxy/forum-posts/${encodeURIComponent(postId)}/like`,
+    { method: "POST", source: "mock" }
+  );
+}
+
 /** Kumpulan service API untuk postingan, komentar, repost, dan daftar komunitas/forum. */
 export const communityPostsApi = {
   createCommunityPost,
@@ -335,4 +345,5 @@ export const communityPostsApi = {
   listUserReposts,
   createCommunity,
   listCommunities,
+  toggleForumPostLike,
 };

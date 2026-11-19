@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/toast";
 import {
     useForumPostRepostStatus,
     useToggleForumPostRepost,
+    useToggleForumPostLike,
 } from "@/services/communities/community-posts.queries";
 
 const actionButtonClass =
@@ -141,24 +142,11 @@ export default function ForumPostCard({
                     </Button>
                 )}
 
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className={actionButtonClass}
-                    aria-label="Suka"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <ThumbsUp
-                        className={cn(
-                            "transition-colors",
-                            isLiked
-                                ? "fill-[var(--primary-text)] text-[var(--primary-text)]"
-                                : "text-[var(--foreground)]"
-                        )}
-                    />
-                    <span className="font-sans text-xs font-bold">{likesCount}</span>
-                </Button>
+                <LikeButton
+                    postId={String(id)}
+                    initialLiked={isLiked}
+                    initialCount={likesCount}
+                />
 
                 <Button
                     type="button"
@@ -258,6 +246,69 @@ function RepostButton({
                 )}
             />
             <span className="font-sans text-xs font-bold">{count}</span>
+        </Button>
+    );
+}
+
+function LikeButton({
+    postId,
+    initialLiked,
+    initialCount,
+}: {
+    postId: string;
+    initialLiked: boolean;
+    initialCount: string | number;
+}) {
+    const { toast } = useToast();
+    const { mutate, isPending } = useToggleForumPostLike();
+    const [override, setOverride] = useState<{ liked: boolean; count: number } | null>(null);
+
+    const liked = override?.liked ?? initialLiked;
+    const shownCount = override ? override.count : initialCount;
+    const numericCount = Number(shownCount);
+
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (isPending) return;
+        const nextLiked = !liked;
+
+        if (Number.isFinite(numericCount)) {
+            setOverride({
+                liked: nextLiked,
+                count: Math.max(0, numericCount + (nextLiked ? 1 : -1)),
+            });
+        }
+
+        mutate(postId, {
+            onSuccess: (res) =>
+                setOverride({ liked: res.data.isLiked, count: res.data.likesCount }),
+            onError: (err) => {
+                setOverride(null);
+                toast.error(getErrorMessage(err, "Gagal memperbarui suka."));
+            },
+        });
+    };
+
+    return (
+        <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={actionButtonClass}
+            aria-label={liked ? "Batal suka" : "Suka"}
+            aria-pressed={liked}
+            disabled={isPending}
+            onClick={handleClick}
+        >
+            <ThumbsUp
+                className={cn(
+                    "transition-colors",
+                    liked
+                        ? "fill-[var(--primary-text)] text-[var(--primary-text)]"
+                        : "text-[var(--foreground)]"
+                )}
+            />
+            <span className="font-sans text-xs font-bold">{shownCount}</span>
         </Button>
     );
 }
