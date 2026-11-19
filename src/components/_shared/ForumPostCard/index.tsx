@@ -242,7 +242,7 @@ function RepostButton({
                     "transition-colors",
                     isReposted
                         ? "fill-[var(--primary-text)] text-[var(--primary-text)]"
-                        : "text-[var(--primary-text)]"
+                        : "text-[var(--foreground)]"
                 )}
             />
             <span className="font-sans text-xs font-bold">{count}</span>
