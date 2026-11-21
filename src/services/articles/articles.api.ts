@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api/client";
-import type { ApiEnvelope } from "@/lib/api/types";
+import type { ApiEnvelope } from "@/lib/api/api.types";
 import { aiAssist } from "@/services/ai/ai.api";
 import type {
   Article,
@@ -134,6 +134,7 @@ export async function uploadArticleImage(
 
 export { aiAssist };
 
+/** Kumpulan service API untuk pengelolaan artikel dan interaksi pembaca. */
 export const articlesApi = {
   createArticle,
   getArticle,

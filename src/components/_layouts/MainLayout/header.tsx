@@ -4,11 +4,12 @@ import Link from "next/link";
 import { PanelLeft, Pencil, User } from "lucide-react";
 import Wrapper from "@/components/_shared/Wrapper";
 import { useMe } from "@/services/auth/auth.queries";
+import type { MainHeaderProps } from "./main-layout.types";
 
-interface MainHeaderProps {
-    onOpenSidebar: () => void;
-}
-
+/**
+ * Header sticky utama aplikasi dengan tombol pembuka sidebar,
+ * tautan beranda, pintasan tulis artikel, dan akses ke profil pengguna.
+ */
 export default function MainHeader({ onOpenSidebar }: MainHeaderProps) {
     const { data: user } = useMe();
 

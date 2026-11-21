@@ -4,6 +4,12 @@ import { getClientIp, serverFetch } from "@/lib/api/server";
 import { toApiError } from "@/lib/api/errors";
 import { forgotPasswordSchema } from "@/services/auth/auth.schemas";
 
+/**
+ * Route handler BFF untuk meneruskan permintaan lupa kata sandi ke backend.
+ *
+ * @param request - Request HTTP berisi payload email pengguna.
+ * @returns Respons JSON status pengiriman instruksi reset kata sandi.
+ */
 export async function POST(request: Request) {
   const originError = assertSameOrigin(request);
   if (originError) return originError;

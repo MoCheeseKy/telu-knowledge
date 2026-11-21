@@ -90,6 +90,10 @@ const handleArticleFeed = (req, res) => {
       (b) => b.article_id === article.id && b.user_id === MOCK_ME_ID
     );
 
+    const isReposted = (db.article_reposts || []).some(
+      (r) => r.article_id === article.id && r.user_id === MOCK_ME_ID
+    );
+
     return {
       id: article.id,
       title: article.title,
@@ -119,6 +123,7 @@ const handleArticleFeed = (req, res) => {
       },
       isLiked,
       isBookmarked,
+      isReposted,
     };
   });
 
@@ -175,8 +180,8 @@ const handleArticleDetail = (req, res, next) => {
   );
   const isFollowingAuthor = author
     ? (db.follows || []).some(
-        (f) => f.follower_id === MOCK_ME_ID && f.following_id === author.id
-      )
+      (f) => f.follower_id === MOCK_ME_ID && f.following_id === author.id
+    )
     : false;
 
   // Komentar pada artikel
@@ -543,15 +548,264 @@ const handleCreateComment = (req, res) => {
 server.post('/api/articles/:id/comments', handleCreateComment);
 server.post('/articles/:id/comments', handleCreateComment);
 
+// 5b. Endpoint Daftar Komentar Artikel (GET /articles/:id/comments)
+const handleListComments = (req, res) => {
+  const { id } = req.params;
+  const db = router.db.getState();
+  const article = (db.articles || []).find((a) => a.id === id || a.slug === id);
+  if (!article) {
+    return res.status(404).json({ statusCode: 404, message: ['Artikel tidak ditemukan'], isError: true, data: null });
+  }
+
+  const rows = (db.article_comments || [])
+    .filter((c) => c.article_id === article.id)
+    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+  const comments = rows.map((c) => {
+    const author = (db.profiles || []).find((p) => p.id === c.author_id);
+    return {
+      id: c.id,
+      articleId: c.article_id,
+      authorId: c.author_id,
+      parentId: c.parent_id || null,
+      content: c.content,
+      createdAt: c.created_at,
+      updatedAt: c.updated_at,
+      author: {
+        id: author ? author.id : c.author_id,
+        displayName: author ? author.display_name : 'Pengguna Tel-U',
+        avatarUrl: author ? author.avatar_url : null,
+        avatarColor: author ? author.avatar_color : '#E53E3E',
+        username: author ? author.username : null,
+        faculty: author ? author.faculty : null,
+        major: author ? author.major : null,
+      },
+    };
+  });
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar komentar berhasil diambil'],
+    data: { comments },
+    isError: false,
+  });
+};
+server.get('/api/articles/:id/comments', handleListComments);
+server.get('/articles/:id/comments', handleListComments);
+
+// 5c. Endpoint Sunting Komentar (PATCH /articles/:id/comments/:commentId)
+const handleUpdateComment = (req, res) => {
+  const { id, commentId } = req.params;
+  const { content } = req.body || {};
+  const trimmed = typeof content === 'string' ? content.trim() : '';
+  if (!trimmed) {
+    return res.status(400).json({ statusCode: 400, message: ['Isi komentar wajib diisi'], isError: true, data: null });
+  }
+  if (trimmed.length > 2000) {
+    return res.status(400).json({ statusCode: 400, message: ['Komentar maksimal 2000 karakter'], isError: true, data: null });
+  }
+
+  const db = router.db.getState();
+  const article = (db.articles || []).find((a) => a.id === id || a.slug === id);
+  if (!article) {
+    return res.status(404).json({ statusCode: 404, message: ['Artikel tidak ditemukan'], isError: true, data: null });
+  }
+  const comment = (db.article_comments || []).find((c) => c.id === commentId && c.article_id === article.id);
+  if (!comment) {
+    return res.status(404).json({ statusCode: 404, message: ['Komentar tidak ditemukan'], isError: true, data: null });
+  }
+  if (comment.author_id !== MOCK_ME_ID) {
+    return res.status(403).json({ statusCode: 403, message: ['Hanya penulis komentar yang dapat menyunting'], isError: true, data: null });
+  }
+
+  comment.content = trimmed;
+  comment.updated_at = new Date().toISOString();
+  router.db.write();
+
+  const author = (db.profiles || []).find((p) => p.id === comment.author_id);
+  return res.json({
+    statusCode: 200,
+    message: ['Komentar berhasil diperbarui'],
+    data: {
+      id: comment.id,
+      articleId: comment.article_id,
+      authorId: comment.author_id,
+      parentId: comment.parent_id || null,
+      content: comment.content,
+      createdAt: comment.created_at,
+      updatedAt: comment.updated_at,
+      author: {
+        id: author ? author.id : comment.author_id,
+        displayName: author ? author.display_name : 'Pengguna Tel-U',
+        avatarUrl: author ? author.avatar_url : null,
+        avatarColor: author ? author.avatar_color : '#E53E3E',
+        username: author ? author.username : null,
+        faculty: author ? author.faculty : null,
+        major: author ? author.major : null,
+      },
+    },
+    isError: false,
+  });
+};
+server.patch('/api/articles/:id/comments/:commentId', handleUpdateComment);
+server.patch('/articles/:id/comments/:commentId', handleUpdateComment);
+
+// 5d. Endpoint Hapus Komentar (DELETE /articles/:id/comments/:commentId)
+const handleDeleteComment = (req, res) => {
+  const { id, commentId } = req.params;
+  const db = router.db.getState();
+  const article = (db.articles || []).find((a) => a.id === id || a.slug === id);
+  if (!article) {
+    return res.status(404).json({ statusCode: 404, message: ['Artikel tidak ditemukan'], isError: true, data: null });
+  }
+  const comment = (db.article_comments || []).find((c) => c.id === commentId && c.article_id === article.id);
+  if (!comment) {
+    return res.status(404).json({ statusCode: 404, message: ['Komentar tidak ditemukan'], isError: true, data: null });
+  }
+  if (comment.author_id !== MOCK_ME_ID) {
+    return res.status(403).json({ statusCode: 403, message: ['Hanya penulis komentar yang dapat menghapus'], isError: true, data: null });
+  }
+
+  // Cascade: hapus semua descendants (BFS)
+  const toDelete = new Set([commentId]);
+  let cursor = [commentId];
+  while (cursor.length > 0) {
+    const next = [];
+    for (const c of db.article_comments || []) {
+      if (c.parent_id && cursor.includes(c.parent_id) && !toDelete.has(c.id)) {
+        toDelete.add(c.id);
+        next.push(c.id);
+      }
+    }
+    cursor = next;
+  }
+  db.article_comments = (db.article_comments || []).filter((c) => !toDelete.has(c.id));
+
+  const stats = (db.article_stats || []).find((s) => s.article_id === article.id);
+  if (stats) stats.comments_count = Math.max(0, (stats.comments_count || toDelete.size) - toDelete.size);
+
+  router.db.write();
+  return res.json({ statusCode: 200, message: ['Komentar berhasil dihapus'], data: null, isError: false });
+};
+server.delete('/api/articles/:id/comments/:commentId', handleDeleteComment);
+server.delete('/articles/:id/comments/:commentId', handleDeleteComment);
+
+// 5.1. Endpoint Toggle Repost Artikel (POST /articles/:id/repost)
+const handleToggleRepost = (req, res) => {
+  const { id } = req.params;
+  const db = router.db.getState();
+  const article = (db.articles || []).find((a) => a.id === id || a.slug === id);
+  if (!article) {
+    return res.status(404).json({ statusCode: 404, message: ['Artikel tidak ditemukan'], isError: true, data: null });
+  }
+
+  if (!db.article_reposts) db.article_reposts = [];
+  const existingIndex = db.article_reposts.findIndex((r) => r.article_id === article.id && r.user_id === MOCK_ME_ID);
+
+  let isReposted;
+  if (existingIndex >= 0) {
+    db.article_reposts.splice(existingIndex, 1);
+    isReposted = false;
+  } else {
+    db.article_reposts.push({ id: crypto.randomUUID(), article_id: article.id, user_id: MOCK_ME_ID, created_at: new Date().toISOString() });
+    isReposted = true;
+  }
+
+  // Hitung ulang total repost dari database agar tidak bug (minus/plus ngawur)
+  const totalReposts = db.article_reposts.filter((r) => r.article_id === article.id).length;
+  
+  let stats = (db.article_stats || []).find((s) => s.article_id === article.id);
+  if (stats) stats.reposts_count = totalReposts;
+
+  router.db.write();
+  return res.json({
+    statusCode: 200,
+    message: [isReposted ? 'Artikel berhasil dibagikan ulang' : 'Repost artikel dibatalkan'],
+    data: { isReposted, repostsCount: totalReposts },
+    isError: false,
+  });
+};
+server.post('/api/articles/:id/repost', handleToggleRepost);
+server.post('/articles/:id/repost', handleToggleRepost);
+
+// 5.2. Endpoint Daftar Repost per Profil (GET /profiles/:id/reposts)
+const handleListProfileReposts = (req, res) => {
+  const { id } = req.params;
+  const db = router.db.getState();
+
+  // 1. Cari semua repost milik user ini
+  const userReposts = (db.article_reposts || [])
+    .filter((r) => r.user_id === id)
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  // 2. Ambil data artikel dan gabungkan (join)
+  const items = userReposts.map((repost) => {
+    const article = (db.articles || []).find((a) => a.id === repost.article_id);
+    if (!article) return null; // Abaikan jika artikel sudah dihapus
+
+    const author = (db.profiles || []).find((p) => p.id === article.author_id);
+    const relTopic = (db.article_topics || []).find((at) => at.article_id === article.id);
+    const mainTopic = relTopic ? (db.topics || []).find((t) => t.id === relTopic.topic_id) : null;
+    const stats = (db.article_stats || []).find((s) => s.article_id === article.id);
+
+    // Cek apakah user yang sedang login sudah me-like atau bookmark artikel ini
+    const isLiked = (db.article_likes || []).some((l) => l.article_id === article.id && l.user_id === MOCK_ME_ID);
+    const isBookmarked = (db.article_bookmarks || []).some((b) => b.article_id === article.id && b.user_id === MOCK_ME_ID);
+
+    return {
+      id: article.id,
+      title: article.title,
+      subtitle: article.subtitle,
+      coverImageUrl: article.cover_image_url,
+      excerpt: article.excerpt,
+      readingTimeMinutes: article.reading_time_minutes,
+      status: article.status,
+      slug: article.slug,
+      publishedAt: article.published_at,
+      createdAt: article.created_at,
+      updatedAt: article.updated_at,
+      topic: mainTopic ? mainTopic.name : 'Umum',
+      topicSlug: mainTopic ? mainTopic.slug : null,
+      author: {
+        id: author ? author.id : article.author_id,
+        displayName: author ? author.display_name : 'Civitas Tel-U',
+        avatarUrl: author ? author.avatar_url : null,
+        username: author ? author.username : null,
+        avatarColor: author ? author.avatar_color : '#E53E3E',
+      },
+      stats: {
+        likesCount: stats ? stats.likes_count : 0,
+        commentsCount: stats ? stats.comments_count : 0,
+        repostsCount: stats ? stats.reposts_count : 0,
+        bookmarksCount: stats ? stats.bookmarks_count : 0,
+      },
+      isLiked,
+      isBookmarked,
+      repostedAt: repost.created_at, // Tambahan khusus untuk item repost
+    };
+  }).filter(Boolean); // Bersihkan nilai null
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar repost berhasil diambil'],
+    data: { items },
+    isError: false,
+  });
+};
+
+// Daftarkan route-nya
+server.get('/api/profiles/:id/reposts', handleListProfileReposts);
+server.get('/profiles/:id/reposts', handleListProfileReposts);
+
 // 6. Endpoint Toggle Follow Penulis
 const handleToggleFollow = (req, res) => {
   const { id } = req.params;
   const db = router.db.getState();
   const profile = (db.profiles || []).find((p) => p.id === id || p.username === id);
-  if (!profile) {
-    return res.status(404).json({
-      statusCode: 404,
-      message: ['Profil tidak ditemukan'],
+  if (profile.id === MOCK_ME_ID) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: ['Tidak dapat mengikuti diri sendiri.'],
       isError: true,
       data: null,
     });
@@ -602,7 +856,7 @@ const handleTopicRecommendations = (req, res) => {
       id: t.id,
       title: t.name,
       count: `${t.articles_count} Artikel`,
-      href: `/discovers-articles?topic=${t.slug}`,
+      href: `/discover-articles?topic=${t.slug}`,
     }));
 
   return res.json({
@@ -695,6 +949,13 @@ const enrichForumPost = (post, db) => {
     (v) => v.post_id === post.id && v.user_id === MOCK_ME_ID && v.vote_value > 0
   );
 
+  // Hitung repost dari tabel relasi (source of truth), fallback ke counter seed
+  const repostsRows = (db.forum_post_reposts || []).filter(
+    (r) => r.post_id === post.id
+  );
+  const repostsCount = repostsRows.length || post.reposts_count || 0;
+  const isReposted = repostsRows.some((r) => r.user_id === MOCK_ME_ID);
+
   return {
     id: post.id,
     communityId: post.community_id,
@@ -712,7 +973,8 @@ const enrichForumPost = (post, db) => {
     score: post.score || 0,
     likesCount: post.likes_count || 0,
     commentsCount: post.comments_count || 0,
-    repostsCount: post.reposts_count || 0,
+    repostsCount,
+    isReposted,
     isLiked,
     createdAt: post.created_at,
     updatedAt: post.updated_at,
@@ -776,9 +1038,9 @@ const handleCreateCommunityPost = (req, res) => {
     flair: typeof flair === 'string' && flair.trim() ? flair.trim() : null,
     tags: Array.isArray(tags)
       ? tags
-          .filter((t) => typeof t === 'string' && t.trim())
-          .map((t) => t.trim())
-          .slice(0, 6)
+        .filter((t) => typeof t === 'string' && t.trim())
+        .map((t) => t.trim())
+        .slice(0, 6)
       : [],
     status: 'aktif',
     is_highlighted: false,
@@ -844,7 +1106,15 @@ server.get('/communities/:communityId/posts', handleListCommunityPosts);
 // communityId). Konten post saja — komentar/like/save tidak termasuk cakupan.
 const handleGetForumPostById = (req, res) => {
   const db = router.db.getState();
-  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+  const targetId = req.params.postId;
+  let post = (db.forum_posts || []).find((p) => p.id === targetId);
+
+  // Fallback ramah untuk link dummy (/discussion-forums/1 s/d 4) dari highlight komunitas atau testing dosen
+  if (!post && (targetId === '1' || targetId === '2' || targetId === '3' || targetId === '4' || targetId === 'sample')) {
+    const idx = parseInt(targetId, 10);
+    const postIndex = !isNaN(idx) && idx >= 1 && idx <= 4 ? idx - 1 : 0;
+    post = (db.forum_posts || [])[postIndex] || (db.forum_posts || [])[0];
+  }
 
   if (!post) {
     return res.status(404).json({
@@ -866,17 +1136,47 @@ const handleGetForumPostById = (req, res) => {
 server.get('/api/forum-posts/:postId', handleGetForumPostById);
 server.get('/forum-posts/:postId', handleGetForumPostById);
 
+// 10g. Endpoint Daftar Semua Postingan Forum (GET /api/forum-posts)
+// Dipakai oleh halaman /discussion-forums untuk menampilkan feed seluruh forum
+const handleListAllForumPosts = (req, res) => {
+  const db = router.db.getState();
+  const posts = (db.forum_posts || [])
+    .slice()
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar postingan forum berhasil diambil'],
+    data: posts.map((p) => enrichForumPost(p, db)),
+    isError: false,
+  });
+};
+
+server.get('/api/forum-posts', handleListAllForumPosts);
+server.get('/forum-posts', handleListAllForumPosts);
+
 // 10b. Endpoint Detail Postingan (GET /communities/:communityId/posts/:postId)
 const findCommunityPost = (communityId, postId, db) => {
-  const community = (db.communities || []).find(
-    (c) => c.id === communityId || c.slug === communityId
-  );
-  // Konsisten dengan create: komunitas yang tidak dikenal (mis. komunitas contoh)
-  // dicocokkan langsung dengan community_id pada post.
-  const resolvedCommunityId = community ? community.id : communityId;
-  const post = (db.forum_posts || []).find(
-    (p) => p.id === postId && p.community_id === resolvedCommunityId
-  );
+  const targetPostId = postId || communityId;
+  const targetCommunityId = postId ? communityId : null;
+
+  const post = (db.forum_posts || []).find((p) => {
+    if (p.id !== targetPostId) return false;
+    if (!targetCommunityId) return true;
+    const comm = (db.communities || []).find(
+      (c) => c.id === targetCommunityId || c.slug === targetCommunityId
+    );
+    const resolvedId = comm ? comm.id : targetCommunityId;
+    return p.community_id === resolvedId;
+  });
+
+  const community = post
+    ? (db.communities || []).find((c) => c.id === post.community_id)
+    : null;
+
   return { community, post };
 };
 
@@ -1023,6 +1323,8 @@ const handleUpdateCommunityPost = (req, res) => {
 
 server.patch('/api/communities/:communityId/posts/:postId', handleUpdateCommunityPost);
 server.patch('/communities/:communityId/posts/:postId', handleUpdateCommunityPost);
+server.patch('/api/forum-posts/:postId', handleUpdateCommunityPost);
+server.patch('/forum-posts/:postId', handleUpdateCommunityPost);
 
 // 10d. Endpoint Hapus Postingan (DELETE /communities/:communityId/posts/:postId)
 const handleDeleteCommunityPost = (req, res) => {
@@ -1091,20 +1393,223 @@ const handleDeleteCommunityPost = (req, res) => {
 
 server.delete('/api/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
 server.delete('/communities/:communityId/posts/:postId', handleDeleteCommunityPost);
+server.delete('/api/forum-posts/:postId', handleDeleteCommunityPost);
+server.delete('/forum-posts/:postId', handleDeleteCommunityPost);
 
-// 11. Endpoint Komentar Postingan Forum (CRUD Forum Post Comments)
+// 10h. Endpoint Buat Komunitas / Forum Baru (POST /api/communities)
+const handleCreateCommunity = (req, res) => {
+  const db = router.db.getState();
+  const { name, description, category, visibility, bannerUrl, avatarColor } =
+    req.body || {};
+  const trimmedName = typeof name === 'string' ? name.trim() : '';
+  const trimmedDesc = typeof description === 'string' ? description.trim() : '';
+
+  if (!trimmedName || !trimmedDesc) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: ['Nama dan deskripsi komunitas wajib diisi.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const slug =
+    trimmedName
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .slice(0, 30) || 'komunitas-baru';
+
+  const now = new Date().toISOString();
+  const newCommunity = {
+    id: crypto.randomUUID(),
+    creator_id: MOCK_ME_ID,
+    name: trimmedName,
+    slug,
+    description: trimmedDesc,
+    category: category || 'Umum',
+    visibility: visibility || 'publik',
+    avatar_url: null,
+    avatar_color: avatarColor || '#EA5753',
+    banner_url: bannerUrl || null,
+    member_count: 1,
+    post_count: 0,
+    created_at: now,
+    updated_at: now,
+  };
+
+  if (!db.communities) db.communities = [];
+  db.communities.unshift(newCommunity);
+
+  if (!db.community_members) db.community_members = [];
+  db.community_members.push({
+    id: crypto.randomUUID(),
+    community_id: newCommunity.id,
+    user_id: MOCK_ME_ID,
+    role: 'creator',
+    joined_at: now,
+  });
+
+  router.db.write();
+
+  return res.status(201).json({
+    statusCode: 201,
+    message: ['Komunitas berhasil dibuat'],
+    data: newCommunity,
+    isError: false,
+  });
+};
+
+server.post('/api/communities', handleCreateCommunity);
+server.post('/communities', handleCreateCommunity);
+
+// 10g. Endpoint Toggle Repost Postingan Forum
+// POST /forum-posts/:postId/repost
+// Response: { isReposted, repostsCount }
+const handleToggleForumPostRepost = (req, res) => {
+  const db = router.db.getState();
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (!db.forum_post_reposts) db.forum_post_reposts = [];
+
+  const existingIndex = db.forum_post_reposts.findIndex(
+    (r) => r.post_id === post.id && r.user_id === MOCK_ME_ID
+  );
+
+  let isReposted;
+  if (existingIndex >= 0) {
+    // Batal repost
+    db.forum_post_reposts.splice(existingIndex, 1);
+    isReposted = false;
+  } else {
+    // Repost baru
+    db.forum_post_reposts.push({
+      id: crypto.randomUUID(),
+      post_id: post.id,
+      user_id: MOCK_ME_ID,
+      created_at: new Date().toISOString(),
+    });
+    isReposted = true;
+  }
+
+  // Sync counter denormalized di post
+  const count = db.forum_post_reposts.filter(
+    (r) => r.post_id === post.id
+  ).length;
+  post.reposts_count = count;
+  post.updated_at = new Date().toISOString();
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: [isReposted ? 'Postingan di-repost' : 'Repost dibatalkan'],
+    data: { isReposted, repostsCount: count },
+    isError: false,
+  });
+};
+
+server.post('/api/forum-posts/:postId/repost', handleToggleForumPostRepost);
+server.post('/forum-posts/:postId/repost', handleToggleForumPostRepost);
+
+// 10h. Endpoint Status Repost Postingan (GET /forum-posts/:postId/repost/status)
+const handleGetForumPostRepostStatus = (req, res) => {
+  const db = router.db.getState();
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const rows = (db.forum_post_reposts || []).filter(
+    (r) => r.post_id === post.id
+  );
+
+  return res.json({
+    statusCode: 200,
+    message: ['Status repost berhasil diambil'],
+    data: {
+      isReposted: rows.some((r) => r.user_id === MOCK_ME_ID),
+      repostsCount: rows.length || post.reposts_count || 0,
+    },
+    isError: false,
+  });
+};
+
+server.get('/api/forum-posts/:postId/repost/status', handleGetForumPostRepostStatus);
+server.get('/forum-posts/:postId/repost/status', handleGetForumPostRepostStatus);
+
+// 10i. Endpoint Daftar Repost oleh User (GET /profiles/:userId/reposts)
+// Response: array post forum yang di-repost user tsb, urut dari repost terbaru.
+const handleListUserReposts = (req, res) => {
+  const db = router.db.getState();
+  const { userId } = req.params;
+
+  // Dukung alias "me"
+  const resolvedUserId = userId === 'me' ? MOCK_ME_ID : userId;
+
+  const profile = (db.profiles || []).find((p) => p.id === resolvedUserId);
+  if (!profile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const repostRows = (db.forum_post_reposts || [])
+    .filter((r) => r.user_id === resolvedUserId)
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+  const items = repostRows
+    .map((r) => {
+      const post = (db.forum_posts || []).find((p) => p.id === r.post_id);
+      if (!post) return null;
+      return {
+        repostId: r.id,
+        repostedAt: r.created_at,
+        post: enrichForumPost(post, db),
+      };
+    })
+    .filter(Boolean);
+
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar repost berhasil diambil'],
+    data: items,
+    isError: false,
+  });
+};
+
+server.get('/api/profiles/:userId/reposts', handleListUserReposts);
+server.get('/profiles/:userId/reposts', handleListUserReposts);
+
 const enrichForumComment = (comment, db) => {
   const author = (db.profiles || []).find((p) => p.id === comment.author_id);
-  const vote = (db.forum_comment_votes || []).find(
-    (v) => v.comment_id === comment.id && v.user_id === MOCK_ME_ID
+  const isLiked = (db.forum_comment_votes || []).some(
+    (v) =>
+      v.comment_id === comment.id &&
+      v.user_id === MOCK_ME_ID &&
+      v.vote_value > 0
   );
-  const userVote = vote
-    ? vote.vote_value === 1
-      ? 1
-      : vote.vote_value === -1
-      ? -1
-      : 0
-    : 0;
 
   return {
     id: comment.id,
@@ -1112,78 +1617,93 @@ const enrichForumComment = (comment, db) => {
     authorId: comment.author_id,
     parentId: comment.parent_id || null,
     content: comment.content,
-    score: typeof comment.score === 'number' ? comment.score : 0,
-    userVote,
+    score: comment.score || 0,
+    userVote: isLiked ? 1 : 0,
+    isLiked,
     createdAt: comment.created_at,
     updatedAt: comment.updated_at,
     author: {
       id: author ? author.id : comment.author_id,
-      displayName: author ? author.display_name : 'Pengguna Tel-U',
+      displayName: author ? author.display_name : 'Anggota Tel-U',
+      username: author ? author.username : null,
       avatarUrl: author ? author.avatar_url : null,
       avatarColor: author ? author.avatar_color : '#E53E3E',
-      username: author ? author.username : null,
-      faculty: author ? author.faculty : null,
-      major: author ? author.major : null,
-      generation: author ? author.generation : null,
     },
   };
 };
 
-// 11a. Get Forum Post Comments (GET /forum-posts/:postId/comments)
-const handleGetForumPostComments = (req, res) => {
+const handleListForumComments = (req, res) => {
   const db = router.db.getState();
-  const postId = req.params.postId;
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
 
-  const comments = (db.forum_comments || []).filter(
-    (c) =>
-      c.post_id === postId ||
-      (postId === '1' && c.post_id === '50000000-0000-4000-8000-000000000001')
-  );
-
-  comments.sort(
-    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-  );
+  const comments = (db.forum_comments || [])
+    .filter((c) => c.post_id === post.id)
+    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    .map((c) => enrichForumComment(c, db));
 
   return res.json({
     statusCode: 200,
-    message: ['Daftar komentar berhasil diambil'],
-    data: comments.map((c) => enrichForumComment(c, db)),
+    message: ['Berhasil mengambil komentar'],
+    data: comments,
     isError: false,
   });
 };
 
-// 11b. Create Forum Post Comment (POST /forum-posts/:postId/comments)
-const handleCreateForumPostComment = (req, res) => {
-  const postId = req.params.postId;
-  const { content, parentId, parent_id } = req.body || {};
+server.get('/api/forum-posts/:postId/comments', handleListForumComments);
+server.get('/forum-posts/:postId/comments', handleListForumComments);
 
-  const trimmedContent = typeof content === 'string' ? content.trim() : '';
-  if (!trimmedContent) {
+const handleCreateForumComment = (req, res) => {
+  const body = req.body || {};
+  const content = typeof body.content === 'string' ? body.content.trim() : '';
+  const parentId = body.parentId || body.parent_id || null;
+
+  if (!content) {
     return res.status(400).json({
       statusCode: 400,
-      message: ['Isi komentar wajib diisi.'],
+      message: ['Isi komentar wajib diisi'],
       isError: true,
       data: null,
     });
   }
 
   const db = router.db.getState();
-  const post = (db.forum_posts || []).find(
-    (p) =>
-      p.id === postId ||
-      (postId === '1' && p.id === '50000000-0000-4000-8000-000000000001')
-  );
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
 
-  const resolvedPostId = post ? post.id : postId;
-  const resolvedParentId = parentId || parent_id || null;
+  if (parentId) {
+    const parent = (db.forum_comments || []).find((c) => c.id === parentId);
+    if (!parent || parent.post_id !== post.id) {
+      return res.status(404).json({
+        statusCode: 404,
+        message: ['Komentar induk tidak ditemukan'],
+        isError: true,
+        data: null,
+      });
+    }
+  }
 
   const now = new Date().toISOString();
   const newComment = {
     id: crypto.randomUUID(),
-    post_id: resolvedPostId,
+    post_id: post.id,
     author_id: MOCK_ME_ID,
-    parent_id: resolvedParentId,
-    content: trimmedContent,
+    parent_id: parentId,
+    content,
     score: 0,
     created_at: now,
     updated_at: now,
@@ -1191,10 +1711,7 @@ const handleCreateForumPostComment = (req, res) => {
 
   if (!db.forum_comments) db.forum_comments = [];
   db.forum_comments.push(newComment);
-
-  if (post) {
-    post.comments_count = (post.comments_count || 0) + 1;
-  }
+  post.comments_count = (post.comments_count || 0) + 1;
 
   router.db.write();
 
@@ -1206,28 +1723,32 @@ const handleCreateForumPostComment = (req, res) => {
   });
 };
 
-// 11c. Update Forum Post Comment (PATCH /forum-posts/:postId/comments/:commentId)
-const handleUpdateForumPostComment = (req, res) => {
-  const commentId = req.params.commentId;
-  const { content } = req.body || {};
+server.post('/api/forum-posts/:postId/comments', handleCreateForumComment);
+server.post('/forum-posts/:postId/comments', handleCreateForumComment);
 
-  const trimmedContent = typeof content === 'string' ? content.trim() : '';
-  if (!trimmedContent) {
+const handleUpdateForumComment = (req, res) => {
+  const body = req.body || {};
+  const content = typeof body.content === 'string' ? body.content.trim() : '';
+
+  if (!content) {
     return res.status(400).json({
       statusCode: 400,
-      message: ['Isi komentar wajib diisi.'],
+      message: ['Isi komentar wajib diisi'],
       isError: true,
       data: null,
     });
   }
 
   const db = router.db.getState();
-  const comment = (db.forum_comments || []).find((c) => c.id === commentId);
-
+  const comment = (db.forum_comments || []).find(
+    (c) =>
+      c.id === req.params.commentId &&
+      (!req.params.postId || c.post_id === req.params.postId)
+  );
   if (!comment) {
     return res.status(404).json({
       statusCode: 404,
-      message: ['Komentar tidak ditemukan.'],
+      message: ['Komentar tidak ditemukan'],
       isError: true,
       data: null,
     });
@@ -1236,13 +1757,13 @@ const handleUpdateForumPostComment = (req, res) => {
   if (comment.author_id !== MOCK_ME_ID) {
     return res.status(403).json({
       statusCode: 403,
-      message: ['Hanya pemilik yang dapat menyunting komentar ini.'],
+      message: ['Hanya penulis yang dapat mengubah komentar ini.'],
       isError: true,
       data: null,
     });
   }
 
-  comment.content = trimmedContent;
+  comment.content = content;
   comment.updated_at = new Date().toISOString();
 
   router.db.write();
@@ -1255,16 +1776,22 @@ const handleUpdateForumPostComment = (req, res) => {
   });
 };
 
-// 11d. Delete Forum Post Comment (DELETE /forum-posts/:postId/comments/:commentId)
-const handleDeleteForumPostComment = (req, res) => {
-  const commentId = req.params.commentId;
-  const db = router.db.getState();
-  const comment = (db.forum_comments || []).find((c) => c.id === commentId);
+server.patch('/api/forum-comments/:commentId', handleUpdateForumComment);
+server.patch('/forum-comments/:commentId', handleUpdateForumComment);
+server.patch('/api/forum-posts/:postId/comments/:commentId', handleUpdateForumComment);
+server.patch('/forum-posts/:postId/comments/:commentId', handleUpdateForumComment);
 
+const handleDeleteForumComment = (req, res) => {
+  const db = router.db.getState();
+  const comment = (db.forum_comments || []).find(
+    (c) =>
+      c.id === req.params.commentId &&
+      (!req.params.postId || c.post_id === req.params.postId)
+  );
   if (!comment) {
     return res.status(404).json({
       statusCode: 404,
-      message: ['Komentar tidak ditemukan.'],
+      message: ['Komentar tidak ditemukan'],
       isError: true,
       data: null,
     });
@@ -1273,36 +1800,37 @@ const handleDeleteForumPostComment = (req, res) => {
   if (comment.author_id !== MOCK_ME_ID) {
     return res.status(403).json({
       statusCode: 403,
-      message: ['Hanya pemilik yang dapat menghapus komentar ini.'],
+      message: ['Hanya penulis yang dapat menghapus komentar ini.'],
       isError: true,
       data: null,
     });
   }
 
-  const toDelete = new Set([comment.id]);
-  let added = true;
-  while (added) {
-    added = false;
-    for (const c of db.forum_comments || []) {
-      if (c.parent_id && toDelete.has(c.parent_id) && !toDelete.has(c.id)) {
-        toDelete.add(c.id);
-        added = true;
+  const deletedIds = new Set([comment.id]);
+  let found = true;
+  while (found) {
+    found = false;
+    for (const c of db.forum_comments) {
+      if (c.parent_id && deletedIds.has(c.parent_id) && !deletedIds.has(c.id)) {
+        deletedIds.add(c.id);
+        found = true;
       }
     }
   }
 
-  const totalDeleted = toDelete.size;
-
-  db.forum_comments = (db.forum_comments || []).filter((c) => !toDelete.has(c.id));
+  db.forum_comments = db.forum_comments.filter((c) => !deletedIds.has(c.id));
   if (db.forum_comment_votes) {
     db.forum_comment_votes = db.forum_comment_votes.filter(
-      (v) => !toDelete.has(v.comment_id)
+      (v) => !deletedIds.has(v.comment_id)
     );
   }
 
   const post = (db.forum_posts || []).find((p) => p.id === comment.post_id);
   if (post) {
-    post.comments_count = Math.max(0, (post.comments_count || 0) - totalDeleted);
+    post.comments_count = Math.max(
+      0,
+      (post.comments_count || 0) - deletedIds.size
+    );
   }
 
   router.db.write();
@@ -1310,34 +1838,374 @@ const handleDeleteForumPostComment = (req, res) => {
   return res.json({
     statusCode: 200,
     message: ['Komentar berhasil dihapus'],
+    data: { deletedIds: Array.from(deletedIds) },
+    isError: false,
+  });
+};
+
+server.delete('/api/forum-comments/:commentId', handleDeleteForumComment);
+server.delete('/forum-comments/:commentId', handleDeleteForumComment);
+server.delete('/api/forum-posts/:postId/comments/:commentId', handleDeleteForumComment);
+server.delete('/forum-posts/:postId/comments/:commentId', handleDeleteForumComment);
+
+// 11. Profil Pengguna
+// Mapper bersama: profiles (snake_case seed) -> ProfileDto (camelCase kontrak frontend).
+const enrichProfile = (profile) => ({
+  id: profile.id,
+  username: profile.username || null,
+  displayName: profile.display_name || 'Anggota Tel-U',
+  avatarUrl: profile.avatar_url || null,
+  avatarColor: profile.avatar_color || '#E53E3E',
+  bannerUrl: profile.banner_url || null,
+  bio: profile.bio || '',
+  faculty: profile.faculty || null,
+  major: profile.major || null,
+  generation: profile.generation || null,
+  website: profile.website || null,
+  github: profile.github || null,
+  linkedin: profile.linkedin || null,
+  showEmail: Boolean(profile.show_email),
+  showCommunities: profile.show_communities !== false,
+  followersCount: (router.db.getState().follows || []).filter(
+    (f) => f.following_id === profile.id
+  ).length,
+  followingCount: (router.db.getState().follows || []).filter(
+    (f) => f.follower_id === profile.id
+  ).length,
+  createdAt: profile.created_at,
+});
+
+// 11a. Endpoint Detail Profil Milik Sendiri (GET /profiles/me)
+// Identitas viewer = MOCK_ME_ID (akun demo mock), konsisten dengan postingan —
+// lihat docs/integrasi-community-posts/README.md bagian "Identitas Penulis di Mock".
+// Cakupan: detail profil saja — post, pengikut, dan diikuti tidak termasuk.
+const handleGetMyProfile = (req, res) => {
+  const db = router.db.getState();
+  const profile = (db.profiles || []).find((p) => p.id === MOCK_ME_ID);
+
+  if (!profile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  // Mirror sesi dicabut pada backend asli: akun yang sudah dihapus tidak dapat
+  // lagi mengakses profil (frontend diarahkan ke halaman login oleh handler 401)
+  if (profile.deleted_at) {
+    return res.status(401).json({
+      statusCode: 401,
+      message: ['Akun telah dihapus.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  return res.json({
+    statusCode: 200,
+    message: ['Profil berhasil diambil'],
+    data: { profile: enrichProfile(profile) },
+    isError: false,
+  });
+};
+
+server.get('/api/profiles/me', handleGetMyProfile);
+server.get('/profiles/me', handleGetMyProfile);
+
+// 11b. Endpoint Perbarui Profil Milik Sendiri (PATCH /profiles/me)
+// Patch parsial: hanya field yang dikirim yang diubah; string kosong pada field
+// nullable (website/github/linkedin/avatarUrl/...) berarti dikosongkan (null).
+const handleUpdateMyProfile = (req, res) => {
+  const db = router.db.getState();
+  const profile = (db.profiles || []).find((p) => p.id === MOCK_ME_ID);
+
+  if (!profile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  // Akun yang sudah dihapus tidak dapat lagi menyunting profil
+  if (profile.deleted_at) {
+    return res.status(401).json({
+      statusCode: 401,
+      message: ['Akun telah dihapus.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  const body = req.body || {};
+  const has = (key) => Object.prototype.hasOwnProperty.call(body, key);
+  const trimStr = (value) => (typeof value === 'string' ? value.trim() : '');
+  const messages = [];
+
+  // Validasi (cermin dari profiles.schemas.ts di frontend)
+  if (has('displayName') && !trimStr(body.displayName)) {
+    messages.push('Nama lengkap wajib diisi.');
+  }
+  if (has('username')) {
+    const username = trimStr(body.username);
+    if (!username) {
+      messages.push('Username wajib diisi.');
+    } else if (username.length > 30) {
+      messages.push('Username maksimal 30 karakter.');
+    } else {
+      const taken = (db.profiles || []).some(
+        (p) =>
+          p.id !== MOCK_ME_ID &&
+          (p.username || '').toLowerCase() === username.toLowerCase()
+      );
+      if (taken) messages.push('Username sudah digunakan.');
+    }
+  }
+  if (has('bio') && typeof body.bio === 'string' && body.bio.length > 160) {
+    messages.push('Bio maksimal 160 karakter.');
+  }
+  for (const key of ['website', 'github', 'linkedin']) {
+    if (has(key) && typeof body[key] === 'string' && body[key].trim().length > 300) {
+      messages.push('Tautan maksimal 300 karakter.');
+    }
+  }
+  if (messages.length > 0) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: messages,
+      isError: true,
+      data: null,
+    });
+  }
+
+  // Merge patch parsial
+  if (has('displayName')) profile.display_name = trimStr(body.displayName);
+  if (has('username')) profile.username = trimStr(body.username);
+  if (has('bio')) profile.bio = typeof body.bio === 'string' ? body.bio : '';
+  if (has('faculty')) profile.faculty = trimStr(body.faculty) || null;
+  if (has('major')) profile.major = trimStr(body.major) || null;
+  if (has('generation')) profile.generation = trimStr(body.generation) || null;
+  for (const key of ['website', 'github', 'linkedin']) {
+    if (has(key)) profile[key] = trimStr(body[key]) || null;
+  }
+  if (has('avatarUrl')) profile.avatar_url = trimStr(body.avatarUrl) || null;
+  if (has('bannerUrl')) profile.banner_url = trimStr(body.bannerUrl) || null;
+  if (has('showEmail')) profile.show_email = Boolean(body.showEmail);
+  if (has('showCommunities')) profile.show_communities = Boolean(body.showCommunities);
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Profil berhasil diperbarui'],
+    data: { profile: enrichProfile(profile) },
+    isError: false,
+  });
+};
+
+server.patch('/api/profiles/me', handleUpdateMyProfile);
+server.patch('/profiles/me', handleUpdateMyProfile);
+
+// 11c. Endpoint Hapus Akun (DELETE /profiles/me) — SOFT DELETE, nama tetap
+// Keputusan desain (lihat docs/integrasi-profil/03-delete-account.md):
+// - Akun hanya DITANDAI lewat kolom `deleted_at` (baris profil TIDAK dihapus).
+// - SELURUH konten yang dibuat (artikel, komentar artikel, post forum, komentar
+//   forum) TIDAK disentuh — beserta nama penulisnya, agar dapat ditelusuri
+//   (tracing). Tidak ada baris di tabel lain yang diubah.
+// - Akun terhapus tidak dapat lagi mengakses/menyunting profil (401), dan di
+//   sisi frontend sesi langsung diakhiri (logout).
+const handleDeleteMyAccount = (req, res) => {
+  const db = router.db.getState();
+  const profile = (db.profiles || []).find((p) => p.id === MOCK_ME_ID);
+
+  if (!profile) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Profil tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (profile.deleted_at) {
+    return res.status(401).json({
+      statusCode: 401,
+      message: ['Akun telah dihapus.'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  profile.deleted_at = new Date().toISOString();
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: ['Akun berhasil dihapus. Konten yang Anda buat tetap tersimpan.'],
     data: null,
     isError: false,
   });
 };
 
-server.get('/api/forum-posts/:postId/comments', handleGetForumPostComments);
-server.get('/forum-posts/:postId/comments', handleGetForumPostComments);
-server.get('/api/communities/:communityId/posts/:postId/comments', handleGetForumPostComments);
-server.get('/communities/:communityId/posts/:postId/comments', handleGetForumPostComments);
+server.delete('/api/profiles/me', handleDeleteMyAccount);
+server.delete('/profiles/me', handleDeleteMyAccount);
 
-server.post('/api/forum-posts/:postId/comments', handleCreateForumPostComment);
-server.post('/forum-posts/:postId/comments', handleCreateForumPostComment);
-server.post('/api/communities/:communityId/posts/:postId/comments', handleCreateForumPostComment);
-server.post('/communities/:communityId/posts/:postId/comments', handleCreateForumPostComment);
+//12. Endpoint Forum/Komunitas yang diikuti viewer
+const handleJoinedCommunities = (req, res) => {
+  const db = router.db.getState();
+  const data = (db.community_members || [])
+    .filter((m) => m.user_id === MOCK_ME_ID)
+    .map((m) => {
+      const c = (db.communities || []).find((x) => x.id === m.community_id);
+      if (!c) return null;
+      return {
+        id: c.id,
+        title: c.name,
+        description: c.description || '',
+        activeMemberCount: `${(c.member_count || 0).toLocaleString('id-ID')} Anggota`,
+        isFollowing: true,
+        href: `/communities/${c.id}`,
+        role: m.role,
+        joinedAt: m.joined_at,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => new Date(b.joinedAt) - new Date(a.joinedAt));
 
-server.patch('/api/forum-posts/:postId/comments/:commentId', handleUpdateForumPostComment);
-server.patch('/forum-posts/:postId/comments/:commentId', handleUpdateForumPostComment);
-server.patch('/api/forum-comments/:commentId', handleUpdateForumPostComment);
-server.patch('/forum-comments/:commentId', handleUpdateForumPostComment);
+  return res.json({
+    statusCode: 200,
+    message: ['Daftar forum yang diikuti berhasil diambil'],
+    data,
+    isError: false,
+  });
+};
 
-server.delete('/api/forum-posts/:postId/comments/:commentId', handleDeleteForumPostComment);
-server.delete('/forum-posts/:postId/comments/:commentId', handleDeleteForumPostComment);
-server.delete('/api/forum-comments/:commentId', handleDeleteForumPostComment);
-server.delete('/forum-comments/:commentId', handleDeleteForumPostComment);
+server.get('/api/communities/joined', handleJoinedCommunities);
+server.get('/communities/joined', handleJoinedCommunities);
 
-// Mount router pada /api dan /
-server.use('/api', router);
-server.use(router);
+// 13. Daftar Pengikut / Diikuti milik sendiri
+const toFollowUser = (profile, db, followedAt) => ({
+  id: profile.id,
+  displayName: profile.display_name || 'Anggota Tel-U',
+  username: profile.username || null,
+  avatarUrl: profile.avatar_url || null,
+  avatarColor: profile.avatar_color || '#E53E3E',
+  bio: profile.bio || '',
+  isFollowing: (db.follows || []).some(
+    (f) => f.follower_id === MOCK_ME_ID && f.following_id === profile.id
+  ),
+  followedAt,
+});
+
+const buildFollowListHandler = (direction) => (req, res) => {
+  const db = router.db.getState();
+  const isFollowers = direction === 'followers';
+  const data = (db.follows || [])
+    .filter((f) =>
+      isFollowers ? f.following_id === MOCK_ME_ID : f.follower_id === MOCK_ME_ID
+    )
+    .map((f) => {
+      const otherId = isFollowers ? f.follower_id : f.following_id;
+      const p = (db.profiles || []).find((x) => x.id === otherId && !x.deleted_at);
+      return p ? toFollowUser(p, db, f.created_at) : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => new Date(b.followedAt) - new Date(a.followedAt));
+
+  return res.json({
+    statusCode: 200,
+    message: [isFollowers ? 'Daftar pengikut berhasil diambil' : 'Daftar diikuti berhasil diambil'],
+    data,
+    isError: false,
+  });
+};
+
+server.get('/api/profiles/me/followers', buildFollowListHandler('followers'));
+server.get('/profiles/me/followers', buildFollowListHandler('followers'));
+server.get('/api/profiles/me/following', buildFollowListHandler('following'));
+server.get('/profiles/me/following', buildFollowListHandler('following'));
+
+// 14. Gabung / Keluar Komunitas
+const findCommunity = (db, id) =>
+  (db.communities || []).find((c) => c.id === id || c.slug === id);
+
+const notFoundCommunity = (res) =>
+  res.status(404).json({
+    statusCode: 404,
+    message: ['Komunitas tidak ditemukan'],
+    isError: true,
+    data: null,
+  });
+
+const handleJoinCommunity = (req, res) => {
+  const db = router.db.getState();
+  const community = findCommunity(db, req.params.id);
+  if (!community) return notFoundCommunity(res);
+
+  if (!db.community_members) db.community_members = [];
+  const already = db.community_members.some(
+    (m) => m.community_id === community.id && m.user_id === MOCK_ME_ID
+  );
+
+  if (!already) {
+    db.community_members.push({
+      id: crypto.randomUUID(),
+      community_id: community.id,
+      user_id: MOCK_ME_ID,
+      role: 'member',
+      joined_at: new Date().toISOString(),
+    });
+    community.member_count = (community.member_count || 0) + 1;
+    router.db.write();
+  }
+
+  return res.json({
+    statusCode: 200,
+    message: [already ? 'Kamu sudah bergabung' : `Bergabung ke ${community.name}`],
+    data: { isJoined: true, memberCount: community.member_count || 0 },
+    isError: false,
+  });
+};
+
+const handleLeaveCommunity = (req, res) => {
+  const db = router.db.getState();
+  const community = findCommunity(db, req.params.id);
+  if (!community) return notFoundCommunity(res);
+
+  const members = db.community_members || [];
+  const index = members.findIndex(
+    (m) => m.community_id === community.id && m.user_id === MOCK_ME_ID
+  );
+
+  if (index >= 0) {
+    if (['owner', 'creator'].includes(members[index].role)) {
+      return res.status(400).json({
+        statusCode: 400,
+        message: ['Pemilik komunitas tidak dapat keluar dari komunitasnya.'],
+        isError: true,
+        data: null,
+      });
+    }
+    members.splice(index, 1);
+    community.member_count = Math.max(0, (community.member_count || 0) - 1);
+    router.db.write();
+  }
+
+  return res.json({
+    statusCode: 200,
+    message: [`Keluar dari ${community.name}`],
+    data: { isJoined: false, memberCount: community.member_count || 0 },
+    isError: false,
+  });
+};
+
+server.post('/api/communities/:id/join', handleJoinCommunity);
+server.post('/communities/:id/join', handleJoinCommunity);
+server.delete('/api/communities/:id/join', handleLeaveCommunity);
+server.delete('/communities/:id/join', handleLeaveCommunity);
 
 server.listen(PORT, () => {
   console.log(`\n======================================================`);
@@ -1346,3 +2214,65 @@ server.listen(PORT, () => {
   console.log(`📁 Seed: ${seedFile}`);
   console.log(`======================================================\n`);
 });
+
+// 15. Endpoint Toggle Suka Postingan Forum
+// POST /forum-posts/:postId/like
+// Response: { isLiked, likesCount, score }
+const handleToggleForumPostLike = (req, res) => {
+  const db = router.db.getState();
+  const post = (db.forum_posts || []).find((p) => p.id === req.params.postId);
+
+  if (!post) {
+    return res.status(404).json({
+      statusCode: 404,
+      message: ['Postingan tidak ditemukan'],
+      isError: true,
+      data: null,
+    });
+  }
+
+  if (!db.forum_post_votes) db.forum_post_votes = [];
+
+  const existing = db.forum_post_votes.find(
+    (v) => v.post_id === post.id && v.user_id === MOCK_ME_ID
+  );
+
+  let isLiked;
+  if (existing && existing.vote_value > 0) {
+    // Batal suka
+    db.forum_post_votes.splice(db.forum_post_votes.indexOf(existing), 1);
+    post.likes_count = Math.max(0, (post.likes_count || 0) - 1);
+    post.score = (post.score || 0) - 1;
+    isLiked = false;
+  } else {
+    if (existing) {
+      existing.vote_value = 1;
+    } else {
+      db.forum_post_votes.push({
+        id: crypto.randomUUID(),
+        post_id: post.id,
+        user_id: MOCK_ME_ID,
+        vote_value: 1,
+        created_at: new Date().toISOString(),
+      });
+    }
+    post.likes_count = (post.likes_count || 0) + 1;
+    post.score = (post.score || 0) + 1;
+    isLiked = true;
+  }
+
+  router.db.write();
+
+  return res.json({
+    statusCode: 200,
+    message: [isLiked ? 'Menyukai postingan' : 'Batal menyukai postingan'],
+    data: { isLiked, likesCount: post.likes_count, score: post.score },
+    isError: false,
+  });
+};
+
+server.post('/api/forum-posts/:postId/like', handleToggleForumPostLike);
+server.post('/forum-posts/:postId/like', handleToggleForumPostLike);
+
+server.use('/api', router);
+server.use(router);

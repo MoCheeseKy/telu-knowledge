@@ -6,7 +6,6 @@ import { PUBLIC_AUTH_PATHS } from "@/lib/constants";
  */
 export const PUBLIC_PATHS: readonly string[] = [
   ...PUBLIC_AUTH_PATHS,
-  // Dapat ditambahkan path publik lain di sini bila diperlukan
 ];
 
 /**
@@ -18,6 +17,9 @@ export const PROXY_ALLOWED_AUTH_PATHS: readonly string[] = ["auth/me"];
 
 /**
  * Memeriksa apakah path saat ini merupakan path publik.
+ *
+ * @param pathname - Path URL yang akan diperiksa.
+ * @returns `true` jika termasuk path publik.
  */
 export function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((publicPath) => pathname === publicPath || pathname.startsWith(`${publicPath}/`));
@@ -26,6 +28,10 @@ export function isPublicPath(pathname: string): boolean {
 /**
  * Memvalidasi dan memastikan parameter redirect `next` aman.
  * Hanya mengizinkan path relatif yang diawali "/" dan menolak open-redirect (seperti "//domain.com" atau "/\\").
+ *
+ * @param nextPath - Target path redirect dari query parameter.
+ * @param fallback - Path cadangan jika `nextPath` tidak valid (default: `"/home"`).
+ * @returns Path relatif yang aman untuk redirect.
  */
 export function safeNextPath(
   nextPath?: string | null,
@@ -37,7 +43,6 @@ export function safeNextPath(
 
   const trimmed = nextPath.trim();
 
-  // Wajib diawali '/' dan BUKAN '//' atau '/\'
   if (
     trimmed.startsWith("/") &&
     !trimmed.startsWith("//") &&

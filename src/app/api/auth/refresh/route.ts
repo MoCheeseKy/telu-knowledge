@@ -9,6 +9,12 @@ import {
 } from "@/lib/auth/cookies";
 import type { BackendLoginData } from "@/services/auth/auth.types";
 
+/**
+ * Route handler BFF untuk memperbarui access token menggunakan refresh token di cookie HttpOnly.
+ *
+ * @param request - Request HTTP untuk validasi same-origin dan pembacaan IP klien.
+ * @returns Respons JSON berisi data user atau error 401 bila sesi tidak valid.
+ */
 export async function POST(request: Request) {
   const originError = assertSameOrigin(request);
   if (originError) return originError;
@@ -36,7 +42,6 @@ export async function POST(request: Request) {
       clientIp,
     });
 
-    // Simpan token baru ke cookie HttpOnly
     await setAuthCookies(backendRes.data);
 
     return NextResponse.json({

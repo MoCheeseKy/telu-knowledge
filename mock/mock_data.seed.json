@@ -2,18 +2,18 @@
   "profiles": [
     {
       "id": "10000000-0000-4000-8000-000000000001",
-      "display_name": "Satria Mahardika",
+      "display_name": "Satria BAJA HITAM",
       "avatar_url": null,
       "created_at": "2024-08-15T08:00:00Z",
-      "username": "satriam",
-      "bio": "Mahasiswa Rekayasa Perangkat Lunak Telkom University. Minat pada Clean Architecture, UI Engineering, dan Game Development.",
+      "username": "satriamHITAM",
+      "bio": "[UPDATED] Mahasiswa Rekayasa Perangkat Lunak Telkom University. Minat pada Clean Architecture, UI Engineering, dan Game Development.",
       "faculty": "Fakultas Informatika",
       "major": "S1 Rekayasa Perangkat Lunak",
       "generation": "2022",
       "banner_url": "/images/persona-c4.jpg",
       "avatar_color": "#0A3AB5",
       "website": "https://satria.dev",
-      "github": "https://github.com/satriam",
+      "github": null,
       "linkedin": "https://linkedin.com/in/satriam",
       "show_email": true,
       "show_communities": true,
@@ -1358,23 +1358,23 @@
     {
       "article_id": "20000000-0000-4000-8000-000000000011",
       "likes_count": 570,
-      "comments_count": 75,
-      "reposts_count": 38,
-      "bookmarks_count": 104
+      "comments_count": 76,
+      "reposts_count": 39,
+      "bookmarks_count": 105
     },
     {
       "article_id": "20000000-0000-4000-8000-000000000012",
       "likes_count": 615,
-      "comments_count": 81,
+      "comments_count": 82,
       "reposts_count": 41,
       "bookmarks_count": 112
     },
     {
       "article_id": "20000000-0000-4000-8000-000000000013",
       "likes_count": 660,
-      "comments_count": 89,
-      "reposts_count": 44,
-      "bookmarks_count": 120
+      "comments_count": 91,
+      "reposts_count": 1,
+      "bookmarks_count": 121
     },
     {
       "article_id": "20000000-0000-4000-8000-000000000014",
@@ -1672,6 +1672,18 @@
       "article_id": "20000000-0000-4000-8000-000000000011",
       "user_id": "10000000-0000-4000-8000-000000000006",
       "created_at": "2024-10-02T16:00:00Z"
+    },
+    {
+      "id": "952e6862-a359-4e5d-afa2-2986a5173ae9",
+      "article_id": "20000000-0000-4000-8000-000000000011",
+      "user_id": "10000000-0000-4000-8000-000000000001",
+      "created_at": "2026-11-12T07:12:50.492Z"
+    },
+    {
+      "id": "6b31efe0-435c-47f3-8170-c40b6b009c67",
+      "article_id": "20000000-0000-4000-8000-000000000013",
+      "user_id": "10000000-0000-4000-8000-000000000001",
+      "created_at": "2026-11-16T06:27:31.696Z"
     }
   ],
   "article_reposts": [
@@ -1710,6 +1722,18 @@
       "article_id": "20000000-0000-4000-8000-000000000012",
       "user_id": "10000000-0000-4000-8000-000000000004",
       "created_at": "2024-10-06T10:00:00Z"
+    },
+    {
+      "id": "62a9447e-4eab-412d-8adc-1fd9c1044b0c",
+      "article_id": "20000000-0000-4000-8000-000000000011",
+      "user_id": "10000000-0000-4000-8000-000000000001",
+      "created_at": "2026-11-12T07:23:25.177Z"
+    },
+    {
+      "id": "ac3a674b-847b-47c1-ba43-8f2ec28be8c5",
+      "article_id": "20000000-0000-4000-8000-000000000013",
+      "user_id": "10000000-0000-4000-8000-000000000001",
+      "created_at": "2026-11-19T11:53:33.195Z"
     }
   ],
   "article_comments": [
@@ -1820,6 +1844,33 @@
       "content": "Halo",
       "created_at": "2026-11-10T15:28:46.782Z",
       "updated_at": "2026-11-10T15:28:46.782Z"
+    },
+    {
+      "id": "76ac5d04-1d98-4993-9fe9-317d26960743",
+      "article_id": "20000000-0000-4000-8000-000000000012",
+      "author_id": "10000000-0000-4000-8000-000000000001",
+      "parent_id": null,
+      "content": "e",
+      "created_at": "2026-11-12T07:12:15.587Z",
+      "updated_at": "2026-11-12T07:12:15.587Z"
+    },
+    {
+      "id": "ece21a18-ec76-4a0b-89ef-6b8147af9d14",
+      "article_id": "20000000-0000-4000-8000-000000000011",
+      "author_id": "10000000-0000-4000-8000-000000000001",
+      "parent_id": null,
+      "content": "ee",
+      "created_at": "2026-11-12T07:23:31.391Z",
+      "updated_at": "2026-11-12T07:23:31.391Z"
+    },
+    {
+      "id": "5f0c98da-9ed5-47e2-98da-651d67727fa4",
+      "article_id": "20000000-0000-4000-8000-000000000013",
+      "author_id": "10000000-0000-4000-8000-000000000001",
+      "parent_id": null,
+      "content": "asdasdas",
+      "created_at": "2026-11-12T07:42:01.977Z",
+      "updated_at": "2026-11-12T07:42:01.977Z"
     }
   ],
   "collections": [

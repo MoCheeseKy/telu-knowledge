@@ -1,8 +1,7 @@
 /**
- * Builder opsi cookie autentikasi (tk_access, tk_refresh, tk_remember).
- * Modul murni tanpa server-only dan tanpa next/headers sehingga aman dipakai di proxy.ts, cookies.ts, dll.
+ * Opsi standar cookie autentikasi (`tk_access`, `tk_refresh`, `tk_remember`).
+ * Modul murni tanpa `server-only` dan `next/headers` agar aman dipakai di `proxy.ts` dan `cookies.ts`.
  */
-
 export interface AuthCookieOptions {
   httpOnly: boolean;
   sameSite: "lax";
@@ -20,7 +19,10 @@ export const DEFAULT_ACCESS_MAX_AGE = 3600;
 export const REMEMBER_MAX_AGE = 30 * 24 * 60 * 60;
 
 /**
- * Opsi cookie untuk access token (tk_access)
+ * Menghasilkan opsi cookie untuk access token (`tk_access`).
+ *
+ * @param expiresIn - Masa berlaku token dalam detik (opsional).
+ * @returns Objek opsi cookie untuk access token.
  */
 export function getAccessCookieOptions(expiresIn?: number): AuthCookieOptions {
   return {
@@ -33,9 +35,12 @@ export function getAccessCookieOptions(expiresIn?: number): AuthCookieOptions {
 }
 
 /**
- * Opsi cookie untuk refresh token (tk_refresh).
- * Jika rememberMe bernilai true, maxAge diatur 30 hari (sliding).
- * Jika false/undefined, menjadi session cookie (maxAge undefined).
+ * Menghasilkan opsi cookie untuk refresh token (`tk_refresh`).
+ * Jika `rememberMe` bernilai true, `maxAge` diatur 30 hari (sliding);
+ * jika false/undefined, menjadi session cookie (`maxAge` undefined).
+ *
+ * @param rememberMe - Status opsi "Ingat saya".
+ * @returns Objek opsi cookie untuk refresh token.
  */
 export function getRefreshCookieOptions(rememberMe?: boolean): AuthCookieOptions {
   const options: AuthCookieOptions = {
@@ -53,8 +58,10 @@ export function getRefreshCookieOptions(rememberMe?: boolean): AuthCookieOptions
 }
 
 /**
- * Opsi cookie untuk penanda remember me (tk_remember).
- * Selalu berdurasi 30 hari, httpOnly, sameSite lax.
+ * Menghasilkan opsi cookie untuk penanda remember me (`tk_remember`).
+ * Selalu berdurasi 30 hari, `httpOnly`, dan `sameSite` lax.
+ *
+ * @returns Objek opsi cookie untuk penanda remember me.
  */
 export function getRememberCookieOptions(): AuthCookieOptions {
   return {
@@ -67,7 +74,9 @@ export function getRememberCookieOptions(): AuthCookieOptions {
 }
 
 /**
- * Opsi dasar untuk penghapusan cookie.
+ * Menghasilkan opsi dasar untuk penghapusan cookie autentikasi.
+ *
+ * @returns Objek opsi cookie dengan `maxAge: 0`.
  */
 export function getClearCookieOptions(): AuthCookieOptions {
   return {

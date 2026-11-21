@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+/**
+ * Skema Zod untuk daftar jenis aksi bantuan penulisan AI yang didukung.
+ */
 export const aiAssistActionSchema = z.enum(
   [
     "paraphrase",
@@ -15,6 +18,9 @@ export const aiAssistActionSchema = z.enum(
   }
 );
 
+/**
+ * Skema validasi Zod untuk permintaan bantuan penulisan AI, termasuk aturan wajib instruksi pada aksi kustom.
+ */
 export const aiAssistSchema = z
   .object({
     action: aiAssistActionSchema,
@@ -48,5 +54,8 @@ export const aiAssistSchema = z
     }
   );
 
+/**
+ * Tipe input hasil inferensi dari `aiAssistSchema`.
+ */
 export type AiAssistInput = z.infer<typeof aiAssistSchema>;
 

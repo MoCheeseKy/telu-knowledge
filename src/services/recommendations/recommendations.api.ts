@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api/client";
-import type { ApiEnvelope } from "@/lib/api/types";
+import type { ApiEnvelope } from "@/lib/api/api.types";
 import type {
   CommunityRecommendation,
   TopicRecommendation,
@@ -45,6 +45,9 @@ export async function getCommunityRecommendations(): Promise<
   );
 }
 
+/**
+ * Kumpulan fungsi klien API untuk mengambil data rekomendasi topik, penulis, dan komunitas.
+ */
 export const recommendationsApi = {
   getTopicRecommendations,
   getWriterRecommendations,

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Wrapper from "@/components/_shared/Wrapper";
 
+/** Footer utama aplikasi yang menampilkan ringkasan platform dan tautan navigasi. */
 export default function MainFooter() {
     return (
         <footer className="w-full border-t border-[var(--dust)] bg-[var(--background)] mt-auto">
@@ -32,10 +33,10 @@ export default function MainFooter() {
                                 <Link href="/discussion-forums" className="text-[var(--muted)] hover:text-[var(--primary-text)] transition-colors">
                                     Forum Diskusi
                                 </Link>
-                                <Link href="/discovers-articles" className="text-[var(--muted)] hover:text-[var(--primary-text)] transition-colors">
+                                <Link href="/discover-articles" className="text-[var(--muted)] hover:text-[var(--primary-text)] transition-colors">
                                     Cari Artikel
                                 </Link>
-                                <Link href="/discovers-forums" className="text-[var(--muted)] hover:text-[var(--primary-text)] transition-colors">
+                                <Link href="/discover-forums" className="text-[var(--muted)] hover:text-[var(--primary-text)] transition-colors">
                                     Cari Forum
                                 </Link>
                             </div>

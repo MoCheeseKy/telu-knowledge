@@ -24,6 +24,11 @@ function handleUnauthorized(): void {
   }
 }
 
+/**
+ * Membuat instance `QueryClient` baru beserta konfigurasi handler 401 global dan kebijakan retry.
+ *
+ * @returns Instance `QueryClient` yang telah dikonfigurasi.
+ */
 export function makeQueryClient(): QueryClient {
   return new QueryClient({
     queryCache: new QueryCache({
@@ -48,9 +53,8 @@ export function makeQueryClient(): QueryClient {
     }),
     defaultOptions: {
       queries: {
-        staleTime: 60 * 1000, // 60 detik
+        staleTime: 60 * 1000,
         retry: (failureCount, error) => {
-          // Jangan retry untuk error HTTP 4xx
           if (
             isApiError(error) &&
             error.statusCode >= 400 &&
@@ -58,7 +62,6 @@ export function makeQueryClient(): QueryClient {
           ) {
             return false;
           }
-          // Maksimal 2 kali retry untuk error lainnya
           return failureCount < 2;
         },
       },
@@ -80,6 +83,12 @@ export function makeQueryClient(): QueryClient {
 
 let browserQueryClient: QueryClient | undefined = undefined;
 
+/**
+ * Mengembalikan instance `QueryClient`: selalu instance baru per request di server,
+ * dan singleton di sisi browser.
+ *
+ * @returns Instance `QueryClient` aktif.
+ */
 export function getQueryClient(): QueryClient {
   if (isServer) {
     // Server: selalu buat instance baru per request

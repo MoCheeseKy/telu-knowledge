@@ -1,4 +1,5 @@
-import MyForumsView from "@/components/_views/MyForums";
+import { Suspense } from "react";
+import MyForumsView from "@/components/_views/Forums/MyForums";
 
 export const metadata = {
   title: "Forum Saya | Tel-U Knowledge",
@@ -6,6 +7,10 @@ export const metadata = {
 };
 
 export default function MyForumsPage() {
-  return <MyForumsView />;
+  return (
+    <Suspense fallback={<div className="w-full py-8 text-center text-sm text-[var(--muted)]">Memuat Forum...</div>}>
+      <MyForumsView />
+    </Suspense>
+  );
 }
 

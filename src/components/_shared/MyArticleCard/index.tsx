@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2 } from "lucide-react";
-import { MyArticleCardProps } from "./_types";
+import { MyArticleCardProps } from "./my-article-card.types";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -15,6 +15,10 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
+/**
+ * Kartu artikel milik pengguna yang mendukung aksi edit, hapus dengan dialog konfirmasi,
+ * serta publikasi untuk artikel berstatus draf.
+ */
 export default function MyArticleCard({
     id,
     title,
@@ -46,7 +50,7 @@ export default function MyArticleCard({
     const handleCardClick = () => {
         if (id === undefined) return;
         if (status === "published") {
-            router.push(`/discovers-articles/${id}/article-detail`);
+            router.push(`/discover-articles/${id}`);
         } else {
             router.push(`/editor-studio/${id}`);
         }
@@ -125,7 +129,6 @@ export default function MyArticleCard({
                 </div>
             </div>
 
-            {/* Dialog Konfirmasi Hapus */}
             <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>

@@ -4,8 +4,11 @@ import { isIP } from "node:net";
 import { serverEnv } from "@/lib/env";
 import { toApiError } from "./errors";
 import { parseApiResponse } from "./parse-response";
-import type { ApiEnvelope } from "./types";
+import type { ApiEnvelope } from "./api.types";
 
+/**
+ * Opsi konfigurasi untuk {@link serverFetch}.
+ */
 export interface ServerFetchOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
@@ -29,6 +32,9 @@ let hasWarnedMissingTrustedIp = false;
  * - TRUSTED_IP_HEADER: Jika diisi, membaca IP HANYA dari header tersebut dan divalidasi.
  * - TRUSTED_PROXY_HOPS (N > 0): Jika TRUSTED_IP_HEADER kosong, membaca entri ke-N dari KANAN
  *   pada X-Forwarded-For dan divalidasi format IP-nya.
+ *
+ * @param headers - Header request masuk yang akan diekstrak IP kliennya.
+ * @returns Alamat IP klien yang valid atau `undefined`.
  */
 export function getClientIp(headers: Headers): string | undefined {
   if (
@@ -82,6 +88,10 @@ export function getClientIp(headers: Headers): string | undefined {
 /**
  * Fetcher sisi server (BFF -> Backend NestJS).
  * Menggunakan URL dasar dari API_BASE_URL, timeout 10 detik, dan cache: no-store.
+ *
+ * @param path - Path endpoint API (dengan atau tanpa prefiks `/api`).
+ * @param options - Opsi request server termasuk method, body, token, IP klien, dan sumber data.
+ * @returns Promise berisi {@link ApiEnvelope} hasil respons backend.
  */
 export async function serverFetch<T>(
   path: string,
@@ -132,7 +142,7 @@ export async function serverFetch<T>(
       headers: requestHeaders,
       body: requestBody,
       cache: "no-store",
-      signal: AbortSignal.timeout(10000), // Timeout 10 detik
+      signal: AbortSignal.timeout(10000),
     });
 
     return await parseApiResponse<T>(response);

@@ -3,18 +3,16 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type {
+  CommunityRuleItem,
+  CommunityRulesListProps,
+} from "./community-rules-list.types";
 
-export interface CommunityRuleItem {
-  id: number;
-  title: string;
-  description: string;
-}
+export type { CommunityRuleItem, CommunityRulesListProps };
 
-interface CommunityRulesListProps {
-  rules: CommunityRuleItem[];
-  className?: string;
-}
-
+/**
+ * Daftar aturan komunitas interaktif dengan tampilan akordeon yang dapat dibuka-tutup per item.
+ */
 export default function CommunityRulesList({
   rules,
   className = "",

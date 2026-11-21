@@ -1,0 +1,90 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { profilesApi } from "./profiles.api";
+import type { FollowUserDto, ProfileDto, UpdateProfilePayload } from "./profiles.types";
+
+/**
+ * Daftar query key TanStack Query untuk entitas profil pengguna.
+ */
+export const profileKeys = {
+  all: ["profiles"] as const,
+  me: ["profiles", "me"] as const,
+  followers: ["profiles", "followers"] as const,
+  following: ["profiles", "following"] as const,
+};
+
+/**
+ * Hook query daftar pengikut profil milik sendiri (GET /proxy/profiles/me/followers).
+ *
+ * @param enabled Mengontrol apakah query dijalankan secara otomatis.
+ * @returns State TanStack Query berisi array `FollowUserDto`.
+ */
+export function useMyFollowers(enabled = true) {
+  return useQuery<FollowUserDto[]>({
+    queryKey: profileKeys.followers,
+    queryFn: async () => (await profilesApi.getMyFollowers()).data,
+    enabled,
+  });
+}
+
+/**
+ * Hook query daftar akun yang diikuti oleh profil milik sendiri (GET /proxy/profiles/me/following).
+ *
+ * @param enabled Mengontrol apakah query dijalankan secara otomatis.
+ * @returns State TanStack Query berisi array `FollowUserDto`.
+ */
+export function useMyFollowing(enabled = true) {
+  return useQuery<FollowUserDto[]>({
+    queryKey: profileKeys.following,
+    queryFn: async () => (await profilesApi.getMyFollowing()).data,
+    enabled,
+  });
+}
+
+/**
+ * Hook query detail profil milik sendiri (GET /proxy/profiles/me).
+ * Query key `profileKeys.me` juga menjadi target invalidasi untuk task
+ * Update Profil yang akan datang.
+ */
+export function useMyProfile() {
+  return useQuery<ProfileDto>({
+    queryKey: profileKeys.me,
+    queryFn: async (): Promise<ProfileDto> => {
+      const res = await profilesApi.getMyProfile();
+      return res.data.profile;
+    },
+  });
+}
+
+/**
+ * Hook mutasi pembaruan profil milik sendiri (PATCH /proxy/profiles/me).
+ * Cache `profileKeys.me` langsung diperbarui dengan respons terbaru sehingga
+ * seluruh tampilan profil sinkron seketika.
+ */
+export function useUpdateMyProfile() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: UpdateProfilePayload) =>
+      profilesApi.updateMyProfile(payload),
+    retry: false,
+    onSuccess: (res) => {
+      if (res?.data?.profile) {
+        queryClient.setQueryData(profileKeys.me, res.data.profile);
+      }
+      void queryClient.invalidateQueries({ queryKey: profileKeys.all });
+    },
+  });
+}
+
+/**
+ * Hook mutasi penghapusan akun (soft delete — DELETE /proxy/profiles/me).
+ * Konten yang dibuat pengguna TETAP tersimpan (lihat
+ * docs/integrasi-profil/03-delete-account.md). Setelah sukses, pemanggil harus
+ * mengakhiri sesi (useLogout) dan mengarahkan ke halaman login.
+ */
+export function useDeleteMyAccount() {
+  return useMutation({
+    mutationFn: () => profilesApi.deleteMyAccount(),
+    retry: false,
+  });
+}

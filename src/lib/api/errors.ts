@@ -1,7 +1,6 @@
 /**
- * Penanganan dan Representasi Error Terpadu untuk API & BFF Tel-U Knowledge.
+ * Representasi error standar untuk API & BFF Tel-U Knowledge.
  */
-
 export class ApiError extends Error {
   readonly statusCode: number;
   readonly messages: string[];
@@ -56,6 +55,9 @@ export class ApiError extends Error {
 
 /**
  * Type guard untuk memeriksa apakah error merupakan instance ApiError.
+ *
+ * @param error - Nilai error yang akan diperiksa.
+ * @returns `true` jika `error` memenuhi bentuk {@link ApiError}.
  */
 export function isApiError(error: unknown): error is ApiError {
   return (
@@ -75,13 +77,15 @@ export function isApiError(error: unknown): error is ApiError {
  * Mengonversi segala jenis error (network, abort/timeout, error tak terduga) menjadi ApiError standar.
  * Untuk error internal tak terduga, tidak membocorkan error.message asli ke client,
  * dan hanya mencatat log detail di sisi server (tanpa mengekspos token/rahasia).
+ *
+ * @param error - Error mentah yang tertangkap.
+ * @returns Instance {@link ApiError} yang aman dikonsumsi UI maupun BFF.
  */
 export function toApiError(error: unknown): ApiError {
   if (isApiError(error)) {
     return error;
   }
 
-  // Timeout atau abort
   if (
     (error instanceof DOMException && error.name === "AbortError") ||
     (error instanceof Error && error.name === "TimeoutError")
@@ -93,7 +97,6 @@ export function toApiError(error: unknown): ApiError {
     );
   }
 
-  // Network offline / koneksi backend gagal
   if (error instanceof TypeError && error.message.toLowerCase().includes("fetch")) {
     return new ApiError(
       502,
@@ -104,7 +107,6 @@ export function toApiError(error: unknown): ApiError {
 
   // Error tak terduga: catat log HANYA di server, kembalikan pesan generik aman
   if (typeof window === "undefined") {
-    // Di sisi server: log detail error internal untuk debugging developer
     console.error(
       "[ApiError Internal Server Error]:",
       error instanceof Error ? error.stack || error.message : error

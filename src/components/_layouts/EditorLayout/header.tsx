@@ -16,11 +16,8 @@ import Wrapper from "@/components/_shared/Wrapper";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useMe } from "@/services/auth/auth.queries";
-import { useEditorStudio, type EditorSaveStatus } from "./context";
-
-interface EditorHeaderProps {
-    authorName?: string;
-}
+import { useEditorStudio } from "./context";
+import type { EditorHeaderProps, EditorSaveStatus } from "./editor-layout.types";
 
 const SAVE_STATUS_CONFIG: Record<
     EditorSaveStatus,
@@ -44,6 +41,10 @@ const SAVE_STATUS_CONFIG: Record<
     },
 };
 
+/**
+ * Header sticky pada halaman editor yang menampilkan tombol kembali,
+ * nama penulis, status penyimpanan draf, serta tombol simpan dan publikasi.
+ */
 export default function EditorHeader({ authorName }: EditorHeaderProps) {
     const router = useRouter();
     const { data: user } = useMe();
